@@ -3,11 +3,22 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "sales-mngt": {
+    "jofak-enterprise": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "type": "component",
+          "changeDetection": "OnPush"
+        },
+        "@schematics/angular:service": {
+          "type": "service"
+        },
+        "@schematics/angular:pipe": {
+         "typeSeparator": "."
+        },
+        "@schematics/angular:directive": {
+          "type": "directive"
         }
       },
       "root": "",
@@ -61,10 +72,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "sales-mngt:build:production"
+              "buildTarget": "jofak-enterprise:build:production"
             },
             "development": {
-              "buildTarget": "sales-mngt:build:development"
+              "buildTarget": "jofak-enterprise:build:development"
             }
           },
           "defaultConfiguration": "development"
