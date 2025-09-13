@@ -1,0 +1,76 @@
+button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  border-radius: 8px;
+  padding: 10px 46px;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &.icon-right {
+    flex-direction: row-reverse;
+  }
+
+  &.icon-button {
+    padding: 8px;
+
+    .mdc-button__label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  &.filled-button {
+    background-color: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+
+    &:hover:not(:disabled) {
+      background-color: var(--mat-sys-primary-container);
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--mat-sys-primary-fixed-dim);
+    }
+  }
+
+  &.outlined-button {
+    background-color: transparent;
+    color: var(--mat-sys-primary);
+    border: 2px solid var(--mat-sys-primary);
+
+    &:hover:not(:disabled) {
+      background-color: var(--mat-sys-surface-variant);
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--mat-sys-primary-container);
+      opacity: 0.8;
+    }
+  }
+
+  .material-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+}
