@@ -43,6 +43,7 @@ $required-bg-color: #fff5f5;
     outline: none;
     font-size: 16px;
     color: #333;
+    box-sizing: border-box;
 
     &::placeholder {
       color: #707070;
@@ -58,4 +59,3 @@ $required-bg-color: #fff5f5;
     }
   }
 }
- 

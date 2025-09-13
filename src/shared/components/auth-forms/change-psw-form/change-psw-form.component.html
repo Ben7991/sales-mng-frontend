@@ -1,0 +1,26 @@
+<form [formGroup]="changePswForm" (ngSubmit)="onRequestPassReset()" class="auth-form">
+  <div class="form-field">
+    <app-input
+      label="New password"
+      placeholder="Enter new password"
+      formControlName="newPassword"
+      type="text"
+      [styles]="{ height: '54px' }"
+    />
+  </div>
+  <div class="form-field">
+    <app-input
+      label="confirm password"
+      placeholder="Confirm new password"
+      formControlName="confirmPassword"
+      type="text"
+      [styles]="{ height: '54px' }"
+    />
+  </div>
+  <app-button
+    type="submit"
+    text="Sign in"
+    [styles]="{ height: '54px' }"
+    [disabled]="!changePswForm.valid"
+  />
+</form>
