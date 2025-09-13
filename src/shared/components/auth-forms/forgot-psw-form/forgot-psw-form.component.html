@@ -1,0 +1,21 @@
+<form [formGroup]="forgotPswForm" (ngSubmit)="onRequestPassReset()" class="auth-form">
+  <div class="form-field">
+    <app-input
+      placeholder="Email address"
+      formControlName="email"
+      type="email"
+      [styles]="{ height: '54px' }"
+    />
+  </div>
+  <app-button
+    type="submit"
+    text="Send reset link"
+    [styles]="{ height: '54px' }"
+    [disabled]="!forgotPswForm.valid"
+  />
+  <div class="form-links">
+    <p class="signup-text">
+      <a routerLink="/login" class="signup-link">Return to sign in</a>
+    </p>
+  </div>
+</form>
