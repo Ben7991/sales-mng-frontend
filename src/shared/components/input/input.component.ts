@@ -25,6 +25,7 @@ export class InputComponent implements ControlValueAccessor, OnInit, AfterViewIn
   public readonly inputId = input(0);
   public readonly type = input<InputType>('text');
   public readonly disabled = input(false);
+  public readonly styles = input({});
 
   public readonly valueChange = output<string>();
   public readonly onblur = output<void>();

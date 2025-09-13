@@ -1,5 +1,5 @@
-<div 
-    class="input-container" 
+<div
+    class="input-container"
     [class.disabled]="disabled()"
     [class.required-invalid]="required() && !internalValue() && isBlurred()"
 >
@@ -7,7 +7,7 @@
     @let displayedLabel = required() ? (label() + '*' ): label();
     <label class="input-label" [for]="randomInputId">{{ displayedLabel }}</label>
   }
-  
+
 <input [id]="randomInputId"
     #input
     [type]="type()"
@@ -17,5 +17,7 @@
     [value]="internalValue()"
     (input)="onInputChange($any($event.target).value)"
     (focus)="onInputFocus()"
-    (blur)="onInputBlur()" />
+    (blur)="onInputBlur()"
+       [ngStyle]="styles()"
+/>
 </div>
