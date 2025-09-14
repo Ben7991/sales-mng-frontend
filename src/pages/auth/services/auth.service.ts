@@ -23,7 +23,7 @@ export class AuthService {
   public resetPassword(
     form: PasswordResetForm,
     token: string
-  ): Observable<{ code: string }> {
-    return this.http.post<{ code: string }>(`${AUTH_RESET_PASSWORD_URL}?token=${token}`, form);
+  ): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${AUTH_RESET_PASSWORD_URL}?token=${token}`, form);
   }
 }

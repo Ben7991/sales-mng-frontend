@@ -84,13 +84,13 @@ export class ChangePswFormComponent implements OnInit, OnDestroy {
         finalize(() => this.isSubmittingForm.set(false))
       )
       .subscribe({
-        next: (response) => {
-          this.snackbarService.showSuccess(response.code);
+        next: ({ message }) => {
+          this.snackbarService.showSuccess(message);
 
           void this.router.navigateByUrl(NAVIGATION_ROUTES.AUTH.LOGIN);
         },
         error: (err: HttpErrorResponse) => {
-          const msg = err.error.code ?? TOAST_MESSAGES.HTTP_ERROR;
+          const msg = err.error.message ?? TOAST_MESSAGES.HTTP_ERROR;
           this.snackbarService.showError(msg);
         }
       })
