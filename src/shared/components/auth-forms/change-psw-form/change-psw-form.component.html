@@ -4,22 +4,29 @@
       label="New password"
       placeholder="Enter new password"
       formControlName="newPassword"
-      type="text"
+      type="password"
+      [required]="true"
       [styles]="{ height: '54px' }"
     />
   </div>
   <div class="form-field">
     <app-input
-      label="confirm password"
+      label="Confirm password"
       placeholder="Confirm new password"
       formControlName="confirmPassword"
-      type="text"
+      type="password"
+      [required]="true"
       [styles]="{ height: '54px' }"
     />
   </div>
+
+  @if (showPasswordMismatchMsg()) {
+    <div class="password-mismatch">Passwords do not match</div>
+  }
+
   <app-button
     type="submit"
-    text="Sign in"
+    text="Submit"
     [styles]="{ height: '54px' }"
     [disabled]="!changePswForm.valid"
   />
