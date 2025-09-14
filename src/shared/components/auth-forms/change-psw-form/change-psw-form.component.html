@@ -29,5 +29,6 @@
     text="Submit"
     [styles]="{ height: '54px' }"
     [disabled]="!changePswForm.valid"
+    [isLoading]="isSubmittingForm()"
   />
 </form>

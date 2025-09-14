@@ -50,7 +50,7 @@ export class LoginFormComponent {
       )
       .subscribe({
         next: (response) => {
-          // todo: determine state management approach and save user data
+          // to do: determine state management approach and save user data
           void this.router.navigateByUrl(NAVIGATION_ROUTES.DASHBOARD.HOME)
         },
         error: (err: HttpErrorResponse) => {

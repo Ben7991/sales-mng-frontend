@@ -13,6 +13,7 @@
     text="Send reset link"
     [styles]="{ height: '54px' }"
     [disabled]="!forgotPswForm.valid"
+    [isLoading]="isSubmittingForm()"
   />
   <div class="form-links">
     <p class="signup-text">
