@@ -6,7 +6,8 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { InputComponent } from '@shared/components/input/input.component';
 import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
-import { AuthService } from 'pages/auth/services/auth.service';
+import { UserService } from '@shared/services/state/user/user.service';
+import { AuthService } from '@shared/services/auth/auth.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -23,6 +24,7 @@ import { finalize } from 'rxjs';
 })
 export class LoginFormComponent {
   private readonly authService = inject(AuthService);
+  private readonly userService = inject(UserService);
   private readonly router = inject(Router);
   private readonly snackbarService = inject(SnackbarService);
   private readonly fb = inject(FormBuilder);
@@ -50,7 +52,9 @@ export class LoginFormComponent {
       )
       .subscribe({
         next: (response) => {
-          // to do: determine state management approach and save user data
+          this.authService.accessToken = response.data.accessToken;
+          this.userService.user = response.data.user;
+
           void this.router.navigateByUrl(NAVIGATION_ROUTES.DASHBOARD.HOME)
         },
         error: (err: HttpErrorResponse) => {

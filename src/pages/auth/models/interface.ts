@@ -1,4 +1,4 @@
-import { UserRole, UserAccountStatus } from "@shared/models/types";
+import { User } from "@shared/models/interface";
 
 export interface LoginForm {
     usernameOrEmail: string,
@@ -8,16 +8,7 @@ export interface LoginForm {
 
 export interface LoginResponse {
     data: {
-        user: {
-            id: string;
-            createdAt: string;
-            updatedAt: string;
-            name: string;
-            username: string;
-            email: string;
-            status: UserAccountStatus,
-            role: UserRole
-        },
+        user: User,
         accessToken: string;
     }
 }
