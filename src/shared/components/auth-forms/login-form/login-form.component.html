@@ -2,8 +2,9 @@
   <div class="form-field">
     <app-input
       placeholder="Email address"
-      formControlName="email"
+      formControlName="usernameOrEmail"
       type="email"
+      [required]="true"
       [styles]="{ height: '54px' }"
     />
   </div>
@@ -13,23 +14,28 @@
       placeholder="Password"
       formControlName="password"
       type="password"
+      [required]="true"
       [styles]="{ height: '54px' }"
     />
   </div>
 
- <app-button
-   type="submit"
-   text="Submit"
-   [styles]="{ height: '54px' }"
-   [disabled]="!loginForm.valid"
- />
+  <div class="remember-me">
+    <app-input formControlName="rememberMe" type="checkbox" /> <span>Remember me</span>
+  </div>
+
+  <app-button
+    type="submit"
+    text="Submit"
+    [styles]="{ height: '54px' }"
+    [disabled]="!loginForm.valid"
+    [isLoading]="isSubmittingForm()"
+  />
 
   <div class="form-links">
-    <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
+    <a routerLink="/{{forgotPasswordRoute}}" class="forgot-link">Forgot password?</a>
     <p class="signup-text">
       Don't have an account yet?
       <a href="#" class="signup-link">Request one</a>
     </p>
   </div>
-
 </form>

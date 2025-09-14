@@ -1,19 +1,27 @@
 import { Routes } from '@angular/router';
-import {LoginComponent} from '../pages/auth/login/login.component';
-import {ForgetPasswordComponent} from '../pages/auth/forget-password/forget-password.component';
-import {ChangePasswordComponent} from '../pages/auth/change-password/change-password.component';
+import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
+import { MainComponent } from 'pages/main/main.component';
+import { NotFoundComponent } from 'pages/not-found/not-found.component';
 
 export const routes: Routes = [
-  {path:'login',
-   component : LoginComponent,
+  {
+    path: '',
+    redirectTo: NAVIGATION_ROUTES.AUTH.LOGIN,
+    pathMatch: 'full'
   },
   {
-    path:'forgot-password',
-    component: ForgetPasswordComponent
-
+    path: 'auth',
+    loadChildren: () =>
+      import('../pages/auth/auth.routes').then(m => m.authRoutes)
   },
   {
-    path:'reset-password',
-    component: ChangePasswordComponent
-  }
+    path: 'main',
+    component: MainComponent,
+    loadChildren: () =>
+      import('../pages/main/main.routes').then(m => m.mainRoutes)
+  },
+  {
+    path: '**',
+    component: NotFoundComponent,
+  },
 ];

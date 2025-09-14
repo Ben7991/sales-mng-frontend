@@ -4,6 +4,7 @@
       placeholder="Email address"
       formControlName="email"
       type="email"
+      [required]="true"
       [styles]="{ height: '54px' }"
     />
   </div>
@@ -12,10 +13,11 @@
     text="Send reset link"
     [styles]="{ height: '54px' }"
     [disabled]="!forgotPswForm.valid"
+    [isLoading]="isSubmittingForm()"
   />
   <div class="form-links">
     <p class="signup-text">
-      <a routerLink="/login" class="signup-link">Return to sign in</a>
+      <a routerLink="/{{loginRoute}}" class="signup-link">Return to sign in</a>
     </p>
   </div>
 </form>

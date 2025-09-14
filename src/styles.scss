@@ -1,11 +1,13 @@
-@use '@angular/material' as mat;
-@use './styles/authStyles';
+@use "@angular/material" as mat;
+@use "./styles/authStyles";
 //@use './styletheme';
 
-html{
-  @include mat.theme((
-    typography: Roboto,
-  ));
+html {
+  @include mat.theme(
+    (
+      typography: Roboto,
+    )
+  );
 }
 
 body {
@@ -15,4 +17,34 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+/* Angular Mat overrides */
+// Snackbar
+.snackbar-success {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #4CAF50,
+      supporting-text-color: white,
+    )
+  );
+}
 
+.snackbar-error {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--mat-sys-error),
+      supporting-text-color: white,
+    )
+  );
+}
+
+.snackbar-info {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: #2196F3,
+      supporting-text-color: white,
+    )
+  );
+}
+
+
+/* END Mat Overrides */
