@@ -18,7 +18,9 @@ type InputType = HTMLInputElement['type'];
   ]
 })
 export class InputComponent implements ControlValueAccessor, OnInit, AfterViewInit {
-  public readonly value = input('');
+  public readonly value = input<any>('');
+  public readonly valueChange = output<any>();
+
   public readonly label = input('');
   public readonly required = input(false);
   public readonly placeholder = input('');
@@ -26,27 +28,23 @@ export class InputComponent implements ControlValueAccessor, OnInit, AfterViewIn
   public readonly type = input<InputType>('text');
   public readonly disabled = input(false);
   public readonly styles = input({});
-
-  public readonly valueChange = output<string>();
   public readonly onblur = output<void>();
   public readonly onfocus = output<void>();
 
   private readonly inputEl = viewChild<ElementRef<HTMLInputElement>>('input');
 
   protected randomInputId = 0;
-  public internalValue = signal('');
+  public internalValue = signal<any>(''); 
   public isFocused = signal(false);
-
   public isBlurred = signal(false);
 
-  private onChange: (value: string) => void = () => { };
-  private onTouched: () => void = () => { };
+  private onChange: (value: any) => void = () => {};
+  private onTouched: () => void = () => {};
 
   ngOnInit(): void {
     if (this.inputId() === 0) {
       this.randomInputId = Math.random();
-    }
-    else {
+    } else {
       this.randomInputId = this.inputId();
     }
   }
@@ -71,17 +69,21 @@ export class InputComponent implements ControlValueAccessor, OnInit, AfterViewIn
     this.onfocus.emit();
   }
 
-  onInputChange(value: string): void {
+  public onValueChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    // Get 'checked' for checkboxes, otherwise get 'value'
+    const value = this.type() === 'checkbox' ? target.checked : target.value;
+
     this.internalValue.set(value);
     this.onChange(value);
     this.valueChange.emit(value);
   }
 
-  public writeValue(value: string): void {
-    this.internalValue.set(value || '');
+  public writeValue(value: any): void {
+    this.internalValue.set(value);
   }
 
-  public registerOnChange(fn: (value: string) => void): void {
+  public registerOnChange(fn: (value: any) => void): void {
     this.onChange = fn;
   }
 

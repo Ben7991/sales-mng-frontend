@@ -1,23 +1,36 @@
 <div
-    class="input-container"
-    [class.disabled]="disabled()"
-    [class.required-invalid]="required() && !internalValue() && isBlurred()"
+  class="input-container"
+  [class.disabled]="disabled()"
+  [class.required-invalid]="required() && !internalValue() && isBlurred()"
 >
   @if (label()) {
     @let displayedLabel = required() ? (label() + '*' ): label();
     <label class="input-label" [for]="randomInputId">{{ displayedLabel }}</label>
   }
 
-<input [id]="randomInputId"
-    #input
-    [type]="type()"
-    [placeholder]="placeholder()"
-    [disabled]="disabled()"
-    [required]="required()"
-    [value]="internalValue()"
-    (input)="onInputChange($any($event.target).value)"
-    (focus)="onInputFocus()"
-    (blur)="onInputBlur()"
-       [ngStyle]="styles()"
-/>
+  @if (type() === 'checkbox') {
+    <input [id]="randomInputId"
+      #input
+      type="checkbox"
+      [disabled]="disabled()"
+      [required]="required()"
+      [checked]="internalValue()"
+      (change)="onValueChange($event)"
+      (blur)="onInputBlur()"
+      [ngStyle]="styles()"
+    />
+  } @else {
+    <input [id]="randomInputId"
+      #input
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [value]="internalValue()"
+      (input)="onValueChange($event)"
+      (focus)="onInputFocus()"
+      (blur)="onInputBlur()"
+      [ngStyle]="styles()"
+    />
+  }
 </div>

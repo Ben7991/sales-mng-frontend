@@ -1,8 +1,13 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {RouterLink} from '@angular/router';
-import {InputComponent} from '@shared/components/input/input.component';
-import {ButtonComponent} from '@shared/components/button/button.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ButtonComponent } from '@shared/components/button/button.component';
+import { InputComponent } from '@shared/components/input/input.component';
+import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
+import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
+import { AuthService } from 'pages/auth/services/auth.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
@@ -17,18 +22,40 @@ import {ButtonComponent} from '@shared/components/button/button.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginFormComponent {
-  public loginForm: FormGroup;
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly snackbarService = inject(SnackbarService);
+  private readonly fb = inject(FormBuilder);
 
-  constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
-  }
+  protected readonly isSubmittingForm = signal(false);
 
-  public onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('Login submitted:', this.loginForm.value);
+  protected readonly loginForm: FormGroup = this.fb.group({
+    usernameOrEmail: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    rememberMe: [false]
+  });
+
+  protected readonly forgotPasswordRoute = NAVIGATION_ROUTES.AUTH.FORGOT_PASSWORD;
+
+  public onSubmit(): void {
+    if (!this.loginForm.valid) {
+      return;
     }
+
+    this.isSubmittingForm.set(true);
+
+    this.authService.login(this.loginForm.value)
+      .pipe(
+        finalize(() => this.isSubmittingForm.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          // todo: determine state management approach and save user data
+          void this.router.navigateByUrl(NAVIGATION_ROUTES.DASHBOARD.HOME)
+        },
+        error: (err: HttpErrorResponse) => {
+          this.snackbarService.showError(err.error.message)
+        }
+      })
   }
 }
