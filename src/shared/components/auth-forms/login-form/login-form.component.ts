@@ -52,7 +52,7 @@ export class LoginFormComponent {
       )
       .subscribe({
         next: (response) => {
-          this.authService.accessToken = response.data.accessToken;
+          this.authService.setAccessToken(response.data.accessToken);
           this.userService.user = response.data.user;
 
           void this.router.navigateByUrl(NAVIGATION_ROUTES.DASHBOARD.HOME)
