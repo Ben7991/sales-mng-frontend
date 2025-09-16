@@ -5,6 +5,8 @@ export const NAVIGATION_ROUTES = {
         FORGOT_PASSWORD: 'auth/forgot-password',
     },
     DASHBOARD: {
-        HOME: 'main/dashboard'
+        HOME: 'main/dashboard',
+        USERS: 'main/users',
+        SUPPLIERS: 'main/suppliers',
     }
 }
