@@ -1,16 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { AUTH_FORGOT_PASSWORD_URL, AUTH_LOGIN_URL, AUTH_RESET_PASSWORD_URL } from '@shared/constants/api.constants';
+import { AUTH_FORGOT_PASSWORD_URL, AUTH_LOGIN_URL, AUTH_REFRESH_TOKEN_URL, AUTH_RESET_PASSWORD_URL } from '@shared/constants/api.constants';
 import { Observable } from 'rxjs';
 import { LoginForm, LoginResponse, PasswordResetForm } from '../../../pages/auth/models/interface';
+import { LocalStorageKeys, LocalStorageService } from '../localstorage/localstorage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly localStorageService = inject(LocalStorageService);
 
-  public accessToken = '';
+  private accessToken: string | null = null;
+
+  constructor() {
+    this.accessToken =
+      this.localStorageService.getLocalStorageItem(LocalStorageKeys.ACCESS_TOKEN);
+  }
+
+  public getAccessToken(): string | null {
+    return this.accessToken;
+  }
+
+  public setAccessToken(token: string): void {
+    this.accessToken = token;
+    this.localStorageService.setLocalStorageItem(LocalStorageKeys.ACCESS_TOKEN, token);
+  }
 
   public login(form: LoginForm): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(AUTH_LOGIN_URL, form);
@@ -27,5 +43,9 @@ export class AuthService {
     token: string
   ): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${AUTH_RESET_PASSWORD_URL}?token=${token}`, form);
+  }
+
+  public refreshToken(): Observable<{ token: string }> {
+    return this.http.get<{ token: string }>(AUTH_REFRESH_TOKEN_URL);
   }
 }
