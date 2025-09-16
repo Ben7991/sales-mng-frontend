@@ -1,5 +1,9 @@
 import { UserAccountStatus, UserRole } from "./types";
 
+export interface UserResponse {
+    data: User;
+}
+
 export interface User {
     id: string;
     createdAt: string;
