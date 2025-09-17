@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 export enum LocalStorageKeys {
     ACCESS_TOKEN = 'jfk_acc_tkn',
+    SIDEBAR_STATE_KEY = 'sidebarCollapsed'
 }
 
 @Injectable({

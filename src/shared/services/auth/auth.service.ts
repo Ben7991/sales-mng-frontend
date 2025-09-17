@@ -1,9 +1,16 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { AUTH_FORGOT_PASSWORD_URL, AUTH_LOGIN_URL, AUTH_REFRESH_TOKEN_URL, AUTH_RESET_PASSWORD_URL } from '@shared/constants/api.constants';
-import { Observable } from 'rxjs';
-import { LoginForm, LoginResponse, PasswordResetForm } from '../../../pages/auth/models/interface';
-import { LocalStorageKeys, LocalStorageService } from '../localstorage/localstorage.service';
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
+import {
+  AUTH_FORGOT_PASSWORD_URL,
+  AUTH_LOGIN_URL,
+  AUTH_REFRESH_TOKEN_URL,
+  AUTH_RESET_PASSWORD_URL,
+  GET_AUTH_USER
+} from '@shared/constants/api.constants';
+import {Observable} from 'rxjs';
+import {LoginForm, LoginResponse, PasswordResetForm} from '../../../pages/auth/models/interface';
+import {LocalStorageKeys, LocalStorageService} from '../localstorage/localstorage.service';
+import {UserResponse} from '@shared/models/interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +37,10 @@ export class AuthService {
 
   public login(form: LoginForm): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(AUTH_LOGIN_URL, form);
+  }
+
+  public getUserDetails():Observable<UserResponse>{
+    return this.http.get<UserResponse>(GET_AUTH_USER)
   }
 
   public requestPasswordResetLink(

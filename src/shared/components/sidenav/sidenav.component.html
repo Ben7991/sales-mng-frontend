@@ -1,0 +1,28 @@
+<nav class="sidenav" [class.collapsed]="sidenavService.isCollapsed$()" [class.mobile-open]="sidenavService.isMobileOpen$()">
+  <div class="sidenav-content">
+    <div class="toggle-icon" (click)="sidenavService.toggleSidebar()">
+      @if (sidenavService.isCollapsed$()) {
+        <svg width="18" height="18" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.1639 6.99997L7.95694 0.792969L6.54294 2.20697L11.3359 6.99997L6.54294 11.793L7.95694 13.207L14.1639 6.99997ZM8.51394 6.99997L2.30694 0.792969L0.892944 2.20697L5.68594 6.99997L0.892944 11.793L2.30694 13.207L8.51394 6.99997Z" fill="white" />
+        </svg>
+      } @else {
+        <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.835995 6.99997L7.04299 0.792969L8.45699 2.20697L3.66399 6.99997L8.45699 11.793L7.04299 13.207L0.835995 6.99997ZM6.48599 6.99997L12.693 0.792969L14.107 2.20697L9.31399 6.99997L14.107 11.793L12.693 13.207L6.48599 6.99997Z" fill="white" />
+        </svg>
+      }
+    </div>
+    <div class="logo-wrapper">
+      <img ngSrc="assets/logo.png" alt="App Logo" class="logo" width="100" height="40" />
+    </div>
+    <ul class="menu-list">
+      @for (item of sidenavService.menuItems$(); track $index) {
+        <li class="menu-item" [class.active]="item.active" (click)="sidenavService.selectMenuItem(item)">
+          <a class="menu-link" [title]="sidenavService.isCollapsed$() ? item.name : ''">
+            <img [ngSrc]="item.icon" alt="{{ item.name }} Icon" class="menu-icon" width="24" height="24" />
+            <span class="menu-text">{{ item.name }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+</nav>
