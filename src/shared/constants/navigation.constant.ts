@@ -6,7 +6,17 @@ export const NAVIGATION_ROUTES = {
     },
     DASHBOARD: {
         HOME: 'main/dashboard',
-        USERS: 'main/users',
-        SUPPLIERS: 'main/suppliers',
-    }
+    },
+    SUPPLIERS: {
+        HOME: 'main/suppliers',
+    },
+    USERS: {
+        HOME: 'main/user-management',
+    },
+    REPORTS: {
+        HOME: 'main/reports',
+    },
+    SETTINGS: {
+        HOME: 'main/settings',
+    },
 }

@@ -55,7 +55,7 @@ export class LoginFormComponent {
           this.authService.setAccessToken(response.data.accessToken);
           this.userService.user = response.data.user;
 
-          void this.router.navigateByUrl(NAVIGATION_ROUTES.DASHBOARD.HOME)
+          void this.router.navigateByUrl(NAVIGATION_ROUTES.USERS.HOME) // temp: set home route to user mgnt page
         },
         error: (err: HttpErrorResponse) => {
           this.snackbarService.showError(err.error.message)

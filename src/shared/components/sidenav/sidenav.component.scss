@@ -1,29 +1,35 @@
-.sidenav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 180px;
+.sidenav { 
+  width: 220px;
   height: 100vh;
   background-color: #ABBEC4;
   z-index: 999;
   padding: 0 24px;
   overflow: visible;
-
+  transition: width 0.3s ease; 
+  
   &.collapsed {
-    width: 70px;
+    width: 80px; 
   }
-
+  
   @media (max-width: 768px) {
     box-shadow: none;
-
+    width: 280px;
+    
     &.mobile-open {
       box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
     }
   }
 }
 
-.toggle-icon{
+.toggle-icon {
   cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .sidenav-content {
@@ -32,7 +38,7 @@
   display: flex;
   gap: 2rem;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   overflow: visible;
 }
@@ -48,11 +54,11 @@
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 4px;
-
+  
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
-
+  
   @media (max-width: 768px) {
     display: block;
   }
@@ -65,19 +71,25 @@
   flex: 1;
   overflow: visible;
   position: relative;
+  width: 100%;
 }
 
 .menu-item {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem; // Increased spacing
   position: relative;
-
+  
   &.active .menu-link {
     border-radius: 8px;
     background: var(--mat-sys-primary);
     color: white;
-
+    
     .menu-icon {
       color: white;
+    }
+    
+    .menu-text {
+      color: white;
+      font-weight: 600;
     }
   }
 }
@@ -93,63 +105,76 @@
   position: relative;
 
   &:hover {
-    border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
     color: white;
-
-    .sidenav.collapsed {
+    
+    // Show tooltip on collapsed sidebar hover
+    .sidenav.collapsed & .menu-text {
       opacity: 1;
       visibility: visible;
     }
   }
-
+  
   .sidenav.collapsed & {
     justify-content: center;
-    padding: 0.875rem 1rem;
+    padding: 1rem;
   }
 }
 
 .menu-icon {
-  min-width: 20px;
-  width: 20px;
-  height: 20px;
-  margin-right: 0.75rem;
+  min-width: 24px; // Increased from 20px
+  width: 24px;
+  height: 24px;
+  margin-right: 1rem; // Increased margin
   color: rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-
+  
   .sidenav.collapsed & {
     margin-right: 0;
   }
-
+  
   svg {
-    width: 20px;
-    height: 20px;
+    width: 24px; // Increased from 20px
+    height: 24px;
     stroke-width: 1.5;
   }
 }
 
 .menu-text {
-  font-size: 0.875rem;
+  font-size: 1rem; // Increased from 0.875rem
   font-weight: 500;
-  transition: opacity 0.2s ease;
-
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  
   .sidenav.collapsed & {
     opacity: 0;
+    visibility: hidden;
     position: absolute;
-    left: 60px;
+    left: 70px; // Adjusted for new collapsed width
     background: #2d3748;
     color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
+    padding: 0.75rem 1rem; // Increased padding
+    border-radius: 6px;
     white-space: nowrap;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     pointer-events: none;
     z-index: 1000;
+    font-size: 0.875rem;
+    
+    // Arrow for tooltip
+    &::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-right-color: #2d3748;
+    }
   }
 }
-
 
 .mobile-overlay {
   position: fixed;
@@ -161,60 +186,53 @@
   z-index: 998;
   opacity: 0;
   visibility: hidden;
-
+  transition: all 0.3s ease;
+  
   &.show {
     opacity: 1;
     visibility: visible;
   }
-
+  
   @media (min-width: 769px) {
     display: none;
   }
 }
 
-@media (max-width: 480px) {
-  .sidenav {
-    width: 280px;
-  }
-
-  .menu-link {
-    padding: 1rem 1.5rem;
-  }
-
-  .menu-text {
-    font-size: 1rem;
-  }
-}
-
-.logo-wrapper{
+.logo-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 16px 0;
-
+  
   .logo {
-    height: 40px;
-    width: 40px;
+    height: 50px; // Increased from 40px
+    width: 50px;
+    transition: all 0.3s ease;
+    
+    .sidenav.collapsed & {
+      height: 40px;
+      width: 40px;
+    }
   }
 }
 
 .sidenav-content {
   overflow-y: auto;
   overflow-x: hidden;
-
+  
   &::-webkit-scrollbar {
     width: 4px;
   }
-
+  
   &::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.1);
   }
-
+  
   &::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
   }
-
+  
   &::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.4);
   }
