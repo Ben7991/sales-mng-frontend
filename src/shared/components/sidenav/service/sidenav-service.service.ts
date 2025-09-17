@@ -1,13 +1,14 @@
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
 import { Router } from '@angular/router';
-import {MenuItem} from '@shared/models/sidenav.interface';
 import {menuItems} from '@shared/components/sidenav/menu-items';
+import {LocalStorageKeys, LocalStorageService} from '@shared/services/localstorage/localstorage.service';
+import {MenuItem} from '@shared/components/sidenav/sidenav.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SidenavService {
-  private readonly SIDEBAR_STATE_KEY = 'sidebarCollapsed';
+  private readonly localStorageService = inject(LocalStorageService);
   private router = inject(Router);
 
 
@@ -21,11 +22,13 @@ export class SidenavService {
   menuItems$ = computed(() => this.menuItems());
 
   constructor() {
-    const savedState = localStorage.getItem(this.SIDEBAR_STATE_KEY);
+    const savedState = this.localStorageService.getLocalStorageItem(LocalStorageKeys.SIDEBAR_STATE_KEY);
     if (savedState !== null) {
-      this.isCollapsed.set(JSON.parse(savedState));
+      if (typeof savedState === "string") {
+        this.isCollapsed.set(JSON.parse(savedState));
+      }
     }
-    effect(() => localStorage.setItem(this.SIDEBAR_STATE_KEY, JSON.stringify(this.isCollapsed())));
+    effect(() => this.localStorageService.setLocalStorageItem(LocalStorageKeys.SIDEBAR_STATE_KEY, JSON.stringify(this.isCollapsed())));
   }
 
   toggleSidebar(): void {

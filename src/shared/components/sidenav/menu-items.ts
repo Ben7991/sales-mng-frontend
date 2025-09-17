@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
-import {MenuItem} from '@shared/models/sidenav.interface';
+import {MenuItem} from '@shared/components/sidenav/sidenav.interface';
 
 export const menuItems = signal<MenuItem[]>([
   { name: 'Dashboard', icon: 'assets/dashboardIcon.svg', route: NAVIGATION_ROUTES.DASHBOARD.HOME, active: true },
