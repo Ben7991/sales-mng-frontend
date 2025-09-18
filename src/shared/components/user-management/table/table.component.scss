@@ -1,0 +1,45 @@
+.table-container {
+  width: 100%;
+
+  .mat-mdc-table {
+    width: 100%;
+    background: white;
+  }
+
+  .mat-mdc-header-row {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .mat-mdc-row {
+    border-bottom: 1px solid #f3f4f6;
+
+    &:hover {
+      background-color: #f9fafb;
+    }
+  }
+
+  .mat-mdc-header-cell {
+    font-weight: 600;
+    color: #374151;
+    border-bottom: none;
+  }
+
+  .mat-mdc-cell {
+    border-bottom: none;
+    color: #1f2937;
+  }
+
+  .status-chip {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .mat-mdc-paginator {
+    border-top: 1px solid #e5e7eb;
+    background-color: white;
+  }
+}
