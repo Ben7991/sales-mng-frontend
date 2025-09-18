@@ -21,3 +21,8 @@ export interface addUserApiResponse {
     "setPassword": boolean
   }
 }
+
+export interface UserFormModalData {
+  user?: addUserInterface;
+  isEdit?: boolean;
+}

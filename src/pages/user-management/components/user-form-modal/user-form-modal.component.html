@@ -17,9 +17,11 @@
           formControlName="role"
           placeholder="Select role"
           [class.error]="isFieldInvalid('role')">
-          <mat-option *ngFor="let role of availableRoles()" [value]="role.value">
-            {{ role.label }}
-          </mat-option>
+          @for (role of availableRoles(); track $index){
+            <mat-option [value]="role.value">
+              {{ role.label }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -43,11 +45,6 @@
         formControlName="username"
         placeholder="Enter user name"
         [class.error]="isFieldInvalid('phoneNumber')">
-      @if (userForm.get('username')?.hasError('required')){
-        <mat-error>
-          Phone number is required
-        </mat-error>
-      }
     </mat-form-field>
     </div>
 
@@ -62,18 +59,13 @@
     />
 
     <app-button
+      text="Add User"
       type="submit"
       [disabled]="userForm.invalid || isSubmitting()"
       [isLoading]="isSubmitting()"
       class="submit-button"
       (click)="onSubmit()"
     >
-      <span *ngIf="!isSubmitting()">
-              {{ isEditMode() ? 'Update User' : 'Add User' }}
-            </span>
-      <span *ngIf="isSubmitting()">
-              {{ isEditMode() ? 'Updating...' : 'Adding...' }}
-            </span>
     </app-button>
   </div>
 </div>

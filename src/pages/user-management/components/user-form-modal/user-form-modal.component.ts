@@ -1,29 +1,20 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {MatButton} from '@angular/material/button';
-import {NgForOf, NgIf} from '@angular/common';
 import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatOption} from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {ButtonComponent} from '@shared/components/button/button.component';
-import {addUserInterface} from '../../interface';
-import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
+import {addUserInterface, UserFormModalData} from '../../interface';
 
-export interface UserFormModalData {
-  user?: addUserInterface;
-  isEdit?: boolean;
-}
 @Component({
   selector: 'app-user-form-modal',
   imports: [
-    NgIf,
     MatFormField,
     MatInput,
     MatFormFieldModule,
     ReactiveFormsModule,
-    NgForOf,
     MatSelectModule,
     MatOption,
     ButtonComponent
