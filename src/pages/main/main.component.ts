@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "@shared/components/header/header.component";
 import { SidenavComponent } from "@shared/components/sidenav/sidenav.component";
+import {ChangeDetectionStrategy, Component, } from '@angular/core';
 
 @Component({
   selector: 'app-main',
