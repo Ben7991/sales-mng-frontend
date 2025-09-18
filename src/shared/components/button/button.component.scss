@@ -13,6 +13,14 @@ button {
   cursor: pointer;
   width: 100%;
 
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;

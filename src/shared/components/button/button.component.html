@@ -11,27 +11,28 @@
     'outlined-button': variant() === 'outlined'
   }"
   [ngStyle]="styles()">
-  
-  @if (isLoading()) {
-    <mat-spinner diameter="16" class="spinner"></mat-spinner>
-  }
-  @else if (icon()) {
-    @if (iconType() === 'material') {
-      <mat-icon 
-        [ngStyle]="iconStyles()" 
-        class="material-icon">
-        {{ icon() }}
-      </mat-icon>
-    } @else {
-      <img 
-        [src]="icon()" 
-        [style]="iconStyles()" 
-        alt="icon" 
-        class="image-icon" />
+
+  <div class="button-content">
+    @if (isLoading()) {
+      <mat-spinner diameter="16" class="spinner"></mat-spinner>
     }
-  }
+    @else if (icon()) {
+      @if (iconType() === 'material') {
+        <mat-icon
+          [ngStyle]="iconStyles()"
+          class="material-icon">
+          {{ icon() }}
+        </mat-icon>
+      } @else {
+        <img
+          [src]="icon()"
+          [style]="iconStyles()"
+          alt="icon"
+          class="image-icon" />
+      }
+    }
 
-  <span>{{ text() }}</span>
-
-  <ng-content />
+    <span>{{ text() }}</span>
+    <ng-content />
+  </div>
 </button>

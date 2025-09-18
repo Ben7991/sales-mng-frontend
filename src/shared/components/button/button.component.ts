@@ -2,6 +2,7 @@ import { NgClass, NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatButton} from '@angular/material/button';
 
 type ButtonType = HTMLButtonElement['type'];
 type ButtonVariant = 'filled' | 'outlined';
@@ -13,7 +14,8 @@ type IconType = 'material' | 'image'; // relative/http image, or an angular mate
     NgClass,
     NgStyle,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    MatButton
   ],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss',
