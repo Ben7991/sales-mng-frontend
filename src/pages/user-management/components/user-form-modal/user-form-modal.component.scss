@@ -1,0 +1,46 @@
+.user-form-container {
+  padding: 5%;
+  min-width: 500px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.user-form {
+  display: flex;
+  gap: 16px;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+}
+
+.cancel-button {
+  color: #666;
+}
+
+.submit-button {
+  min-width: 120px;
+}
+
+.error {
+  border-color: #f44336 !important;
+}
+
+@media (max-width: 600px) {
+  .user-form-container {
+    min-width: 280px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+}

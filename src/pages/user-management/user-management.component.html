@@ -1,1 +1,57 @@
-<p>user-management works!</p>
+<div class="user-management-container">
+
+    <div class="filter-section">
+      <app-search
+        [data]="tableData"
+        [config]="userSearchConfig"
+        [isLoading]="isLoadingUsers"
+        (searchResults)="onUserSearch($event)"
+        (searchTermChange)="onUserSearchTermChange($event)"
+      />
+      <div class="left-actions">
+        <app-button
+          text="Filter"
+          variant="outlined"
+          [matMenuTriggerFor]="filterMenu"
+          class="filter-button"
+        >
+          <mat-icon>expand_more</mat-icon>
+        </app-button>
+
+        <mat-menu #filterMenu="matMenu">
+          <button mat-menu-item>Option 1</button>
+          <button mat-menu-item>Option 2</button>
+          <button mat-menu-item>Option 3</button>
+        </mat-menu>
+        <app-button
+          (click)="openAddUserModal()"
+          icon="assets/addIcon.svg"
+          [isIconButton]="true"
+          text="Add new user"
+          [styles]="{ height: '40px',width: '140px' }"
+        />
+      </div>
+    </div>
+
+
+
+</div>
+<div class="tableName">
+  @if (tableData.length > 0) {
+    <p class="selection-info">
+      Users( {{ tableData.length }} )
+    </p>
+  }
+</div>
+<app-table
+  [columns]="tableColumns"
+  [data]="filteredUsers"
+  [loading]="isLoading"
+  [actions]="tableActions"
+  [showCheckboxes]="true"
+  [showPagination]="true"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 25, 50]"
+  (selectionChange)="onSelectionChange($event)"
+  (actionClick)="onActionClick($event)"
+  (pageChange)="onPageChange($event)"/>

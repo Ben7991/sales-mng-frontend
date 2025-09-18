@@ -1,0 +1,249 @@
+.search-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .search-field {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+
+    .search-input {
+      width: 100%;
+      height: 40px;
+      padding: 8px 16px 8px 48px;
+      font-size: 16px;
+      font-family: inherit;
+      border: 1px solid #E3E3E3;
+      border-radius: 8px;
+      background: white;
+      color: rgba(0, 0, 0, 0.87);
+      outline: none;
+      transition: all 0.2s ease-in-out;
+      box-sizing: border-box;
+
+      &::placeholder {
+        color: rgba(0, 0, 0, 0.6);
+        opacity: 1;
+      }
+
+      &:hover {
+        border-color: rgba(0, 0, 0, 0.6);
+      }
+
+      &:focus {
+        border-color: var(#121212);
+        border-width: 2px;
+        padding: 7px 15px 7px 47px
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+    }
+
+    // Search icon
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: rgba(0, 0, 0, 0.54);
+      pointer-events: none;
+      z-index: 1;
+      transition: color 0.2s ease-in-out;
+    }
+
+    // Clear button
+    .clear-button {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: none;
+      color: rgba(0, 0, 0, 0.54);
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease-in-out;
+      z-index: 1;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      &:focus {
+        outline: 2px solid var(#121212);
+        outline-offset: 1px;
+      }
+
+      .clear-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+
+    &:focus-within {
+      .search-icon {
+        color: var(#121212);
+      }
+    }
+  }
+
+  .loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-top: 2px solid var(#121212);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    .search-field {
+      min-width: 150px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    .search-field {
+      min-width: 120px;
+
+      .search-input {
+        font-size: 14px;
+        height: 36px;
+        padding: 6px 14px 6px 40px;
+
+        &:focus {
+          padding: 5px 13px 5px 39px;
+        }
+      }
+
+      .search-icon {
+        width: 18px;
+        height: 18px;
+        left: 10px;
+      }
+
+      .clear-button {
+        width: 20px;
+        height: 20px;
+        right: 6px;
+
+        .clear-icon {
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+  }
+}
+
+
+// Error state
+.search-container {
+  .search-field {
+    &.error {
+      .search-input {
+        border-color: #f44336 !important;
+      }
+    }
+  }
+}
+
+// Compact variant
+.search-container {
+  &.compact {
+    .search-field {
+      .search-input {
+        height: 32px;
+        font-size: 14px;
+        padding: 4px 12px 4px 36px;
+
+        &:focus {
+          padding: 3px 11px 3px 35px;
+        }
+      }
+
+      .search-icon {
+        width: 16px;
+        height: 16px;
+        left: 10px;
+      }
+
+      .clear-button {
+        width: 20px;
+        height: 20px;
+        right: 6px;
+
+        .clear-icon {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+  }
+}
+
+
+.search-container {
+  &.large {
+    .search-field {
+      .search-input {
+        height: 48px;
+        font-size: 18px;
+        padding: 12px 20px 12px 56px;
+
+        &:focus {
+          padding: 11px 19px 11px 55px;
+        }
+      }
+
+      .search-icon {
+        width: 24px;
+        height: 24px;
+        left: 16px;
+      }
+
+      .clear-button {
+        width: 28px;
+        height: 28px;
+        right: 10px;
+
+        .clear-icon {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+  }
+}

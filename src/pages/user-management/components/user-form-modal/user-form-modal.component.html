@@ -1,0 +1,71 @@
+<div class="user-form-container">
+  <h3>Add New User</h3>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+    <div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>User Name</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Enter user name"
+          [class.error]="isFieldInvalid('userName')">
+
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Role</mat-label>
+        <mat-select
+          formControlName="role"
+          placeholder="Select role"
+          [class.error]="isFieldInvalid('role')">
+          @for (role of availableRoles(); track $index){
+            <mat-option [value]="role.value">
+              {{ role.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          placeholder="Enter user email"
+          [class.error]="isFieldInvalid('email')">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+      <mat-label>User Name</mat-label>
+      <input
+        matInput
+        formControlName="username"
+        placeholder="Enter user name"
+        [class.error]="isFieldInvalid('phoneNumber')">
+    </mat-form-field>
+    </div>
+
+  </form>
+  <div class="form-actions">
+    <app-button
+      variant="outlined"
+      type="button"
+      (click)="onCancel()"
+      class="cancel-button"
+      text="cancel"
+    />
+
+    <app-button
+      text="Add User"
+      type="submit"
+      [disabled]="userForm.invalid || isSubmitting()"
+      [isLoading]="isSubmitting()"
+      class="submit-button"
+      (click)="onSubmit()"
+    >
+    </app-button>
+  </div>
+</div>
