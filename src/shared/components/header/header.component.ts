@@ -2,13 +2,20 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, injec
 import {AuthService} from '@shared/services/auth/auth.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {TitleCasePipe, UpperCasePipe} from '@angular/common';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {NAVIGATION_ROUTES} from '@shared/constants/navigation.constant';
 
 @Component({
   selector: 'app-header',
   imports: [
     UpperCasePipe,
-    TitleCasePipe
-
+    TitleCasePipe,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatIconModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
@@ -20,6 +27,8 @@ export class HeaderComponent implements OnInit {
   public userName: string = '';
   public userInitials: string = '';
   public hasNotifications: boolean = false;
+  public isMenuTriggered = false
+  private readonly router = inject(Router);
   @Input() toggleSidenavCallback: () => void = () => {};
   private readonly destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
@@ -36,6 +45,10 @@ export class HeaderComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  public navigateToSettings(): void {
+    void this.router.navigateByUrl(NAVIGATION_ROUTES.SETTINGS.HOME)
   }
 
   toggleSidenav() {
