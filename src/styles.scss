@@ -45,5 +45,13 @@ html, body {
   );
 }
 
+.popup-menu {
+  @include mat.menu-overrides((
+    container-color: white,
+    item-label-text-color: #333,
+    item-hover-state-layer-color: #F7F7F7,
+  ));
+}
+
 
 /* END Mat Overrides */

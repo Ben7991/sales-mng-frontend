@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { Supplier } from 'pages/suppliers/models/interface';
 
 interface DialogData {
@@ -18,27 +19,28 @@ interface DialogData {
   selector: 'app-supplier-form-modal',
   standalone: true,
   imports: [
-    CommonModule,
+    ButtonComponent,
     ReactiveFormsModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './supplier-form-modal.component.html',
   styleUrl: './supplier-form-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SupplierFormModalComponent implements OnInit {
-  supplierForm!: FormGroup;
-  isEdit: boolean;
-  originalSupplier?: Supplier;
+  protected supplierForm!: FormGroup;
+  protected isEdit: boolean;
+  private readonly originalSupplier?: Supplier;
 
   constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<SupplierFormModalComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: DialogData
+    private readonly fb: FormBuilder,
+    private readonly dialogRef: MatDialogRef<SupplierFormModalComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    private readonly data: DialogData
   ) {
     this.isEdit = data.isEdit;
     this.originalSupplier = data.supplier;
@@ -91,17 +93,17 @@ export class SupplierFormModalComponent implements OnInit {
     return this.supplierForm.get('phones') as FormArray;
   }
 
-  addPhone() {
+  protected addPhone() {
     this.phonesFormArray.push(this.createPhoneControl());
   }
 
-  removePhone(index: number) {
+  protected removePhone(index: number) {
     if (this.phonesFormArray.length > 1) {
       this.phonesFormArray.removeAt(index);
     }
   }
 
-  onSubmit() {
+  protected onSubmit() {
     if (this.supplierForm.valid) {
       const formValue = this.supplierForm.value;
 
@@ -160,7 +162,7 @@ export class SupplierFormModalComponent implements OnInit {
     return updateData;
   }
 
-  onCancel() {
+  protected onCancel() {
     this.dialogRef.close({ action: 'cancel' });
   }
 }

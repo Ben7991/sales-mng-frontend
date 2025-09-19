@@ -40,11 +40,6 @@ export const supplierTableActions: TableAction[] = [
     label: 'Edit',
     action: 'edit'
   },
-  {
-    icon: 'delete',
-    label: 'Delete',
-    action: 'delete'
-  }
 ];
 
 export const supplierSearchConfig: SearchConfig = {

@@ -1,5 +1,9 @@
 <div class="user-form-container">
-  <h3>Add New User</h3>
+  @if (isEditMode()){
+    <h3>Edit User Details</h3>
+  } @else {
+    <h3>Add New User</h3>
+  }
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
     <div>
       <mat-form-field appearance="outline" class="form-field">
@@ -59,9 +63,9 @@
     />
 
     <app-button
-      text="Add User"
+      [text]="isEditMode()? 'Finish': 'Add User'"
       type="submit"
-      [disabled]="userForm.invalid || isSubmitting()"
+      [disabled]="userForm.invalid || isSubmitting() || (isEditMode() && userForm.pristine)"
       [isLoading]="isSubmitting()"
       class="submit-button"
       (click)="onSubmit()"
