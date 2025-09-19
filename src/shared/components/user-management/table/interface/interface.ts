@@ -4,6 +4,7 @@ export interface TableColumn {
   sortable?: boolean;
   type?: 'text' | 'status' | 'actions';
   width?: string;
+  formatter?: (value: any, row?: any) => string;
 }
 
 export interface TableAction {
