@@ -7,6 +7,8 @@ export interface userArrayResponse {
     data: {
         users: User[];
         count: number;
+        total?: number;
+        currentPage?: number
     };
 }
 
@@ -19,4 +21,10 @@ export interface User {
     email: string;
     status: UserAccountStatus,
     role: UserRole
+}
+
+export interface UserApiParams {
+  perPage?: string | number;
+  page?: string | number;
+  q?: string;
 }

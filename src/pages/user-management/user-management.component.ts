@@ -22,6 +22,10 @@ import {ModalService} from '@shared/components/modal/service/modal.service';
 import { UserFormModalComponent} from './components/user-form-modal/user-form-modal.component';
 import {addUserInterface} from './interface';
 import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
+import {MatDivider} from '@angular/material/divider';
+import {UserAccountStatus} from '@shared/models/types';
+import {ChangeStatusModalComponent} from './components/change-status-modal/change-status-modal.component';
+import {PageEvent} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-user-management',
@@ -33,7 +37,8 @@ import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    SearchComponent
+    SearchComponent,
+    MatDivider
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss',
@@ -41,7 +46,8 @@ import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
 })
 export class UserManagementComponent implements OnInit{
   public isLoading = false;
-  public pageSize = 10;
+  public pageSize = 10 ;
+  public totalUsers: number | undefined  = 0;
   private cdr = inject(ChangeDetectorRef);
   private userManagementService = inject(UserManagementService);
   private destroyRef = inject(DestroyRef)
@@ -61,21 +67,30 @@ export class UserManagementComponent implements OnInit{
   constructor(private readonly modalService: ModalService) {}
   public readonly lastResult = signal<any>(null);
 
-  public openAddUserModal(): void {
+  public openUserModal(user?: any): void {
+    const isEdit = !!user;
+
     const modalRef = this.modalService.openCustomModal(UserFormModalComponent, {
       width: '50%',
       maxWidth: '90vw',
-      panelClass: 'custom-dialog-container',
       disableClose: false,
-      data: { isEdit: false }
+      data: {
+        isEdit,
+        user: user ?? null
+      }
     });
 
     modalRef.afterClosed().subscribe(result => {
       if (result?.action === 'confirm') {
-        this.handleAddUser(result.data);
+        if (isEdit) {
+          this.handleUpdateUser(user.id, result.data);
+        } else {
+          this.handleAddUser(result.data);
+        }
       }
     });
   }
+
   private handleAddUser(userData: addUserInterface): void {
     this.userManagementService.addUser(userData).subscribe({
       next: (response) => {
@@ -89,27 +104,45 @@ export class UserManagementComponent implements OnInit{
 
     this.loadUsers();
   }
-  loadUsers(page: number = 0, limit: number = 10) {
+
+  private handleUpdateUser(userId: string, userdata: Partial<addUserInterface>): void {
+    this.userManagementService.updateUserInfo(userId, userdata).subscribe({
+      next: (response) => {
+        this.snackbarService.showSuccess(response.message)
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.snackbarService.showError(err.error.message)
+      }
+    })
+  }
+
+
+
+  public  loadUsers(page: number = 0, limit: number = 10) {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.userManagementService.getAllUsers()
+    this.userManagementService.getAllUsers({ page, perPage: limit })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           this.tableData = response.data.users;
           this.filteredUsers = [...this.tableData];
+          this.totalUsers = response.data.count;
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: () => {
           this.isLoading = false;
           this.tableData = [];
           this.filteredUsers = [];
+          this.totalUsers = 0;
           this.cdr.markForCheck();
         }
       });
   }
+
 
   onUserSearch(results: User[]) {
     this.filteredUsers = results;
@@ -124,16 +157,52 @@ export class UserManagementComponent implements OnInit{
 
 
   onSelectionChange(selectedItems: any[]) {
-    console.log('Selected items:', selectedItems);
   }
 
-  onActionClick(event: {action: string, item: any}) {
-    console.log('Action clicked:', event.action, 'on item:', event.item);
+  public onActionClick(event: { action: string; item: any }) {
+    if (event.action === 'edit') {
+      this.openUserModal(event.item);
+    } else if (event.action === 'change status') {
+      const modalRef = this.modalService.openCustomModal(ChangeStatusModalComponent, {
+        width: '50%',
+        maxWidth: '90vw',
+        data: { currentStatus: event.item.status }
+      });
+
+      modalRef.afterClosed().subscribe((newStatus: UserAccountStatus) => {
+        if (newStatus && newStatus !== event.item.status) {
+          this.userManagementService.changeUserStatus(event.item.id, newStatus).subscribe({
+            next: (response) => {
+              this.snackbarService.showSuccess(response.message)
+              event.item.status = newStatus;
+              this.loadUsers();
+            },
+            error: (err) => {
+              this.snackbarService.showError(err.error.message)
+            },
+          });
+        }
+      });
+    }
   }
 
-  onPageChange(event: any) {
-    console.log('Page changed:', event);
-    // You might want to reload data here if using server-side pagination
-    // this.loadUsers(event.pageIndex, event.pageSize);
+
+ public onPageChange(event: PageEvent) {
+    this.pageSize = event.pageSize;
+    const page = event.pageIndex;
+
+    this.loadUsers(page, this.pageSize);
+  }
+
+ public filterStatus(stats: string) {
+    this.userManagementService.getAllUsers({q:stats}).subscribe({
+      next: (response) => {
+        this.tableData = response.data.users;
+      },
+      error: (err) => {
+        this.snackbarService.showError(err.error.message)
+      }
+    })
+
   }
 }
