@@ -65,6 +65,7 @@ export class PasswordComponent implements OnInit{
     this.authUser.changePassword(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.snackbarService.showSuccess(response.message)
+        this.passwordForm.reset();
       },
       error: error => {
         this.snackbarService.showError(error.error.message);

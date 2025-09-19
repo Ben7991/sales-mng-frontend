@@ -47,11 +47,11 @@ export class AuthService {
   }
 
   public updateDetails(userData: Partial<addUserInterface>): Observable<addUserApiResponse>{
-    return this.http.patch<addUserApiResponse>(AUTH_USER_UPDATE,userData)
+    return this.http.post<addUserApiResponse>(AUTH_USER_UPDATE,userData)
   }
 
   public changePassword(userData: PasswordChange) {
-    return this.http.patch<{ message: string }>(
+    return this.http.post<{ message: string }>(
       AUTH_IN_APP_PASSWORD_CHANGE,
       userData
     );
