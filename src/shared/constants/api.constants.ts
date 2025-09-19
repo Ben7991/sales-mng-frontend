@@ -9,3 +9,5 @@ export const GET_AUTH_USER = `${environment.serverUrl}/auth/user`;
 
 /* USERS */
 export const GET_USERS_URL = `${environment.serverUrl}/users`;
+export const UPDATE_USER_INFO = `${environment.serverUrl}/users/{id}`;
+export const CHNANGE_USER_STATUS = `${environment.serverUrl}/users/{id}/change-status`;
