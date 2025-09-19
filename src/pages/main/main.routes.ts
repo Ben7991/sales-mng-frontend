@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { SuppliersComponent } from "pages/suppliers/suppliers.component";
+import { SupplierManagementComponent } from "pages/suppliers/supplier-management.component";
 import { UserManagementComponent } from "pages/user-management/user-management.component";
 
 export const mainRoutePaths: Routes = [
@@ -9,6 +9,6 @@ export const mainRoutePaths: Routes = [
     },
     {
         path: 'suppliers',
-        component: SuppliersComponent
+        component: SupplierManagementComponent
     }
 ];

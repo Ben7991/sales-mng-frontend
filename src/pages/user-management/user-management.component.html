@@ -8,7 +8,7 @@
         (searchResults)="onUserSearch($event)"
         (searchTermChange)="onUserSearchTermChange($event)"
       />
-      <div class="left-actions">
+      <div class="filter-actions">
         <app-button
           text="Filter"
           variant="outlined"
@@ -36,7 +36,7 @@
 
 
 </div>
-<div class="tableName">
+<div class="table-name">
   @if (tableData.length > 0) {
     <p class="selection-info">
       Users( {{ tableData.length }} )

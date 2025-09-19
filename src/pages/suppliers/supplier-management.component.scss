@@ -1,7 +1,7 @@
 @use '@styles/mixins/_filter-section.scss' as filter;
 @use '@styles/mixins/_table.scss' as table;
 
-.user-management-container {
+.supplier-management-container {
   @include filter.filter-section;
 }
 
