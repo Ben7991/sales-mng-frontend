@@ -193,12 +193,15 @@ export class UserManagementComponent implements OnInit{
   }
 
  public filterStatus(stats: string) {
+    this.isLoading = true
     this.userManagementService.getAllUsers({q:stats}).subscribe({
       next: (response) => {
         this.filteredUsers = response.data.users;
+        this.isLoading = false
       },
       error: (err) => {
         this.snackbarService.showError(err.error.message)
+        this.isLoading = false
       }
     })
 

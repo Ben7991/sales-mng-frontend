@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {MatFormField} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -28,6 +28,7 @@ export class GeneralComponent implements OnInit {
   public authUser = inject(AuthService);
   public destroyRef = inject(DestroyRef);
   public user!: User;
+  protected readonly isSubmittingForm = signal(false);
 
   public isEditMode = false;
 
@@ -73,15 +74,18 @@ export class GeneralComponent implements OnInit {
   }
 
   public onSubmit() {
+    this.isSubmittingForm.set(true)
     if (this.userForm.invalid) return;
     const updatedUser = this.userForm.getRawValue();
     this.authUser.updateDetails(updatedUser).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
        this.snackbarService.showSuccess(response.message)
+        this.isSubmittingForm.set(false)
         this.ngOnInit()
       },
       error: error => {
         this.snackbarService.showError(error.error.message);
+        this.isSubmittingForm.set(false)
       }
     });
 

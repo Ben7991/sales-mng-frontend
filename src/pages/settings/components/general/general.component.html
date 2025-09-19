@@ -31,7 +31,7 @@
       <app-button text="Cancel" variant="outlined" (click)="cancelEditing()" class="cancel-button" />
       <app-button text="Save Changes" type="submit" [disabled]="userForm.invalid" class="submit-button" />
     } @else {
-      <app-button text="Edit"  (click)="enableEditing()" class="submit-button" />
+      <app-button text="Edit" [isLoading]="isSubmittingForm()"  (click)="enableEditing()" class="submit-button" />
     }
   </div>
 </form>

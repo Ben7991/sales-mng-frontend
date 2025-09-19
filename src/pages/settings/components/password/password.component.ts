@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
@@ -28,6 +28,8 @@ export class PasswordComponent implements OnInit{
   private readonly fb = inject(FormBuilder);
   private readonly snackbarService = inject(SnackbarService)
   private destroyRef =inject(DestroyRef)
+  protected readonly isSubmittingForm = signal(false);
+
   public readonly passwordForm: FormGroup = this.fb.group({
     currentPassword: ['', [Validators.required]],
     newPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -50,6 +52,7 @@ export class PasswordComponent implements OnInit{
   }
 
  public onSubmit() {
+   this.isSubmittingForm.set(true)
     if (this.passwordForm.invalid) return;
     const payload = {
       userId: this.currentUser.id,
@@ -65,10 +68,12 @@ export class PasswordComponent implements OnInit{
     this.authUser.changePassword(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.snackbarService.showSuccess(response.message)
+        this.isSubmittingForm.set(false)
         this.passwordForm.reset();
       },
       error: error => {
         this.snackbarService.showError(error.error.message);
+        this.isSubmittingForm.set(false)
       }
     })
 
