@@ -2,19 +2,18 @@
 @use "./styles/authStyles";
 //@use './styletheme';
 
-html {
+html, body {
   @include mat.theme(
     (
       typography: Roboto,
     )
   );
-}
 
-body {
   padding: 0;
   margin: 0;
   height: 100%;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-y: hidden;
 }
 
 /* Angular Mat overrides */
