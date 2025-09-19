@@ -9,3 +9,5 @@ export const GET_AUTH_USER = `${environment.serverUrl}/auth/user`;
 
 /* USERS */
 export const GET_USERS_URL = `${environment.serverUrl}/users`;
+
+/* SUPPLIERS */

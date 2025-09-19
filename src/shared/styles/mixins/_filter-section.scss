@@ -1,0 +1,16 @@
+@mixin filter-section {
+  .filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0 10px;
+    margin-bottom: 4%;
+
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 5%;
+    }
+  }
+}

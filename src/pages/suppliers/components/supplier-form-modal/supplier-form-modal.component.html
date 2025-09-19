@@ -1,0 +1,90 @@
+<div class="modal-header">
+  <h2>{{ isEdit ? 'Edit Supplier' : 'Add New Supplier' }}</h2>
+  <button mat-icon-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" class="supplier-form">
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Supplier Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter supplier name">
+      <mat-error *ngIf="supplierForm.get('name')?.hasError('required')">
+        Supplier name is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Company Name</mat-label>
+      <input matInput formControlName="companyName" placeholder="Enter company name">
+      <mat-error *ngIf="supplierForm.get('companyName')?.hasError('required')">
+        Company name is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="Enter supplier email">
+      <mat-error *ngIf="supplierForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="supplierForm.get('email')?.hasError('email')">
+        Please enter a valid email
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-row" *ngIf="isEdit">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="ACTIVE">Active</mat-option>
+        <mat-option value="IN_ACTIVE">Inactive</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="phone-section">
+    <div class="section-header">
+      <label>Phone Numbers</label>
+      <button type="button" mat-icon-button (click)="addPhone()" class="add-phone-btn">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div formArrayName="phones">
+      <div *ngFor="let phone of phonesFormArray.controls; let i = index" class="phone-row">
+        <mat-form-field appearance="outline" class="phone-input">
+          <mat-label>Phone {{ i + 1 }}</mat-label>
+          <input matInput [formControlName]="i" placeholder="Enter phone number">
+          <mat-error *ngIf="phone.hasError('required')">
+            Phone number is required
+          </mat-error>
+          <mat-error *ngIf="phone.hasError('pattern')">
+            Please enter a valid phone number
+          </mat-error>
+        </mat-form-field>
+        <button 
+          type="button" 
+          mat-icon-button 
+          (click)="removePhone(i)"
+          [disabled]="phonesFormArray.length <= 1"
+          class="remove-phone-btn">
+          <mat-icon>remove</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <button type="button" mat-button (click)="onCancel()">Cancel</button>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!supplierForm.valid">
+      {{ isEdit ? 'Update Supplier' : 'Add Supplier' }}
+    </button>
+  </div>
+</form>
