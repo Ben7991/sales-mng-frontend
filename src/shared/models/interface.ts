@@ -28,3 +28,14 @@ export interface UserApiParams {
   page?: string | number;
   q?: string;
 }
+
+export interface PasswordChange{
+  userId: string;
+  name: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
