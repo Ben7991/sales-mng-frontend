@@ -2,15 +2,18 @@ import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {
   AUTH_FORGOT_PASSWORD_URL,
+  AUTH_IN_APP_PASSWORD_CHANGE,
   AUTH_LOGIN_URL,
   AUTH_REFRESH_TOKEN_URL,
   AUTH_RESET_PASSWORD_URL,
+  AUTH_USER_UPDATE,
   GET_AUTH_USER
 } from '@shared/constants/api.constants';
 import {Observable} from 'rxjs';
 import {LoginForm, LoginResponse, PasswordResetForm} from '../../../pages/auth/models/interface';
 import {LocalStorageKeys, LocalStorageService} from '../localstorage/localstorage.service';
-import {UserResponse} from '@shared/models/interface';
+import {PasswordChange, UserResponse} from '@shared/models/interface';
+import {addUserApiResponse, addUserInterface} from '../../../pages/user-management/interface';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +44,17 @@ export class AuthService {
 
   public getUserDetails():Observable<UserResponse>{
     return this.http.get<UserResponse>(GET_AUTH_USER)
+  }
+
+  public updateDetails(userData: Partial<addUserInterface>): Observable<addUserApiResponse>{
+    return this.http.post<addUserApiResponse>(AUTH_USER_UPDATE,userData)
+  }
+
+  public changePassword(userData: PasswordChange) {
+    return this.http.post<{ message: string }>(
+      AUTH_IN_APP_PASSWORD_CHANGE,
+      userData
+    );
   }
 
   public requestPasswordResetLink(

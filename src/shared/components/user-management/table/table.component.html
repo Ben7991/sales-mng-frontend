@@ -87,6 +87,13 @@
         (page)="onPageChange($event)">
       </mat-paginator>
     }
+
+  }
+  @else if (loading()) {
+    <div class="empty-state">
+      <mat-spinner>
+      </mat-spinner>
+    </div>
   }
   @else {
     <div class="empty-state">
