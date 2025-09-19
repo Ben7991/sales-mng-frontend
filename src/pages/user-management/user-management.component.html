@@ -9,22 +9,44 @@
         (searchTermChange)="onUserSearchTermChange($event)"
       />
       <div class="left-actions">
-        <app-button
-          text="Filter"
-          variant="outlined"
-          [matMenuTriggerFor]="filterMenu"
-          class="filter-button"
-        >
-          <mat-icon>expand_more</mat-icon>
-        </app-button>
+          <app-button
+            text="Filter"
+            variant="outlined"
+            [matMenuTriggerFor]="filterMenu"
+            class="filter-button"
+          >
+            <mat-icon>expand_more</mat-icon>
+          </app-button>
 
-        <mat-menu #filterMenu="matMenu">
-          <button mat-menu-item>Option 1</button>
-          <button mat-menu-item>Option 2</button>
-          <button mat-menu-item>Option 3</button>
-        </mat-menu>
+          <mat-menu #filterMenu="matMenu" class="popup-menu">
+            <button mat-menu-item [matMenuTriggerFor]="roleMenu">
+              Filter by role
+            </button>
+            <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+              Filter by status
+            </button>
+          </mat-menu>
+
+          <!-- Role submenu -->
+          <mat-menu #roleMenu="matMenu" class="popup-menu submenu">
+            <button mat-menu-item (click)="filterStatus('ADMIN')">Admin</button>
+            <button mat-menu-item (click)="filterStatus('SALES_PERSON')">Sale Person</button>
+            <button mat-menu-item (click)="filterStatus('PROCUREMENT_OFFICER')">Procurement Person</button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="this.loadUsers()">Clear filter</button>
+          </mat-menu>
+
+          <!-- Status submenu -->
+          <mat-menu #statusMenu="matMenu" class="popup-menu submenu">
+            <button mat-menu-item (click)="filterStatus('Active')" >Active</button>
+            <button mat-menu-item (click)="filterStatus('ADMIN')">Quit</button>
+            <button mat-menu-item (click)="filterStatus('ADMIN')">Fired</button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item >Clear filter</button>
+          </mat-menu>
+
         <app-button
-          (click)="openAddUserModal()"
+          (click)="openUserModal()"
           icon="assets/addIcon.svg"
           [isIconButton]="true"
           text="Add new user"
@@ -37,9 +59,9 @@
 
 </div>
 <div class="tableName">
-  @if (tableData.length > 0) {
+  @if (totalUsers! > 0) {
     <p class="selection-info">
-      Users( {{ tableData.length }} )
+      Users( {{totalUsers}} )
     </p>
   }
 </div>
@@ -51,7 +73,7 @@
   [showCheckboxes]="true"
   [showPagination]="true"
   [pageSize]="pageSize"
-  [pageSizeOptions]="[5, 10, 25, 50]"
+  [totalItems]="totalUsers"
   (selectionChange)="onSelectionChange($event)"
   (actionClick)="onActionClick($event)"
   (pageChange)="onPageChange($event)"/>

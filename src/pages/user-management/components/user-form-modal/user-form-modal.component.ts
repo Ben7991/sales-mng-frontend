@@ -32,10 +32,8 @@ export class UserFormModalComponent implements OnInit{
   public readonly isEditMode = signal<boolean>(false);
   public readonly availableRoles = signal([
     { value: 'SALES_PERSON', label: 'Sales Person' },
-    { value: 'ADMIN', label: 'Admin' },
     { value: 'PROCUREMENT_OFFICER', label: 'Procurement Officer' },
   ]);
-
 
   public readonly userForm: FormGroup = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
