@@ -1,0 +1,24 @@
+<div class="container">
+  <h3 >Change User Status</h3>
+  <mat-dialog-content>
+    <mat-radio-group [(ngModel)]="selectedStatus">
+      @for (status of statuses; track $index) {
+        <mat-radio-button [value]="status">
+          {{ status }}
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+  </mat-dialog-content>
+  <div class="actions">
+    <app-button
+      text="Cancel"
+      (click)="onCancel()"
+      variant="outlined"
+    />
+    <app-button
+      text="Confirm"
+      (click)="onConfirm()"
+      [disabled]="selectedStatus === data.currentStatus"
+    />
+  </div>
+</div>

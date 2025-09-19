@@ -1,24 +1,78 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
-import { AddPhoneInterface, AddSupplierApiResponse, AddSupplierInterface, ChangeStatusInterface, SupplierArrayResponse, UpdateSupplierInterface } from '../models/interface';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
+import { supplierBasicInfoUpdateUrl, supplierContactAdditionUrl, supplierContactDeletionUrl, SUPPLIERS_URL, supplierStatusChangeUrl } from '@shared/constants/api.constants';
+import { TOAST_MESSAGES } from '@shared/constants/general.constants';
+import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
+import { catchError, EMPTY, finalize, forkJoin, Observable, tap } from 'rxjs';
+import { AddPhoneInterface, AddSupplierApiResponse, AddSupplierInterface, ChangeStatusInterface, Supplier, SupplierArrayResponse, UpdateSupplierInterface } from '../models/interface';
+
+export class SupplierTableDataAdapter {
+  static adaptForTable(suppliers: Supplier[]): any[] {
+    return suppliers.map(supplier => ({
+      ...supplier,
+      phone: this.formatPhoneDisplay(supplier.supplierPhones),
+      status: supplier.status === 'ACTIVE' ? 'Active' : 'Inactive'
+    }));
+  }
+
+  private static formatPhoneDisplay(phones: { phone: string }[]): string {
+    if (phones.length === 0) return 'No phone';
+    if (phones.length === 1) return phones[0].phone;
+    return `${phones[0].phone} (+${phones.length - 1} more)`;
+  }
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupplierManagementService {
   private readonly http = inject(HttpClient);
-  private readonly SUPPLIERS_URL = 'https://api.jofakenterprise.com/suppliers';
+  private readonly snackbarService = inject(SnackbarService);
 
-  public getAllSuppliers(): Observable<SupplierArrayResponse> {
-    return this.http.get<SupplierArrayResponse>(this.SUPPLIERS_URL);
+  public readonly suppliers = signal<Supplier[] | null>(null);
+  public readonly isLoadingSuppiers = signal(false);
+
+  public getASuppliers(): void {
+    if (this.suppliers()) {
+      return;
+    }
+
+    this.isLoadingSuppiers.set(true)
+    this.http.get<SupplierArrayResponse>(SUPPLIERS_URL)
+      .pipe(
+        tap((response) => {
+          this.suppliers.set(
+            SupplierTableDataAdapter.adaptForTable(response.data.data)
+          );
+        }),
+        catchError((err: HttpErrorResponse) => {
+          const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
+          this.snackbarService.showError(msg);
+
+          return EMPTY;
+        }),
+        finalize(() => this.isLoadingSuppiers.set(false))
+      )
+      .subscribe()
   }
 
-  public addSupplier(supplierData: AddSupplierInterface): Observable<AddSupplierApiResponse> {
-    return this.http.post<AddSupplierApiResponse>(this.SUPPLIERS_URL, supplierData);
+  public addSupplier(supplierData: AddSupplierInterface): void {
+    this.http.post<AddSupplierApiResponse>(SUPPLIERS_URL, supplierData)
+      .pipe(
+
+    )
+      .subscribe({
+        next: ({ data }) => {
+          this.suppliers.update(suppliers => suppliers ? [data!, ...suppliers] : [data!]);
+          this.snackbarService.showSuccess('Supplier added successfully');
+        },
+        error: (err: HttpErrorResponse) => {
+          this.snackbarService.showError(err.error?.message || 'Failed to add supplier');
+        }
+      });
   }
 
-  public updateSupplier(supplierId: number, supplierData: any): Observable<any> {
+  public updateSupplier(supplierId: number, supplierData: any): void {
     const updates: Observable<any>[] = [];
 
     if (supplierData.basicInfo) {
@@ -43,26 +97,31 @@ export class SupplierManagementService {
       updates.push(...phoneDeletes);
     }
 
-    return updates.length > 0 ? forkJoin(updates) : new Observable(observer => observer.next({}));
+    const obs = (updates.length > 0) ? forkJoin(updates) : new Observable(observer => observer.next({}));
+    obs.subscribe({
+      next: () => {
+        this.getASuppliers();
+        this.snackbarService.showSuccess('Supplier updated successfully');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.snackbarService.showError(err.error?.message || 'Failed to update supplier');
+      }
+    })
   }
 
   private updateBasicInfo(supplierId: number, basicInfo: UpdateSupplierInterface): Observable<any> {
-    return this.http.patch(`${this.SUPPLIERS_URL}/${supplierId}`, basicInfo);
+    return this.http.patch(supplierBasicInfoUpdateUrl(supplierId), basicInfo);
   }
 
   private changeStatus(supplierId: number, status: ChangeStatusInterface): Observable<any> {
-    return this.http.patch(`${this.SUPPLIERS_URL}/${supplierId}/change-status`, status);
+    return this.http.patch(supplierStatusChangeUrl(supplierId), status);
   }
 
   private addPhone(supplierId: number, phoneData: AddPhoneInterface): Observable<any> {
-    return this.http.post(`${this.SUPPLIERS_URL}/${supplierId}/phone`, phoneData);
+    return this.http.post(supplierContactAdditionUrl(supplierId), phoneData);
   }
 
   private deletePhone(supplierId: number, phoneId: number): Observable<any> {
-    return this.http.delete(`${this.SUPPLIERS_URL}/${supplierId}/phone/${phoneId}`);
-  }
-
-  public deleteSupplier(supplierId: number): Observable<any> {
-    return this.http.delete(`${this.SUPPLIERS_URL}/${supplierId}`);
+    return this.http.delete(supplierContactDeletionUrl(supplierId, phoneId));
   }
 }

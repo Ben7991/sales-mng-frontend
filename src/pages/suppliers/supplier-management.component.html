@@ -1,21 +1,9 @@
-<div>
-    <div class="filter-section">
-        <!--search-->
-
-        <div class="filter-actions">
-            <!--filter actions-->
-
-
-        </div>
-    </div>
-</div>
-
 <div class="supplier-management-container">
   <div class="filter-section">
     <app-search
       [data]="tableData"
       [config]="supplierSearchConfig"
-      [isLoading]="isLoadingSuppliers"
+      [isLoading]="supplierManagementService.isLoadingSuppiers()"
       (searchResults)="onSupplierSearch($event)"
       (searchTermChange)="onSupplierSearchTermChange($event)"
     />
@@ -40,29 +28,21 @@
         icon="assets/addIcon.svg"
         [isIconButton]="true"
         text="Add new supplier"
-        [styles]="{ height: '40px',width: '140px' }"
       />
     </div>
   </div>
 </div>
 
-<div class="table-name">
-  @if (tableData.length > 0) {
-    <p class="selection-info">
-      Suppliers( {{ tableData.length }} )
-    </p>
-  }
-</div>
+<div class="table-name">Suppliers</div>
 
 <app-table
   [columns]="tableColumns"
-  [data]="filteredSuppliers"
+  [data]="supplierManagementService.suppliers() ?? []"
   [loading]="isLoading"
   [actions]="tableActions"
-  [showCheckboxes]="true"
+  [showCheckboxes]="false"
   [showPagination]="true"
   [pageSize]="pageSize"
-  [pageSizeOptions]="[5, 10, 25, 50]"
   (selectionChange)="onSelectionChange($event)"
   (actionClick)="onActionClick($event)"
   (pageChange)="onPageChange($event)"

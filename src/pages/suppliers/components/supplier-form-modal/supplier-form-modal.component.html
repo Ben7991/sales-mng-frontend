@@ -10,19 +10,17 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Supplier Name</mat-label>
       <input matInput formControlName="name" placeholder="Enter supplier name">
-      <mat-error *ngIf="supplierForm.get('name')?.hasError('required')">
-        Supplier name is required
-      </mat-error>
+      @if (supplierForm.get('name')?.hasError('required')) {
+        <mat-error>Supplier name is required</mat-error>
+      }
     </mat-form-field>
-  </div>
 
-  <div class="form-row">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Company Name</mat-label>
       <input matInput formControlName="companyName" placeholder="Enter company name">
-      <mat-error *ngIf="supplierForm.get('companyName')?.hasError('required')">
-        Company name is required
-      </mat-error>
+      @if (supplierForm.get('companyName')?.hasError('required')) {
+        <mat-error> Company name is required</mat-error>
+      }
     </mat-form-field>
   </div>
 
@@ -30,24 +28,26 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Email</mat-label>
       <input matInput type="email" formControlName="email" placeholder="Enter supplier email">
-      <mat-error *ngIf="supplierForm.get('email')?.hasError('required')">
-        Email is required
-      </mat-error>
-      <mat-error *ngIf="supplierForm.get('email')?.hasError('email')">
-        Please enter a valid email
-      </mat-error>
+      @if (supplierForm.get('email')?.hasError('required')) {
+        <mat-error> Email is required</mat-error>
+      }
+      @if (supplierForm.get('email')?.hasError('email')) {
+        <mat-error>Please enter a valid email</mat-error>
+      }
     </mat-form-field>
   </div>
 
-  <div class="form-row" *ngIf="isEdit">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Status</mat-label>
-      <mat-select formControlName="status">
-        <mat-option value="ACTIVE">Active</mat-option>
-        <mat-option value="IN_ACTIVE">Inactive</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  @if (isEdit) {
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="ACTIVE">Active</mat-option>
+          <mat-option value="IN_ACTIVE">Inactive</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  }
 
   <div class="phone-section">
     <div class="section-header">
@@ -57,26 +57,34 @@
       </button>
     </div>
 
+    
     <div formArrayName="phones">
-      <div *ngFor="let phone of phonesFormArray.controls; let i = index" class="phone-row">
-        <mat-form-field appearance="outline" class="phone-input">
-          <mat-label>Phone {{ i + 1 }}</mat-label>
-          <input matInput [formControlName]="i" placeholder="Enter phone number">
-          <mat-error *ngIf="phone.hasError('required')">
-            Phone number is required
-          </mat-error>
-          <mat-error *ngIf="phone.hasError('pattern')">
-            Please enter a valid phone number
-          </mat-error>
-        </mat-form-field>
-        <button 
-          type="button" 
-          mat-icon-button 
-          (click)="removePhone(i)"
-          [disabled]="phonesFormArray.length <= 1"
-          class="remove-phone-btn">
-          <mat-icon>remove</mat-icon>
-        </button>
+        <div class="phones">
+          @for (phone of phonesFormArray.controls; track $index) {
+            <div class="phone-row">
+              <mat-form-field appearance="outline" class="phone-input">
+                <mat-label>Phone {{ $index + 1 }}</mat-label>
+    
+                <input matInput [formControlName]="$index" placeholder="Enter phone number">
+                @if (phone.hasError('required')) {
+                  <mat-error> Phone number is required </mat-error>
+                }
+    
+                @if (phone.hasError('pattern')) {
+                  <mat-error>Please enter a valid phone number</mat-error>
+                }
+              </mat-form-field>
+          
+              <button 
+                type="button" 
+                mat-icon-button 
+                (click)="removePhone($index)"
+                [disabled]="phonesFormArray.length <= 1"
+                class="remove-phone-btn">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
+          }
       </div>
     </div>
   </div>

@@ -9,7 +9,8 @@
 
 ::ng-deep .custom-dialog-container {
   .mat-mdc-dialog-container {
-    border-radius: 2px !important;
+    border-radius: 8px !important;
     overflow: hidden;
+    background: white !important;
   }
 }

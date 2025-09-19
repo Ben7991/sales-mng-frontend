@@ -26,7 +26,7 @@ import {
 } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatIconModule} from '@angular/material/icon';
-import {NgStyle} from '@angular/common';
+import {NgStyle, TitleCasePipe} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {MatIconButton} from '@angular/material/button';
@@ -43,7 +43,6 @@ import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-ma
     MatMenuTrigger,
     MatCellDef,
     MatHeaderCellDef,
-    MatSortHeader,
     MatCheckbox,
     MatTable,
     MatSort,
@@ -53,7 +52,10 @@ import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-ma
     MatRowDef,
     MatRow,
     MatMenu,
-    MatIconButton
+    MatIconButton,
+    MatSortHeader,
+    TitleCasePipe,
+    MatPaginator
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -63,30 +65,28 @@ export class TableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-
   columns = input<TableColumn[]>([]);
   data = input<any[]>([]);
   loading = input(false);
   showCheckboxes = input(true);
   showPagination = input(true);
-  pageSize = input(10);
-  pageSizeOptions = input([5, 10, 25, 50]);
+  pageSize = input(0);
+  totalItems = input<number | undefined>(0)
+  pageSizeOptions = input([]);
   actions = input<TableAction[]>([]);
   statusConfig = input<StatusConfig>({
-    'Active': { color: '#10b981', backgroundColor: '#d1fae5' },
-    'Quit': { color: '#f59e0b', backgroundColor: '#fef3c7' },
-    'Fired': { color: '#ef4444', backgroundColor: '#fee2e2' }
+    ACTIVE: { color: '#10b981', backgroundColor: '#d1fae5' },
+    QUIT: { color: '#f59e0b', backgroundColor: '#fef3c7' },
+    FIRED: { color: '#ef4444', backgroundColor: '#fee2e2' }
   });
 
 
   selectionChange = output<any[]>();
-  actionClick = output<{action: string, item: any}>();
+  actionClick = output<{ action: string; item: any }>();
   pageChange = output<PageEvent>();
-
 
   private dataSource = signal(new MatTableDataSource<any>([]));
   private selection = signal(new SelectionModel<any>(true, []));
-
 
   displayedColumns = computed(() => {
     const cols: string[] = [];
@@ -95,7 +95,7 @@ export class TableComponent implements AfterViewInit {
       cols.push('select');
     }
 
-    cols.push(...this.columns().map(col => col.key));
+    cols.push(...this.columns().map((col) => col.key));
 
     if (this.actions().length > 0) {
       cols.push('actions');
@@ -144,7 +144,7 @@ export class TableComponent implements AfterViewInit {
     if (this.isAllSelected()) {
       currentSelection.clear();
     } else {
-      this.dataSource().data.forEach(row => currentSelection.select(row));
+      this.dataSource().data.forEach((row) => currentSelection.select(row));
     }
 
     this.selection.set(currentSelection);
@@ -187,4 +187,5 @@ export class TableComponent implements AfterViewInit {
   getSelection() {
     return this.selection();
   }
+
 }
