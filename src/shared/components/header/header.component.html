@@ -1,31 +1,66 @@
 <header class="header">
   <div class="header-content">
-    <button class="menu-toggle" (click)="toggleSidenav()" aria-label="Toggle menu">
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-      <span class="hamburger-line"></span>
-    </button>
-
-    <h1 class="page-title">{{ pageTitle }}</h1>
+    <h1 class="page-title">{{ pageTitle | titlecase}}</h1>
 
     <div class="header-actions">
-      <div class="notification-icon">
-        @if (hasNotifications){
-          <span class="notification-dot"></span>
-        }
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-        </svg>
-      </div>
+      <header class="header">
+        <div class="header-content">
+          <button class="menu-toggle" (click)="toggleSidenav()" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
 
-      <div class="user-profile">
-        <div class="user-avatar">{{ userInitials |uppercase}}</div>
-        <span class="user-name">{{ userName| titlecase }}</span>
-        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6,9 12,15 18,9"></polyline>
-        </svg>
-      </div>
+          <div class="header-actions">
+            <div class="notification-icon">
+              @if (hasNotifications){
+                <span class="notification-dot"></span>
+              }
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+
+            <div class="user-profile-container">
+              <div
+                class="user-profile"
+                [matMenuTriggerFor]="profileMenu"
+                (menuOpened)="isMenuTriggered = true"
+                (menuClosed)="isMenuTriggered = false"
+              >
+                <div class="user-avatar">{{ userInitials | uppercase }}</div>
+                <span class="user-name">{{ userName | titlecase }}</span>
+
+                <svg
+                  class="dropdown-arrow"
+                  [class.open]="isMenuTriggered"
+                  width="12" height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+              </div>
+            </div>
+
+            <mat-menu #profileMenu="matMenu" yPosition="below" xPosition="before" class="popup-menu submenu">
+              <button mat-menu-item (click)="navigateToSettings()">
+                <mat-icon>settings</mat-icon>
+                <span>Settings</span>
+              </button>
+              <button mat-menu-item>
+                <mat-icon>logout</mat-icon>
+                <span>Logout</span>
+              </button>
+            </mat-menu>
+
+
+          </div>
+          </div>
+      </header>
     </div>
   </div>
 </header>
