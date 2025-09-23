@@ -31,6 +31,7 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {MatIconButton} from '@angular/material/button';
 import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-table',
@@ -55,7 +56,8 @@ import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-ma
     MatIconButton,
     MatSortHeader,
     TitleCasePipe,
-    MatPaginator
+    MatPaginator,
+    MatProgressSpinner
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',

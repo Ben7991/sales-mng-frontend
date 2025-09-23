@@ -52,7 +52,7 @@ export class UserManagementComponent implements OnInit{
   private userManagementService = inject(UserManagementService);
   private destroyRef = inject(DestroyRef)
   private readonly snackbarService = inject(SnackbarService);
-
+  public pageIndex = 0;
   public readonly tableColumns: TableColumn[] = userTableColumns
   public readonly tableActions: TableAction[] = userTableActions
   public readonly userSearchConfig: SearchConfig = userSearchConfig
@@ -95,21 +95,19 @@ export class UserManagementComponent implements OnInit{
     this.userManagementService.addUser(userData).subscribe({
       next: (response) => {
         this.snackbarService.showSuccess(response.message)
-        this.loadUsers();
+        this.loadUsers(this.pageIndex, this.pageSize);
       },
       error: (err) => {
         this.snackbarService.showError(err.error.message)
       }
     })
-
-    this.loadUsers();
   }
 
   private handleUpdateUser(userId: string, userdata: Partial<addUserInterface>): void {
     this.userManagementService.updateUserInfo(userId, userdata).subscribe({
       next: (response) => {
         this.snackbarService.showSuccess(response.message)
-        this.loadUsers();
+        this.loadUsers(this.pageIndex, this.pageSize);
       },
       error: (err) => {
         this.snackbarService.showError(err.error.message)
@@ -175,7 +173,7 @@ export class UserManagementComponent implements OnInit{
             next: (response) => {
               this.snackbarService.showSuccess(response.message)
               event.item.status = newStatus;
-              this.loadUsers();
+              this.loadUsers(this.pageIndex, this.pageSize);
             },
             error: (err) => {
               this.snackbarService.showError(err.error.message)
@@ -189,18 +187,21 @@ export class UserManagementComponent implements OnInit{
 
  public onPageChange(event: PageEvent) {
     this.pageSize = event.pageSize;
-    const page = event.pageIndex;
+   this.pageIndex = event.pageIndex;
 
-    this.loadUsers(page, this.pageSize);
+   this.loadUsers(this.pageIndex, this.pageSize);
   }
 
  public filterStatus(stats: string) {
+    this.isLoading = true
     this.userManagementService.getAllUsers({q:stats}).subscribe({
       next: (response) => {
-        this.tableData = response.data.users;
+        this.filteredUsers = response.data.users;
+        this.isLoading = false
       },
       error: (err) => {
         this.snackbarService.showError(err.error.message)
+        this.isLoading = false
       }
     })
 
