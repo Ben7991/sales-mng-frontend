@@ -8,15 +8,13 @@ export interface Supplier {
   name: string;
   companyName: string;
   email: string;
-  status: 'ACTIVE' | 'IN_ACTIVE';
+  status: SupplierStatusInterface['status'];
   supplierPhones: SupplierPhone[];
 }
 
-export interface SupplierArrayResponse {
-  data: {
-    count: number;
-    data: Supplier[];
-  };
+export interface GetSupplierApiResponse {
+  count: number;
+  data: Supplier[];
 }
 
 export interface AddSupplierInterface {
@@ -37,7 +35,7 @@ export interface UpdateSupplierInterface {
   email: string;
 }
 
-export interface ChangeStatusInterface {
+export interface SupplierStatusInterface {
   status: 'ACTIVE' | 'IN_ACTIVE';
 }
 

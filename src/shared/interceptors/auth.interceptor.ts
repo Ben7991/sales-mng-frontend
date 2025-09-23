@@ -21,7 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (
     const router = inject(Router);
 
     const accessToken = authService.getAccessToken();
-
+    
     // Skip adding token for whitelisted URLs
     const shouldSkip = WHITE_LISTED_URLS.some(url => req.url.includes(url));
 
@@ -30,7 +30,12 @@ export const authInterceptor: HttpInterceptorFn = (
         authReq = req.clone({
             setHeaders: {
                 Authorization: `Bearer ${accessToken}`
-            }
+            },
+            withCredentials: true
+        });
+    } else {
+        authReq = req.clone({
+            withCredentials: true
         });
     }
 
@@ -48,8 +53,9 @@ export const authInterceptor: HttpInterceptorFn = (
                         // Retry the original request with new token
                         const retryReq = req.clone({
                             setHeaders: {
-                                Authorization: `Bearer ${response.token}`
-                            }
+                                Authorization: `Bearer ${response.token}`,
+                            },
+                            withCredentials: true
                         });
 
                         return next(retryReq);

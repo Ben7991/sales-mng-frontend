@@ -1,10 +1,24 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { supplierBasicInfoUpdateUrl, supplierContactAdditionUrl, supplierContactDeletionUrl, SUPPLIERS_URL, supplierStatusChangeUrl } from '@shared/constants/api.constants';
+import {
+  getSuppliersUrl,
+  supplierBasicInfoUpdateUrl,
+  supplierContactAdditionUrl,
+  supplierContactDeletionUrl,
+  supplierStatusChangeUrl
+} from '@shared/constants/api.constants';
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { catchError, EMPTY, finalize, forkJoin, Observable, tap } from 'rxjs';
-import { AddPhoneInterface, AddSupplierApiResponse, AddSupplierInterface, ChangeStatusInterface, Supplier, SupplierArrayResponse, UpdateSupplierInterface } from '../models/interface';
+import {
+  AddPhoneInterface,
+  AddSupplierApiResponse,
+  AddSupplierInterface,
+  GetSupplierApiResponse,
+  Supplier,
+  SupplierStatusInterface,
+  UpdateSupplierInterface
+} from '../models/interface';
 
 export class SupplierTableDataAdapter {
   static adaptForTable(suppliers: Supplier[]): any[] {
@@ -22,6 +36,13 @@ export class SupplierTableDataAdapter {
   }
 }
 
+const SUPPLIERS_PAGE_SIZE = 25;
+
+const DEFAULT_SUPPLIER_FETCH_OPTIONS: { useCache: boolean, showLoader: boolean } = {
+  useCache: false,
+  showLoader: true
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,17 +53,22 @@ export class SupplierManagementService {
   public readonly suppliers = signal<Supplier[] | null>(null);
   public readonly isLoadingSuppiers = signal(false);
 
-  public getASuppliers(): void {
-    if (this.suppliers()) {
+  public searchQuery = '';
+  public currentPage = 0;
+
+  public getSuppliers({ useCache, showLoader } = DEFAULT_SUPPLIER_FETCH_OPTIONS): void {
+    if (useCache && this.suppliers()) {
       return;
     }
 
-    this.isLoadingSuppiers.set(true)
-    this.http.get<SupplierArrayResponse>(SUPPLIERS_URL)
+    this.isLoadingSuppiers.set(showLoader);
+    this.http.get<GetSupplierApiResponse>(
+      getSuppliersUrl(SUPPLIERS_PAGE_SIZE, this.currentPage, this.searchQuery)
+    )
       .pipe(
         tap((response) => {
           this.suppliers.set(
-            SupplierTableDataAdapter.adaptForTable(response.data.data)
+            SupplierTableDataAdapter.adaptForTable(response.data)
           );
         }),
         catchError((err: HttpErrorResponse) => {
@@ -57,13 +83,13 @@ export class SupplierManagementService {
   }
 
   public addSupplier(supplierData: AddSupplierInterface): void {
-    this.http.post<AddSupplierApiResponse>(SUPPLIERS_URL, supplierData)
-      .pipe(
-
+    this.http.post<AddSupplierApiResponse>(
+      getSuppliersUrl(SUPPLIERS_PAGE_SIZE, this.currentPage, this.searchQuery),
+      supplierData
     )
       .subscribe({
-        next: ({ data }) => {
-          this.suppliers.update(suppliers => suppliers ? [data!, ...suppliers] : [data!]);
+        next: () => {
+          this.getSuppliers();
           this.snackbarService.showSuccess('Supplier added successfully');
         },
         error: (err: HttpErrorResponse) => {
@@ -100,7 +126,7 @@ export class SupplierManagementService {
     const obs = (updates.length > 0) ? forkJoin(updates) : new Observable(observer => observer.next({}));
     obs.subscribe({
       next: () => {
-        this.getASuppliers();
+        this.getSuppliers({ useCache: false, showLoader: false });
         this.snackbarService.showSuccess('Supplier updated successfully');
       },
       error: (err: HttpErrorResponse) => {
@@ -113,7 +139,7 @@ export class SupplierManagementService {
     return this.http.patch(supplierBasicInfoUpdateUrl(supplierId), basicInfo);
   }
 
-  private changeStatus(supplierId: number, status: ChangeStatusInterface): Observable<any> {
+  private changeStatus(supplierId: number, status: SupplierStatusInterface): Observable<any> {
     return this.http.patch(supplierStatusChangeUrl(supplierId), status);
   }
 

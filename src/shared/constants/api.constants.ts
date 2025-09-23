@@ -13,15 +13,17 @@ export const UPDATE_USER_INFO = `${environment.serverUrl}/users/{id}`;
 export const CHNANGE_USER_STATUS = `${environment.serverUrl}/users/{id}/change-status`;
 
 /* SUPPLIERS */
-export const SUPPLIERS_URL =  `${environment.serverUrl}/suppliers`;
-export const supplierBasicInfoUpdateUrl = 
-    (supplierId: number) =>  `${environment.serverUrl}/suppliers/${supplierId}`;
+export const getSuppliersUrl =
+    (limit: number, page: number, query: string) => `${environment.serverUrl}/suppliers?perPage=${limit}&page=${page}&q=${query}`;
 
-export const supplierStatusChangeUrl = 
-    (supplierId: number) =>  `${environment.serverUrl}/suppliers/${supplierId}/change-status`;
+export const supplierBasicInfoUpdateUrl =
+    (supplierId: number) => `${environment.serverUrl}/suppliers/${supplierId}`;
 
-export const supplierContactAdditionUrl = 
-    (supplierId: number) =>  `${environment.serverUrl}/suppliers/${supplierId}/phone`;
+export const supplierStatusChangeUrl =
+    (supplierId: number) => `${environment.serverUrl}/suppliers/${supplierId}/change-status`;
 
-export const supplierContactDeletionUrl = 
-    (supplierId: number, phoneId: number) =>  `${environment.serverUrl}/suppliers/${supplierId}/phone/${phoneId}`;
+export const supplierContactAdditionUrl =
+    (supplierId: number) => `${environment.serverUrl}/suppliers/${supplierId}/phone`;
+
+export const supplierContactDeletionUrl =
+    (supplierId: number, phoneId: number) => `${environment.serverUrl}/suppliers/${supplierId}/phone/${phoneId}`;

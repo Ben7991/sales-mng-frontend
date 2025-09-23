@@ -1,28 +1,11 @@
 <div class="supplier-management-container">
   <div class="filter-section">
     <app-search
-      [data]="tableData"
       [config]="supplierSearchConfig"
-      [isLoading]="supplierManagementService.isLoadingSuppiers()"
-      (searchResults)="onSupplierSearch($event)"
       (searchTermChange)="onSupplierSearchTermChange($event)"
     />
+    
     <div class="filter-actions">
-      <app-button
-        text="Filter"
-        variant="outlined"
-        [matMenuTriggerFor]="filterMenu"
-        class="filter-button"
-      >
-        <mat-icon>expand_more</mat-icon>
-      </app-button>
-
-      <mat-menu #filterMenu="matMenu">
-        <button mat-menu-item>Active</button>
-        <button mat-menu-item>Inactive</button>
-        <button mat-menu-item>All</button>
-      </mat-menu>
-      
       <app-button
         (click)="openAddSupplierModal()"
         icon="assets/addIcon.svg"
@@ -35,15 +18,19 @@
 
 <div class="table-name">Suppliers</div>
 
-<app-table
-  [columns]="tableColumns"
-  [data]="supplierManagementService.suppliers() ?? []"
-  [loading]="isLoading"
-  [actions]="tableActions"
-  [showCheckboxes]="false"
-  [showPagination]="true"
-  [pageSize]="pageSize"
-  (selectionChange)="onSelectionChange($event)"
-  (actionClick)="onActionClick($event)"
-  (pageChange)="onPageChange($event)"
-/>
+@if (supplierManagementService.isLoadingSuppiers()) {
+  <app-loader />
+}
+@else {
+  <app-table
+    [columns]="tableColumns"
+    [data]="supplierManagementService.suppliers() ?? []"
+    [actions]="tableActions"
+    [showCheckboxes]="false"
+    [showPagination]="true"
+    [statusConfig]="statusConfig"
+    (selectionChange)="onSelectionChange($event)"
+    (actionClick)="onActionClick($event)"
+    (pageChange)="onPageChange($event)"
+  />
+}

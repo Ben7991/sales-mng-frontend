@@ -1,19 +1,17 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  DestroyRef,
   inject,
   OnInit
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { LoaderComponent } from '@shared/components/loader/loader.component';
 import { ModalService } from '@shared/components/modal/service/modal.service';
 import { SearchConfig } from '@shared/components/search/interface';
 import { SearchComponent } from '@shared/components/search/search.component';
-import { TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
+import { StatusConfig, TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
 import { TableComponent } from '@shared/components/user-management/table/table.component';
 import { SupplierFormModalComponent } from './components/supplier-form-modal/supplier-form-modal.component';
 import { supplierSearchConfig, supplierTableActions, supplierTableColumns } from './constants/supplier.constant';
@@ -27,30 +25,28 @@ import { SupplierManagementService } from './services/supplier-management.servic
     FormsModule,
     ButtonComponent,
     MatIconModule,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    SearchComponent
+    SearchComponent,
+    LoaderComponent,
   ],
   templateUrl: './supplier-management.component.html',
   styleUrl: './supplier-management.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SupplierManagementComponent implements OnInit {
-  public isLoading = false;
-  public pageSize = 10;
-  private readonly cdr = inject(ChangeDetectorRef);
   protected readonly supplierManagementService = inject(SupplierManagementService);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly modalService = inject(ModalService);
 
-  public readonly tableColumns: TableColumn[] = supplierTableColumns;
-  public readonly tableActions: TableAction[] = supplierTableActions;
-  public readonly supplierSearchConfig: SearchConfig = supplierSearchConfig;
-  public tableData: Supplier[] = [];
+  protected readonly tableColumns: TableColumn[] = supplierTableColumns;
+  protected readonly tableActions: TableAction[] = supplierTableActions;
+  protected readonly supplierSearchConfig: SearchConfig = supplierSearchConfig;
+
+  protected readonly statusConfig: StatusConfig = {
+    Active: { color: '#10b981', backgroundColor: '#d1fae5' },
+    Inactive: { color: '#ef4444', backgroundColor: '#fee2e2' }
+  };
 
   ngOnInit() {
-    this.supplierManagementService.getASuppliers();
+    this.supplierManagementService.getSuppliers();
   }
 
   public openAddSupplierModal(): void {
@@ -70,22 +66,19 @@ export class SupplierManagementComponent implements OnInit {
     });
   }
 
-  onSupplierSearch(results: Supplier[]) {
-    // this.filteredSuppliers = results;
-    this.cdr.markForCheck();
+  protected onSupplierSearchTermChange(term: string) {
+    this.supplierManagementService.searchQuery = term;
+    this.supplierManagementService.getSuppliers({
+      useCache: false,
+      showLoader: true
+    });
   }
 
-  onSupplierSearchTermChange(term: string) {
-    // this.isLoadingSuppliers = term.length > 0;
-    // this.isLoadingSuppliers = false;
-    this.cdr.markForCheck();
-  }
-
-  onSelectionChange(selectedItems: any[]) {
+  protected onSelectionChange(selectedItems: any[]) {
     console.log('Selected items:', selectedItems);
   }
 
-  onActionClick(event: { action: string, item: Supplier }) {
+  protected onActionClick(event: { action: string, item: Supplier }) {
     if (event.action == 'edit') {
       this.openEditSupplierModal(event.item);
     }
@@ -108,7 +101,7 @@ export class SupplierManagementComponent implements OnInit {
     });
   }
 
-  onPageChange(event: any) {
+  protected onPageChange(event: any) {
     console.log('Page changed:', event);
   }
 }

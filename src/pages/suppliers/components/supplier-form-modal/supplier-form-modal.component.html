@@ -35,19 +35,17 @@
         <mat-error>Please enter a valid email</mat-error>
       }
     </mat-form-field>
-  </div>
 
-  @if (isEdit) {
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Status</mat-label>
-        <mat-select formControlName="status">
-          <mat-option value="ACTIVE">Active</mat-option>
-          <mat-option value="IN_ACTIVE">Inactive</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  }
+    @if (isEdit) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" value="ACTIVE">
+            <mat-option value="ACTIVE">Active</mat-option>
+            <mat-option value="IN_ACTIVE">Inactive</mat-option>
+          </mat-select>
+        </mat-form-field>
+    }
+  </div>
 
   <div class="phone-section">
     <div class="section-header">
@@ -90,9 +88,20 @@
   </div>
 
   <div class="modal-actions">
-    <button type="button" mat-button (click)="onCancel()">Cancel</button>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!supplierForm.valid">
-      {{ isEdit ? 'Update Supplier' : 'Add Supplier' }}
-    </button>
+     <app-button
+      variant="outlined"
+      type="button"
+      (click)="onCancel()"
+      class="cancel-button"
+      text="Cancel"
+    />
+
+    <app-button
+      [text]="isEdit ? 'Update Supplier' : 'Add Supplier'"
+      type="submit"
+      [disabled]="!supplierForm.valid"
+      class="submit-button"
+    >
+    </app-button>
   </div>
 </form>
