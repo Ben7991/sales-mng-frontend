@@ -46,7 +46,7 @@ export class SupplierManagementComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.supplierManagementService.getSuppliers();
+    this.supplierManagementService.getSuppliers({ useCache: true });
   }
 
   public openAddSupplierModal(): void {

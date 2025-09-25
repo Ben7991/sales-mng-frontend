@@ -38,7 +38,7 @@ export class SupplierTableDataAdapter {
 
 const SUPPLIERS_PAGE_SIZE = 25;
 
-const DEFAULT_SUPPLIER_FETCH_OPTIONS: { useCache: boolean, showLoader: boolean } = {
+const DEFAULT_SUPPLIER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
   useCache: false,
   showLoader: true
 };
@@ -61,7 +61,7 @@ export class SupplierManagementService {
       return;
     }
 
-    this.isLoadingSuppiers.set(showLoader);
+    this.isLoadingSuppiers.set(showLoader ?? true);
     this.http.get<GetSupplierApiResponse>(
       getSuppliersUrl(SUPPLIERS_PAGE_SIZE, this.currentPage, this.searchQuery)
     )
