@@ -1,32 +1,11 @@
-.filter-section{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 40px;
-  padding: 0 10px;
-  margin-bottom: 4%;
-}
-.left-actions{
-  display: flex;
-  align-items: center;
-  gap: 5%;
-}
-.tableName{
-  display: flex;
-  align-items: center;
-  padding: 10px 0 10px 0;
-  width: 100%;
-  height: 56px;
-  background: white;
+@use '@styles/mixins/_filter-section.scss' as filter;
+@use '@styles/mixins/_table.scss' as table;
 
-  .selection-info{
-    padding: 35px;
-    display: flex;
-    align-items: center;
-    font-size: 18px;
-    font-weight: bold;
-  }
+.user-management-container {
+  @include filter.filter-section;
 }
+
+@include table.table;
 
 ::ng-deep .custom-dialog-container {
   .mat-mdc-dialog-container {

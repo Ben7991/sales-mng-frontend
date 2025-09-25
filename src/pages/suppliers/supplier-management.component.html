@@ -1,0 +1,38 @@
+<div class="supplier-management-container">
+  <div class="filter-section">
+    <app-search
+      [config]="supplierSearchConfig"
+      (searchTermChange)="onSupplierSearchTermChange($event)"
+    />
+    
+    <div class="filter-actions">
+      <app-button
+        (click)="openAddSupplierModal()"
+        icon="assets/addIcon.svg"
+        [isIconButton]="true"
+        text="Add new supplier"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="table-name">Suppliers</div>
+
+@if (supplierManagementService.isLoadingSuppiers()) {
+  <div class="loader">
+    <mat-spinner></mat-spinner>
+  </div>
+}
+@else {
+  <app-table
+    [columns]="tableColumns"
+    [data]="supplierManagementService.suppliers() ?? []"
+    [actions]="tableActions"
+    [showCheckboxes]="false"
+    [showPagination]="true"
+    [statusConfig]="statusConfig"
+    (selectionChange)="onSelectionChange($event)"
+    (actionClick)="onActionClick($event)"
+    (pageChange)="onPageChange($event)"
+  />
+}
