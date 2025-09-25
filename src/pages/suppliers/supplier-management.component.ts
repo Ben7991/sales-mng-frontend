@@ -6,8 +6,8 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ButtonComponent } from '@shared/components/button/button.component';
-import { LoaderComponent } from '@shared/components/loader/loader.component';
 import { ModalService } from '@shared/components/modal/service/modal.service';
 import { SearchConfig } from '@shared/components/search/interface';
 import { SearchComponent } from '@shared/components/search/search.component';
@@ -26,7 +26,7 @@ import { SupplierManagementService } from './services/supplier-management.servic
     ButtonComponent,
     MatIconModule,
     SearchComponent,
-    LoaderComponent,
+    MatProgressSpinner
   ],
   templateUrl: './supplier-management.component.html',
   styleUrl: './supplier-management.component.scss',

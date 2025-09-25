@@ -19,7 +19,9 @@
 <div class="table-name">Suppliers</div>
 
 @if (supplierManagementService.isLoadingSuppiers()) {
-  <app-loader />
+  <div class="loader">
+    <mat-spinner></mat-spinner>
+  </div>
 }
 @else {
   <app-table

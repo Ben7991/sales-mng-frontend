@@ -89,7 +89,7 @@ export class SupplierManagementService {
     )
       .subscribe({
         next: () => {
-          this.getSuppliers();
+          this.getSuppliers({ showLoader: false, useCache: false });
           this.snackbarService.showSuccess('Supplier added successfully');
         },
         error: (err: HttpErrorResponse) => {
