@@ -1,5 +1,10 @@
 <div class="category-form-container">
-  <h3>{{ modalTitle }}</h3>
+  <div class="modal-header">
+    <h2>{{ modalTitle }}</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
   
   <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
     <mat-form-field appearance="outline" class="form-field">

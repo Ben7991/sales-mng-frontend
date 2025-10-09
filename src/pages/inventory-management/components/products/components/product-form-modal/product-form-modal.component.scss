@@ -3,9 +3,17 @@
   background: #fff;
   overflow-y: auto;
   max-height: 80vh;
+}
 
-  h3 {
-    margin: 0 0 20px 0;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 20px 0;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
     font-size: 1.5rem;
     font-weight: 500;
   }
