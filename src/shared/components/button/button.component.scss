@@ -5,7 +5,7 @@ button {
   gap: 8px;
   white-space: nowrap;
   border-radius: 8px;
-  padding: 10px 46px;
+  padding: 10px;
   font-weight: 500;
   font-size: 14px;
   font-family: inherit;
@@ -19,7 +19,6 @@ button {
     justify-content: center;
     gap: 8px;
   }
-
 
   &:disabled {
     cursor: not-allowed;
@@ -83,7 +82,7 @@ button {
     object-fit: contain;
   }
 
-   .spinner {
+  .spinner {
     ::ng-deep circle {
       stroke: currentColor;
     }

@@ -1,0 +1,45 @@
+.product-form-container {
+  padding: 5%;
+  background: #fff;
+  overflow-y: auto;
+  max-height: 80vh;
+
+  h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+
+  app-button {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 600px) {
+  .product-form-container {
+    min-width: 280px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+}

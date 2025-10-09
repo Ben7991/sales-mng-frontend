@@ -1,0 +1,33 @@
+<div class="category-form-container">
+  <h3>{{ modalTitle }}</h3>
+  
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Category name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter category name">
+      @if (categoryForm.get('name')?.hasError('required')) {
+        <mat-error>Category name is required</mat-error>
+      }
+      @if (categoryForm.get('name')?.hasError('minlength')) {
+        <mat-error>Category name must be at least 2 characters</mat-error>
+      }
+    </mat-form-field>
+  </form>
+
+  <div class="form-actions">
+    <app-button
+      text="Cancel"
+      variant="outlined"
+      type="button"
+      (click)="onCancel()"
+    />
+    <app-button
+      [text]="submitButtonText"
+      variant="filled"
+      type="submit"
+      [disabled]="categoryForm.invalid"
+      [isLoading]="isSubmitting()"
+      (click)="onSubmit()"
+    />
+  </div>
+</div>

@@ -1,0 +1,75 @@
+import { SearchConfig } from '@shared/components/search/interface';
+import { TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
+
+export const CATEGORIES_PAGE_SIZE = 25;
+export const PRODUCTS_PAGE_SIZE = 20;
+
+export const categorySearchConfig: SearchConfig = {
+  placeholder: 'Search category',
+  debounceTime: 600,
+  showClearButton: true,
+  width: '100%'
+};
+
+export const productSearchConfig: SearchConfig = {
+  placeholder: 'Search product',
+  debounceTime: 600,
+  showClearButton: true,
+  width: '100%' 
+};
+
+export const categoryTableColumns: TableColumn[] = [
+  {
+    key: 'name',
+    label: 'Category name',
+    sortable: true,
+    width: '100%'
+  }
+];
+
+export const categoryTableActions: TableAction[] = [
+  {
+    action: 'edit',
+    label: 'Edit',
+    icon: 'edit'
+  }
+];
+
+export const productTableColumns: TableColumn[] = [
+  {
+    key: 'name',
+    label: 'Product name',
+    sortable: true,
+    width: '25%'
+  },
+  {
+    key: 'category',
+    label: 'Category',
+    sortable: true,
+    width: '20%',
+    formatter: (value: any) => value?.name || 'N/A'
+  },
+  {
+    key: 'status',
+    label: 'Status',
+    sortable: true,
+    width: '20%',
+    type: 'status',
+    formatter: (value: string) => {
+      return value === 'IN_USE' ? 'In use' : 'Discontinued';
+    }
+  }
+];
+
+export const productTableActions: TableAction[] = [
+  {
+    action: 'edit',
+    label: 'Edit Product',
+    icon: 'edit'
+  },
+  {
+    action: 'edit-image',
+    label: 'Edit Image',
+    icon: 'image'
+  }
+];

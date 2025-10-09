@@ -1,3 +1,88 @@
-<div>
+<div class="products-page-container">
+  <div class="two-column-layout">
+    <!-- Categories Section -->
+    <div class="section categories-section">
+      <div class="section-header">
+        <h2 class="section-title">Categories</h2>
+      </div>
 
+      <div class="search--add-category">
+        <app-search
+          class="search"
+          [config]="categorySearchConfig"
+          (searchTermChange)="onCategorySearchTermChange($event)"
+        />
+
+        <div class="add-category">
+          <app-button
+            icon="assets/addIcon.svg"
+            text="Add category"
+            (click)="openAddCategoryModal()"
+          />
+        </div>
+      </div>
+
+      @if (productsService.isLoadingCategories()) {
+        <div class="loader">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      } @else {
+        <div class="categories-list">
+          @for (category of productsService.categories(); track category.id) {
+            <div class="category-item">
+              <span class="category-name">{{ category.name }}</span>
+              <app-button
+                icon="edit"
+                iconType="material"
+                [isIconButton]="true"
+                class="edit-button"
+                [styles]="{ 'background' : 'none'}"
+                [iconStyles]="{ 'color': 'var(--mat-sys-primary)' }"
+                (click)="onCategoryActionClick({action: 'edit', item: category})"
+              />
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Products Section -->
+    <div class="section products-section">
+        <div class="section-header">
+          <h2 class="section-title">Products</h2>
+        </div>
+
+        <div class="section-actions">
+          <app-search
+            [config]="productSearchConfig"
+            (searchTermChange)="onProductSearchTermChange($event)"
+          />
+          <app-button
+            text="Add Product"
+            icon="assets/addIcon.svg"
+            (click)="openAddProductModal()"
+          />
+        </div>
+
+        @if (productsService.isLoadingProducts()) {
+          <div class="loader">
+            <mat-spinner diameter="50"></mat-spinner>
+          </div>
+        } @else {
+          <app-table
+            [columns]="productTableColumns"
+            [data]="productsService.products() ?? []"
+            [actions]="productTableActions"
+            [showCheckboxes]="false"
+            [showPagination]="true"
+            [pageSize]="productsPageSize"
+            [totalItems]="productsService.productsCount()"
+            [statusConfig]="productStatusConfig"
+            (actionClick)="onProductActionClick($event)"
+            (pageChange)="onProductPageChange($event)"
+          />
+        }
+      </div>
+    </div>
 </div>
+

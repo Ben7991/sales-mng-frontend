@@ -7,4 +7,6 @@ export interface SearchConfig {
   showClearButton?: boolean;
   appearance?: 'fill' | 'outline';
   floatLabel?: 'auto' | 'always';
+  minWidth?: number;
+  width?: string; // e.g., '100%', '300px', '20rem'
 }

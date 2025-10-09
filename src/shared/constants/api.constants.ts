@@ -29,3 +29,22 @@ export const supplierContactAdditionUrl =
 
 export const supplierContactDeletionUrl =
     (supplierId: number, phoneId: number) => `${environment.serverUrl}/suppliers/${supplierId}/phone/${phoneId}`;
+
+
+/* PRODUCTS & CATEGORIES */
+export const getCategoriesUrl =
+    (limit: number, page: number, query: string) => `${environment.serverUrl}/categories?perPage=${limit}&page=${page}&q=${query}`;
+
+export const updateCategoryUrl =
+    (id: number) => `${environment.serverUrl}/categories/${id}`;
+
+export const getProductsUrl =
+    (limit: number, page: number, query: string) => `${environment.serverUrl}/products?perPage=${limit}&page=${page}&q=${query}`;
+
+export const updateProductUrl =
+    (id: number) => `${environment.serverUrl}/products/${id}`;
+
+export const changeProductImageUrl =
+    (id: number) => `${environment.serverUrl}/products/${id}/change-image`;
+
+

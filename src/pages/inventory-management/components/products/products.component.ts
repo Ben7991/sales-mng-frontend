@@ -1,11 +1,209 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ButtonComponent } from '@shared/components/button/button.component';
+import { ModalService } from '@shared/components/modal/service/modal.service';
+import { SearchConfig } from '@shared/components/search/interface';
+import { SearchComponent } from '@shared/components/search/search.component';
+import { StatusConfig, TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
+import { TableComponent } from '@shared/components/user-management/table/table.component';
+import { CategoryFormModalComponent } from './components/category-form-modal/category-form-modal.component';
+import { ProductFormModalComponent } from './components/product-form-modal/product-form-modal.component';
+import { ProductImageEditModalComponent } from './components/product-image-edit-modal/product-image-edit-modal.component';
+import {
+  CATEGORIES_PAGE_SIZE,
+  categorySearchConfig,
+  categoryTableActions,
+  categoryTableColumns,
+  PRODUCTS_PAGE_SIZE,
+  productSearchConfig,
+  productTableActions,
+  productTableColumns
+} from './constants/products.constant';
+import { Category, Product } from './models/interface';
+import { ProductsManagementService } from './services/products-management.service';
 
 @Component({
   selector: 'app-products',
-  imports: [],
+  imports: [
+    TableComponent,
+    ButtonComponent,
+    MatIconModule,
+    SearchComponent,
+    MatProgressSpinner
+  ],
   templateUrl: './products.component.html',
-  styleUrl: './products.component.scss'
+  styleUrl: './products.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductsComponent {
+export class ProductsComponent implements OnInit {
+  protected readonly productsService = inject(ProductsManagementService);
+  private readonly modalService = inject(ModalService);
 
+  // Category configuration
+  protected readonly categoryTableColumns: TableColumn[] = categoryTableColumns;
+  protected readonly categoryTableActions: TableAction[] = categoryTableActions;
+  protected readonly categorySearchConfig: SearchConfig = categorySearchConfig;
+  protected readonly categoriesPageSize = CATEGORIES_PAGE_SIZE;
+
+  // Product configuration
+  protected readonly productTableColumns: TableColumn[] = productTableColumns;
+  protected readonly productTableActions: TableAction[] = productTableActions;
+  protected readonly productSearchConfig: SearchConfig = productSearchConfig;
+  protected readonly productsPageSize = PRODUCTS_PAGE_SIZE;
+
+  protected readonly productStatusConfig: StatusConfig = {
+    'In use': { color: '#10b981', backgroundColor: '#d1fae5' },
+    'Discontinued': { color: '#ef4444', backgroundColor: '#fee2e2' }
+  };
+
+  ngOnInit(): void {
+    this.productsService.getCategories({ useCache: true });
+    this.productsService.getProducts({ useCache: true });
+  }
+
+  /* =============== CATEGORY HANDLERS =============== */
+
+  protected onCategorySearchTermChange(term: string): void {
+    this.productsService.categorySearchQuery = term;
+    this.productsService.currentCategoryPage = 0;
+    this.productsService.getCategories({ useCache: false, showLoader: true });
+  }
+
+  protected onCategoryPageChange(event: PageEvent): void {
+    this.productsService.currentCategoryPage = event.pageIndex;
+    this.productsService.getCategories({ useCache: false, showLoader: true });
+  }
+
+  protected onCategoryActionClick(event: { action: string; item: Category }): void {
+    if (event.action === 'edit') {
+      this.openEditCategoryModal(event.item);
+    }
+  }
+
+  protected openAddCategoryModal(): void {
+    const modalRef = this.modalService.openCustomModal(CategoryFormModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      data: { isEdit: false }
+    });
+
+    modalRef.afterClosed().subscribe(result => {
+      if (result?.action === 'confirm') {
+        this.productsService.addCategory(result.data);
+      }
+    });
+  }
+
+  private openEditCategoryModal(category: Category): void {
+    const modalRef = this.modalService.openCustomModal(CategoryFormModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      data: { isEdit: true, category }
+    });
+
+    modalRef.afterClosed().subscribe(result => {
+      if (result?.action === 'confirm') {
+        this.productsService.updateCategory(category.id, result.data);
+      }
+    });
+  }
+
+  /* =============== PRODUCT HANDLERS =============== */
+
+  protected onProductSearchTermChange(term: string): void {
+    this.productsService.productSearchQuery = term;
+    this.productsService.currentProductPage = 0;
+    this.productsService.getProducts({ useCache: false, showLoader: true });
+  }
+
+  protected onProductPageChange(event: PageEvent): void {
+    this.productsService.currentProductPage = event.pageIndex;
+    this.productsService.getProducts({ useCache: false, showLoader: true });
+  }
+
+  protected onProductActionClick(event: { action: string; item: Product }): void {
+    if (event.action === 'edit') {
+      this.openEditProductModal(event.item);
+    } else if (event.action === 'edit-image') {
+      this.onProductImageEdit(event.item);
+    }
+  }
+
+  protected onProductImageEdit(product: Product): void {
+    const modalRef = this.modalService.openCustomModal(ProductImageEditModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      data: {
+        productId: product.id,
+        productName: product.name,
+        currentImagePath: product.imagePath
+      }
+    });
+
+    modalRef.afterClosed().subscribe(result => {
+      if (result?.action === 'confirm') {
+        this.productsService.updateProductImage(product.id, result.data);
+      }
+    });
+  }
+
+  protected openAddProductModal(): void {
+    const modalRef = this.modalService.openCustomModal(ProductFormModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      data: {
+        isEdit: false,
+        categories: this.productsService.categories() || []
+      }
+    });
+
+    modalRef.afterClosed().subscribe(result => {
+      if (result?.action === 'confirm') {
+        const { file, ...productData } = result.data;
+        this.productsService.addProduct({
+          ...productData,
+          file
+        });
+      }
+    });
+  }
+
+  private openEditProductModal(product: Product): void {
+    const modalRef = this.modalService.openCustomModal(ProductFormModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      data: {
+        isEdit: true,
+        product,
+        categories: this.productsService.categories() || []
+      }
+    });
+
+    modalRef.afterClosed().subscribe(result => {
+      if (result?.action === 'confirm') {
+        const { file, ...productData } = result.data;
+
+        // Product basic info update (name, category, status)
+        this.productsService.updateProduct(product.id, productData);
+
+        // If a new image was selected, update it separately
+        if (file) {
+          this.productsService.updateProductImage(product.id, { file });
+        }
+      }
+    });
+  }
 }
+

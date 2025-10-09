@@ -1,8 +1,15 @@
+.supplier-form-container {
+  padding: 5%;
+  background: #fff;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 0 0 20px 0;
   margin-bottom: 20px;
 
   h2 {
@@ -13,7 +20,7 @@
 }
 
 .supplier-form {
-  padding: 0 24px;
+  padding: 0;
 
   .form-row {
     margin-bottom: 16px;
@@ -66,8 +73,7 @@
     display: flex;
     justify-content: center;
     gap: 12px;
-    padding: 24px 0;
-    border-top: 1px solid #e0e0e0;
+    padding: 24px 0 0 0;
     margin-top: 24px;
   }
 }
