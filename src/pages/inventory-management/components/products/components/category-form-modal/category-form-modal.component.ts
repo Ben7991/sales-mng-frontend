@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { Category } from '../../models/interface';
+import { toTitleCase } from '@shared/utils/string.util';
 
 interface CategoryFormModalData {
   isEdit: boolean;
@@ -45,7 +46,7 @@ export class CategoryFormModalComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.isEdit && this.data.category) {
       this.categoryForm.patchValue({
-        name: this.data.category.name
+        name: toTitleCase(this.data.category.name)
       });
     }
   }
@@ -56,6 +57,22 @@ export class CategoryFormModalComponent implements OnInit {
 
   protected get submitButtonText(): string {
     return this.data.isEdit ? 'Save Category' : 'Create Category';
+  }
+
+  protected onCategoryNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const cursorPosition = input.selectionStart || 0;
+    const titleCased = toTitleCase(input.value);
+    
+    // Update form control
+    this.categoryForm.get('name')?.setValue(titleCased, { emitEvent: false });
+    
+    // Update input value and restore cursor position
+    if (titleCased !== input.value) {
+      setTimeout(() => {
+        input.setSelectionRange(cursorPosition, cursorPosition);
+      }, 0);
+    }
   }
 
   protected onCancel(): void {

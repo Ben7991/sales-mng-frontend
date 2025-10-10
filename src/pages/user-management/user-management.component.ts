@@ -7,7 +7,7 @@ import {
   OnInit, signal
 } from '@angular/core';
 import {TableComponent} from '@shared/components/user-management/table/table.component';
-import {TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
+import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
 import {User} from '@shared/models/interface';
 import {FormsModule} from '@angular/forms';
 import {ButtonComponent} from '@shared/components/button/button.component';
@@ -26,6 +26,7 @@ import {MatDivider} from '@angular/material/divider';
 import {UserAccountStatus} from '@shared/models/types';
 import {ChangeStatusModalComponent} from './components/change-status-modal/change-status-modal.component';
 import {PageEvent} from '@angular/material/paginator';
+import {STATUS_COLORS} from '@shared/constants/colors.constant';
 
 @Component({
   selector: 'app-user-management',
@@ -59,6 +60,12 @@ export class UserManagementComponent implements OnInit{
   public tableData: User[] = [];
   public filteredUsers: User[] = [];
   public isLoadingUsers = false;
+
+  protected readonly statusConfig: StatusConfig = {
+    'ACTIVE': STATUS_COLORS.ACTIVE,
+    'QUIT': STATUS_COLORS.QUIT,
+    'FIRED': STATUS_COLORS.INACTIVE
+  };
 
   ngOnInit() {
     this.loadUsers();

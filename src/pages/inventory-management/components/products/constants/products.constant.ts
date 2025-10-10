@@ -1,5 +1,6 @@
 import { SearchConfig } from '@shared/components/search/interface';
 import { TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
+import { toTitleCase } from '@shared/utils/string.util';
 
 export const CATEGORIES_PAGE_SIZE = 25;
 export const PRODUCTS_PAGE_SIZE = 20;
@@ -15,7 +16,7 @@ export const productSearchConfig: SearchConfig = {
   placeholder: 'Search product',
   debounceTime: 600,
   showClearButton: true,
-  width: '100%' 
+  width: '100%'
 };
 
 export const categoryTableColumns: TableColumn[] = [
@@ -47,7 +48,7 @@ export const productTableColumns: TableColumn[] = [
     label: 'Category',
     sortable: true,
     width: '20%',
-    formatter: (value: any) => value?.name || 'N/A'
+    formatter: (value: any) => toTitleCase(value.name)
   },
   {
     key: 'status',
@@ -64,12 +65,7 @@ export const productTableColumns: TableColumn[] = [
 export const productTableActions: TableAction[] = [
   {
     action: 'edit',
-    label: 'Edit Product',
+    label: 'Edit',
     icon: 'edit'
-  },
-  {
-    action: 'edit-image',
-    label: 'Edit Image',
-    icon: 'image'
   }
 ];

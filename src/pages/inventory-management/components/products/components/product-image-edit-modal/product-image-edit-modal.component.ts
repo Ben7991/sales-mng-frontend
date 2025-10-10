@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ImageUploadComponent } from '@shared/components/image-upload/image-upload.component';
@@ -16,6 +17,7 @@ interface ProductImageEditModalData {
   selector: 'app-product-image-edit-modal',
   imports: [
     MatDialogModule,
+    MatButtonModule,
     MatIconModule,
     ButtonComponent,
     ImageUploadComponent

@@ -1,3 +1,5 @@
+@use '@styles/mixins/_form.scss' as form;
+
 .product-form-container {
   padding: 5%;
   background: #fff;
@@ -23,6 +25,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  @include form.form-row;
 }
 
 .form-field {

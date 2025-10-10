@@ -1,49 +1,53 @@
-.modal-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.image-edit-container {
+  padding: 5%;
+  background: #fff;
+  overflow-y: auto;
+  max-height: 80vh;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  padding: 0 0 20px 0;
+  margin-bottom: 20px;
 
-  .modal-title {
+  h2 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--mat-sys-on-surface);
-  }
-
-  .close-button {
-    color: var(--mat-sys-on-surface-variant);
+    font-size: 1.5rem;
+    font-weight: 500;
   }
 }
 
 .modal-body {
-  flex: 1;
-  padding: 24px;
-  overflow-y: auto;
+  margin-bottom: 20px;
 
   .product-name {
     font-size: 16px;
     font-weight: 500;
-    color: var(--mat-sys-on-surface);
     margin: 0 0 16px 0;
   }
 }
 
-.modal-footer {
+.form-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin-top: 8px;
+  padding-top: 16px;
 
   app-button {
     min-width: 120px;
+  }
+}
+
+@media (max-width: 600px) {
+  .image-edit-container {
+    min-width: 280px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
   }
 }

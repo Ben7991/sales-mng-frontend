@@ -30,7 +30,7 @@
         <div class="categories-list">
           @for (category of productsService.categories(); track category.id) {
             <div class="category-item">
-              <span class="category-name">{{ category.name }}</span>
+              <span class="category-name">{{ toTitleCase(category.name) }}</span>
               <app-button
                 icon="edit"
                 iconType="material"

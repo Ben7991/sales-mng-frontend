@@ -8,9 +8,10 @@ import { SearchConfig } from '@shared/components/search/interface';
 import { SearchComponent } from '@shared/components/search/search.component';
 import { StatusConfig, TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
 import { TableComponent } from '@shared/components/user-management/table/table.component';
+import { STATUS_COLORS } from '@shared/constants/colors.constant';
+import { toTitleCase } from '@shared/utils/string.util';
 import { CategoryFormModalComponent } from './components/category-form-modal/category-form-modal.component';
 import { ProductFormModalComponent } from './components/product-form-modal/product-form-modal.component';
-import { ProductImageEditModalComponent } from './components/product-image-edit-modal/product-image-edit-modal.component';
 import {
   CATEGORIES_PAGE_SIZE,
   categorySearchConfig,
@@ -54,8 +55,8 @@ export class ProductsComponent implements OnInit {
   protected readonly productsPageSize = PRODUCTS_PAGE_SIZE;
 
   protected readonly productStatusConfig: StatusConfig = {
-    'In use': { color: '#10b981', backgroundColor: '#d1fae5' },
-    'Discontinued': { color: '#ef4444', backgroundColor: '#fee2e2' }
+    'IN_USE': STATUS_COLORS.ACTIVE,
+    'DISCONTINUED': STATUS_COLORS.INACTIVE
   };
 
   ngOnInit(): void {
@@ -130,29 +131,7 @@ export class ProductsComponent implements OnInit {
   protected onProductActionClick(event: { action: string; item: Product }): void {
     if (event.action === 'edit') {
       this.openEditProductModal(event.item);
-    } else if (event.action === 'edit-image') {
-      this.onProductImageEdit(event.item);
     }
-  }
-
-  protected onProductImageEdit(product: Product): void {
-    const modalRef = this.modalService.openCustomModal(ProductImageEditModalComponent, {
-      width: '500px',
-      maxWidth: '90vw',
-      panelClass: 'custom-dialog-container',
-      disableClose: false,
-      data: {
-        productId: product.id,
-        productName: product.name,
-        currentImagePath: product.imagePath
-      }
-    });
-
-    modalRef.afterClosed().subscribe(result => {
-      if (result?.action === 'confirm') {
-        this.productsService.updateProductImage(product.id, result.data);
-      }
-    });
   }
 
   protected openAddProductModal(): void {
@@ -204,6 +183,12 @@ export class ProductsComponent implements OnInit {
         }
       }
     });
+  }
+
+  /* =============== UTILITY METHODS =============== */
+
+  protected toTitleCase(str: string): string {
+    return toTitleCase(str);
   }
 }
 

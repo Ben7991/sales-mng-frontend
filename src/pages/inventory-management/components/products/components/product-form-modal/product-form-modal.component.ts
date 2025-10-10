@@ -11,6 +11,7 @@ import { ImageUploadComponent } from '@shared/components/image-upload/image-uplo
 import { Category, Product, ProductStatus } from '../../models/interface';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import environment from '@shared/environments/environment';
+import { toTitleCase } from '@shared/utils/string.util';
 
 interface ProductFormModalData {
   isEdit: boolean;
@@ -60,7 +61,7 @@ export class ProductFormModalComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.isEdit && this.data.product) {
       this.productForm.patchValue({
-        name: this.data.product.name,
+        name: toTitleCase(this.data.product.name),
         categoryId: this.data.product.category.id,
         status: this.data.product.status
       });
@@ -88,6 +89,26 @@ export class ProductFormModalComponent implements OnInit {
 
   protected onFileError(errorMessage: string): void {
     this.snackbarService.showError(errorMessage);
+  }
+
+  protected onProductNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const cursorPosition = input.selectionStart || 0;
+    const titleCased = toTitleCase(input.value);
+    
+    // Update form control
+    this.productForm.get('name')?.setValue(titleCased, { emitEvent: false });
+    
+    // Update input value and restore cursor position
+    if (titleCased !== input.value) {
+      setTimeout(() => {
+        input.setSelectionRange(cursorPosition, cursorPosition);
+      }, 0);
+    }
+  }
+
+  protected toTitleCase(str: string): string {
+    return toTitleCase(str);
   }
 
   protected onCancel(): void {

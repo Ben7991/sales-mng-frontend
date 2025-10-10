@@ -170,7 +170,7 @@ export class ProductsManagementService {
     const formData = new FormData();
     formData.append('file', imageData.file);
 
-    this.http.patch<ProductApiResponse>(changeProductImageUrl(productId), formData)
+    this.http.post<ProductApiResponse>(changeProductImageUrl(productId), formData)
       .subscribe({
         next: () => {
           this.getProducts({ showLoader: false, useCache: false });

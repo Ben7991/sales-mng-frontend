@@ -1,3 +1,5 @@
+@use '@styles/mixins/_form.scss' as form;
+
 .supplier-form-container {
   padding: 5%;
   background: #fff;
@@ -22,13 +24,15 @@
 .supplier-form {
   padding: 0;
 
-  .form-row {
-    margin-bottom: 16px;
+  @include form.form-row;
 
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
+  // .form-row {
+  //   margin-bottom: 16px;
+
+  //   display: grid;
+  //   grid-template-columns: repeat(2, 1fr);
+  //   gap: 16px;
+  // }
 
   .phone-section {
     margin-bottom: 24px;

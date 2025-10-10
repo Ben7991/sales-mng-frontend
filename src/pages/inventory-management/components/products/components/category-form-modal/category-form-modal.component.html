@@ -9,7 +9,11 @@
   <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Category name</mat-label>
-      <input matInput formControlName="name" placeholder="Enter category name">
+      <input 
+        matInput 
+        formControlName="name" 
+        placeholder="Enter category name"
+        (input)="onCategoryNameInput($event)">
       @if (categoryForm.get('name')?.hasError('required')) {
         <mat-error>Category name is required</mat-error>
       }
