@@ -56,3 +56,12 @@ export interface ProductApiResponse {
   message: string;
   data: Product;
 }
+
+export interface ProductLiveSearchItem {
+  id: number;
+  name: string;
+}
+
+export interface ProductLiveSearchApiResponse {
+  data: ProductLiveSearchItem[];
+}

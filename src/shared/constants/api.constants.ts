@@ -47,4 +47,7 @@ export const updateProductUrl =
 export const changeProductImageUrl =
     (id: number) => `${environment.serverUrl}/products/${id}/change-image`;
 
+export const productLiveSearchUrl = 
+    (query: string) => `${environment.serverUrl}/products/live-search?q=${query}`;
+
 

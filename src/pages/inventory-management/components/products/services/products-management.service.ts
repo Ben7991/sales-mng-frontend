@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { catchError, EMPTY, finalize, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, tap, Observable } from 'rxjs';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
 import {
@@ -8,7 +8,8 @@ import {
   getProductsUrl,
   updateCategoryUrl,
   updateProductUrl,
-  changeProductImageUrl
+  changeProductImageUrl,
+  productLiveSearchUrl
 } from '@shared/constants/api.constants';
 import {
   AddCategoryInterface,
@@ -21,7 +22,8 @@ import {
   ProductApiResponse,
   UpdateCategoryInterface,
   UpdateProductImageInterface,
-  UpdateProductInterface
+  UpdateProductInterface,
+  ProductLiveSearchApiResponse
 } from '../models/interface';
 import { CATEGORIES_PAGE_SIZE, PRODUCTS_PAGE_SIZE } from '../constants/products.constant';
 
@@ -183,5 +185,9 @@ export class ProductsManagementService {
           this.snackbarService.showError(msg);
         }
       });
+  }
+
+  public searchProducts(query: string): Observable<ProductLiveSearchApiResponse> {
+    return this.http.get<ProductLiveSearchApiResponse>(productLiveSearchUrl(query));
   }
 }
