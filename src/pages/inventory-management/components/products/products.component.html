@@ -43,6 +43,13 @@
             </div>
           }
         </div>
+        
+        <app-paginator
+          [totalItems]="productsService.categoriesCount()"
+          [pageSize]="productsService.currentCategoryPageSize"
+          [currentPage]="productsService.currentCategoryPage"
+          (pageChange)="onCategoryPageChange($event)"
+        />
       }
     </div>
 
@@ -75,7 +82,8 @@
             [actions]="productTableActions"
             [showCheckboxes]="false"
             [showPagination]="true"
-            [pageSize]="productsPageSize"
+            [pageSize]="productsService.currentProductPageSize"
+            [currentPage]="productsService.currentProductPage"
             [totalItems]="productsService.productsCount()"
             [statusConfig]="productStatusConfig"
             (actionClick)="onProductActionClick($event)"

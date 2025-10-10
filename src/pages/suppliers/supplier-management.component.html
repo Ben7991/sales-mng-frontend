@@ -15,7 +15,7 @@
   </div>
 </div>
 
-<div class="table-name">Suppliers</div>
+<div class="table-name">Suppliers ({{supplierManagementService.suppliers()?.length}})</div>
 
 @if (supplierManagementService.isLoadingSuppiers()) {
   <div class="loader">
@@ -29,6 +29,9 @@
     [actions]="tableActions"
     [showCheckboxes]="false"
     [showPagination]="true"
+    [pageSize]="supplierManagementService.currentPageSize"
+    [currentPage]="supplierManagementService.currentPage"
+    [totalItems]="supplierManagementService.suppliersCount()"
     [statusConfig]="statusConfig"
     (selectionChange)="onSelectionChange($event)"
     (actionClick)="onActionClick($event)"

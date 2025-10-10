@@ -43,6 +43,7 @@ export class ProductsManagementService {
   public readonly categoriesCount = signal(0);
   public categorySearchQuery = '';
   public currentCategoryPage = 0;
+  public currentCategoryPageSize = CATEGORIES_PAGE_SIZE;
 
   // Products
   public readonly products = signal<Product[] | null>(null);
@@ -50,6 +51,7 @@ export class ProductsManagementService {
   public readonly productsCount = signal(0);
   public productSearchQuery = '';
   public currentProductPage = 0;
+  public currentProductPageSize = PRODUCTS_PAGE_SIZE;
 
   public getCategories({ useCache, showLoader } = DEFAULT_FETCH_OPTIONS): void {
     if (useCache && this.categories()) {
@@ -58,7 +60,7 @@ export class ProductsManagementService {
 
     this.isLoadingCategories.set(showLoader ?? true);
     this.http.get<GetCategoriesApiResponse>(
-      getCategoriesUrl(CATEGORIES_PAGE_SIZE, this.currentCategoryPage, this.categorySearchQuery)
+      getCategoriesUrl(this.currentCategoryPageSize, this.currentCategoryPage, this.categorySearchQuery)
     )
       .pipe(
         tap((response) => {
@@ -77,7 +79,7 @@ export class ProductsManagementService {
 
   public addCategory(categoryData: AddCategoryInterface): void {
     this.http.post<CategoryApiResponse>(
-      getCategoriesUrl(CATEGORIES_PAGE_SIZE, this.currentCategoryPage, this.categorySearchQuery),
+      getCategoriesUrl(this.currentCategoryPageSize, this.currentCategoryPage, this.categorySearchQuery),
       categoryData
     )
       .subscribe({
@@ -113,7 +115,7 @@ export class ProductsManagementService {
 
     this.isLoadingProducts.set(showLoader ?? true);
     this.http.get<GetProductsApiResponse>(
-      getProductsUrl(PRODUCTS_PAGE_SIZE, this.currentProductPage, this.productSearchQuery)
+      getProductsUrl(this.currentProductPageSize, this.currentProductPage, this.productSearchQuery)
     )
       .pipe(
         tap((response) => {
@@ -137,7 +139,7 @@ export class ProductsManagementService {
     formData.append('file', productData.file);
 
     this.http.post<ProductApiResponse>(
-      getProductsUrl(PRODUCTS_PAGE_SIZE, this.currentProductPage, this.productSearchQuery),
+      getProductsUrl(this.currentProductPageSize, this.currentProductPage, this.productSearchQuery),
       formData
     )
       .subscribe({

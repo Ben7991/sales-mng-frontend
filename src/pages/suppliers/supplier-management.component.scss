@@ -1,24 +1,13 @@
 @use "@styles/mixins/_filter-section.scss" as filter;
 @use "@styles/mixins/_table.scss" as table;
+@use "@styles/mixins/_general.scss" as generalStyles;
 
 .supplier-management-container {
   @include filter.filter-section;
 }
 
 @include table.table;
-
-.table-name {
-  padding-left: 25px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.loader {
-  min-height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@include generalStyles.loader;
 
 ::ng-deep .custom-dialog-container {
   .mat-mdc-dialog-container {

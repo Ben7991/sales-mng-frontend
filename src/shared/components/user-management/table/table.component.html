@@ -38,12 +38,12 @@
                 <span
                   class="status-chip"
                   [ngStyle]="getStatusStyles(element[column.key.toLowerCase()])">
-                  {{ column.formatter ? column.formatter?.(element[column.key], element) : element[column.key] | titlecase }}
+                  {{ column.formatter ? column.formatter(element[column.key], element) : (element[column.key] | titlecase) }}
                 </span>
               }
               @default {
                 <span>
-                  {{ column.formatter ? column.formatter?.(element[column.key], element) : element[column.key]  | titlecase }}
+                  {{ column.formatter ? column.formatter(element[column.key], element) : (element[column.key] | titlecase) }}
                 </span>
               }
             }
@@ -79,13 +79,14 @@
       <mat-row *matRowDef="let row; columns: displayedColumns();"></mat-row>
     </mat-table>
 
-    @if (columns().length > 2) {
-      <mat-paginator
-        [length]="totalItems()"
+    @if (showPagination()) {
+      <app-paginator
+        [totalItems]="totalItems() ?? 0"
         [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
         [pageSizeOptions]="pageSizeOptions()"
-        (page)="onPageChange($event)">
-      </mat-paginator>
+        (pageChange)="onPageChange($event)"
+      />
     }
 
   }

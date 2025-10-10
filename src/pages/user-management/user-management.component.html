@@ -1,80 +1,78 @@
 <div class="user-management-container">
+  <div class="filter-section">
+    <app-search
+      [config]="userSearchConfig"
+      (searchTermChange)="onUserSearchTermChange($event)"
+    />
+    
+  <div class="filter-actions">
+    <app-button
+      text="Filter"
+      variant="outlined"
+      [matMenuTriggerFor]="filterMenu"
+      class="filter-button"
+    >
+      <mat-icon>expand_more</mat-icon>
+    </app-button>
 
-    <div class="filter-section">
-      <!-- <app-search
-        [data]="tableData"
-        [config]="userSearchConfig"
-        [isLoading]="isLoadingUsers"
-        (searchResults)="onUserSearch($event)"
-        (searchTermChange)="onUserSearchTermChange($event)"
-      /> -->
-      <div class="filter-actions">
-          <app-button
-            text="Filter"
-            variant="outlined"
-            [matMenuTriggerFor]="filterMenu"
-            class="filter-button"
-          >
-            <mat-icon>expand_more</mat-icon>
-          </app-button>
+    <mat-menu #filterMenu="matMenu" class="popup-menu">
+      <button mat-menu-item [matMenuTriggerFor]="roleMenu">
+        Filter by role
+      </button>
+      <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+        Filter by status
+      </button>
+    </mat-menu>
 
-          <mat-menu #filterMenu="matMenu" class="popup-menu">
-            <button mat-menu-item [matMenuTriggerFor]="roleMenu">
-              Filter by role
-            </button>
-            <button mat-menu-item [matMenuTriggerFor]="statusMenu">
-              Filter by status
-            </button>
-          </mat-menu>
+    <!-- Role submenu -->
+    <mat-menu #roleMenu="matMenu" class="popup-menu submenu">
+      <button mat-menu-item (click)="filterStatus('ADMIN')">Admin</button>
+      <button mat-menu-item (click)="filterStatus('SALES_PERSON')">Sale Person</button>
+      <button mat-menu-item (click)="filterStatus('PROCUREMENT_OFFICER')">Procurement Person</button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="filterStatus('')">Clear filter</button>
+    </mat-menu>
 
-          <!-- Role submenu -->
-          <mat-menu #roleMenu="matMenu" class="popup-menu submenu">
-            <button mat-menu-item (click)="filterStatus('ADMIN')">Admin</button>
-            <button mat-menu-item (click)="filterStatus('SALES_PERSON')">Sale Person</button>
-            <button mat-menu-item (click)="filterStatus('PROCUREMENT_OFFICER')">Procurement Person</button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="this.loadUsers()">Clear filter</button>
-          </mat-menu>
+    <!-- Status submenu -->
+    <mat-menu #statusMenu="matMenu" class="popup-menu submenu">
+      <button mat-menu-item (click)="filterStatus('ACTIVE')" >Active</button>
+      <button mat-menu-item (click)="filterStatus('QUIT')">Quit</button>
+      <button mat-menu-item (click)="filterStatus('FIRED')">Fired</button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="filterStatus('')">Clear filter</button>
+    </mat-menu>
 
-          <!-- Status submenu -->
-          <mat-menu #statusMenu="matMenu" class="popup-menu submenu">
-            <button mat-menu-item (click)="filterStatus('ACTIVE')" >Active</button>
-            <button mat-menu-item (click)="filterStatus('QUIT')">Quit</button>
-            <button mat-menu-item (click)="filterStatus('FIRED')">Fired</button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="this.loadUsers()">Clear filter</button>
-          </mat-menu>
-
-        <app-button
-          (click)="openUserModal()"
-          icon="assets/addIcon.svg"
-          [isIconButton]="true"
-          text="Add new user"
-          [styles]="{ height: '40px',width: '140px' }"
-        />
-      </div>
-    </div>
-
-
-
+    <app-button
+      (click)="openUserModal()"
+      icon="assets/addIcon.svg"
+      [isIconButton]="true"
+      text="Add new user"
+      [styles]="{ height: '40px',width: '140px' }"
+    />
+  </div>
 </div>
-<div class="table-name">
-  @if (totalUsers! > 0) {
-    <p class="selection-info">
-      Users( {{totalUsers}} )
-    </p>
-  }
 </div>
-<app-table
-  [columns]="tableColumns"
-  [data]="filteredUsers"
-  [loading]="isLoading"
-  [actions]="tableActions"
-  [showCheckboxes]="true"
-  [showPagination]="true"
-  [pageSize]="pageSize"
-  [totalItems]="totalUsers"
-  [statusConfig]="statusConfig"
-  (selectionChange)="onSelectionChange($event)"
-  (actionClick)="onActionClick($event)"
-  (pageChange)="onPageChange($event)"/>
+
+<div class="table-name">Users ({{ userManagementService.usersCount() }})</div>
+
+@if (userManagementService.isLoadingUsers()) {
+  <div class="loader">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+}
+@else {
+  <app-table
+    [columns]="tableColumns"
+    [data]="userManagementService.users() ?? []"
+    [actions]="tableActions"
+    [showCheckboxes]="false"
+    [showPagination]="true"
+    [pageSize]="userManagementService.currentPageSize"
+    [currentPage]="userManagementService.currentPage"
+    [totalItems]="userManagementService.usersCount()"
+    [statusConfig]="statusConfig"
+    (selectionChange)="onSelectionChange($event)"
+    (actionClick)="onActionClick($event)"
+    (pageChange)="onPageChange($event)"
+  />
+}

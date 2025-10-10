@@ -2,8 +2,8 @@ import { SearchConfig } from '@shared/components/search/interface';
 import { TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
 import { toTitleCase } from '@shared/utils/string.util';
 
-export const CATEGORIES_PAGE_SIZE = 25;
-export const PRODUCTS_PAGE_SIZE = 20;
+export const CATEGORIES_PAGE_SIZE = 40;
+export const PRODUCTS_PAGE_SIZE = 25;
 
 export const categorySearchConfig: SearchConfig = {
   placeholder: 'Search category',

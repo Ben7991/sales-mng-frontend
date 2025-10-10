@@ -103,6 +103,11 @@ export class SupplierManagementComponent implements OnInit {
   }
 
   protected onPageChange(event: any) {
-    console.log('Page changed:', event);
+    this.supplierManagementService.currentPage = event.pageIndex;
+    this.supplierManagementService.currentPageSize = event.pageSize;
+    this.supplierManagementService.getSuppliers({
+      useCache: false,
+      showLoader: true
+    });
   }
 }

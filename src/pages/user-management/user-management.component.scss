@@ -1,11 +1,13 @@
-@use '@styles/mixins/_filter-section.scss' as filter;
-@use '@styles/mixins/_table.scss' as table;
+@use "@styles/mixins/_filter-section.scss" as filter;
+@use "@styles/mixins/_table.scss" as table;
+@use "@styles/mixins/_general.scss" as generalStyles;
 
 .user-management-container {
   @include filter.filter-section;
 }
 
 @include table.table;
+@include generalStyles.loader;
 
 ::ng-deep .custom-dialog-container {
   .mat-mdc-dialog-container {

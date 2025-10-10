@@ -4,6 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ModalService } from '@shared/components/modal/service/modal.service';
+import { PaginatorComponent } from '@shared/components/paginator/paginator.component';
 import { SearchConfig } from '@shared/components/search/interface';
 import { SearchComponent } from '@shared/components/search/search.component';
 import { StatusConfig, TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
@@ -32,7 +33,8 @@ import { ProductsManagementService } from './services/products-management.servic
     ButtonComponent,
     MatIconModule,
     SearchComponent,
-    MatProgressSpinner
+    MatProgressSpinner,
+    PaginatorComponent
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',
@@ -74,6 +76,7 @@ export class ProductsComponent implements OnInit {
 
   protected onCategoryPageChange(event: PageEvent): void {
     this.productsService.currentCategoryPage = event.pageIndex;
+    this.productsService.currentCategoryPageSize = event.pageSize;
     this.productsService.getCategories({ useCache: false, showLoader: true });
   }
 
@@ -125,6 +128,7 @@ export class ProductsComponent implements OnInit {
 
   protected onProductPageChange(event: PageEvent): void {
     this.productsService.currentProductPage = event.pageIndex;
+    this.productsService.currentProductPageSize = event.pageSize;
     this.productsService.getProducts({ useCache: false, showLoader: true });
   }
 
@@ -184,8 +188,6 @@ export class ProductsComponent implements OnInit {
       }
     });
   }
-
-  /* =============== UTILITY METHODS =============== */
 
   protected toTitleCase(str: string): string {
     return toTitleCase(str);
