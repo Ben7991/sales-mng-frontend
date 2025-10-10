@@ -9,18 +9,17 @@
       <app-button
         (click)="openAddSupplierModal()"
         icon="assets/addIcon.svg"
-        [isIconButton]="true"
         text="Add new supplier"
       />
     </div>
   </div>
 </div>
 
-<div class="table-name">Suppliers</div>
+<div class="table-name">Suppliers ({{supplierManagementService.suppliers()?.length}})</div>
 
 @if (supplierManagementService.isLoadingSuppiers()) {
   <div class="loader">
-    <mat-spinner></mat-spinner>
+    <mat-spinner diameter="50"></mat-spinner>
   </div>
 }
 @else {
@@ -30,6 +29,9 @@
     [actions]="tableActions"
     [showCheckboxes]="false"
     [showPagination]="true"
+    [pageSize]="supplierManagementService.currentPageSize"
+    [currentPage]="supplierManagementService.currentPage"
+    [totalItems]="supplierManagementService.suppliersCount()"
     [statusConfig]="statusConfig"
     (selectionChange)="onSelectionChange($event)"
     (actionClick)="onActionClick($event)"

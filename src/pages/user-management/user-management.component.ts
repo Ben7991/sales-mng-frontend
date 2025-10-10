@@ -1,14 +1,11 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  DestroyRef,
   inject,
-  OnInit, signal
+  OnInit
 } from '@angular/core';
 import {TableComponent} from '@shared/components/user-management/table/table.component';
-import {TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
-import {User} from '@shared/models/interface';
+import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
 import {FormsModule} from '@angular/forms';
 import {ButtonComponent} from '@shared/components/button/button.component';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
@@ -17,15 +14,14 @@ import {SearchComponent} from '@shared/components/search/search.component';
 import {SearchConfig} from '@shared/components/search/interface';
 import {UserManagementService} from './service/user-management.service';
 import {userSearchConfig, userTableActions, userTableColumns} from './constants/user-management.const';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ModalService} from '@shared/components/modal/service/modal.service';
 import { UserFormModalComponent} from './components/user-form-modal/user-form-modal.component';
-import {addUserInterface} from './interface';
-import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
 import {MatDivider} from '@angular/material/divider';
 import {UserAccountStatus} from '@shared/models/types';
 import {ChangeStatusModalComponent} from './components/change-status-modal/change-status-modal.component';
 import {PageEvent} from '@angular/material/paginator';
+import {STATUS_COLORS} from '@shared/constants/colors.constant';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-user-management',
@@ -37,35 +33,43 @@ import {PageEvent} from '@angular/material/paginator';
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    SearchComponent,
-    MatDivider
+    MatDivider,
+    MatProgressSpinner,
+    SearchComponent
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserManagementComponent implements OnInit{
-  public isLoading = false;
-  public pageSize = 10 ;
-  public totalUsers: number | undefined  = 0;
-  private cdr = inject(ChangeDetectorRef);
-  private userManagementService = inject(UserManagementService);
-  private destroyRef = inject(DestroyRef)
-  private readonly snackbarService = inject(SnackbarService);
-  public pageIndex = 0;
-  public readonly tableColumns: TableColumn[] = userTableColumns
-  public readonly tableActions: TableAction[] = userTableActions
-  public readonly userSearchConfig: SearchConfig = userSearchConfig
-  public tableData: User[] = [];
-  public filteredUsers: User[] = [];
-  public isLoadingUsers = false;
+  protected readonly userManagementService = inject(UserManagementService);
+  private readonly modalService = inject(ModalService);
+
+  protected readonly tableColumns: TableColumn[] = userTableColumns;
+  protected readonly tableActions: TableAction[] = userTableActions;
+  protected readonly userSearchConfig: SearchConfig = userSearchConfig;
+
+  protected readonly statusConfig: StatusConfig = {
+    'ACTIVE': STATUS_COLORS.ACTIVE,
+    'QUIT': STATUS_COLORS.QUIT,
+    'FIRED': STATUS_COLORS.INACTIVE
+  };
 
   ngOnInit() {
-    this.loadUsers();
+    this.userManagementService.getUsers({ useCache: true });
   }
 
-  constructor(private readonly modalService: ModalService) {}
-  public readonly lastResult = signal<any>(null);
+  protected onUserSearchTermChange(term: string): void {
+    this.userManagementService.searchQuery = term;
+    this.userManagementService.currentPage = 0;
+    this.userManagementService.getUsers({ useCache: false, showLoader: true });
+  }
+
+  protected onPageChange(event: PageEvent): void {
+    this.userManagementService.currentPage = event.pageIndex;
+    this.userManagementService.currentPageSize = event.pageSize;
+    this.userManagementService.getUsers({ useCache: false, showLoader: true });
+  }
 
   public openUserModal(user?: any): void {
     const isEdit = !!user;
@@ -83,81 +87,19 @@ export class UserManagementComponent implements OnInit{
     modalRef.afterClosed().subscribe(result => {
       if (result?.action === 'confirm') {
         if (isEdit) {
-          this.handleUpdateUser(user.id, result.data);
+          this.userManagementService.updateUserAndRefresh(user.id, result.data);
         } else {
-          this.handleAddUser(result.data);
+          this.userManagementService.addUserAndRefresh(result.data);
         }
       }
     });
   }
 
-  private handleAddUser(userData: addUserInterface): void {
-    this.userManagementService.addUser(userData).subscribe({
-      next: (response) => {
-        this.snackbarService.showSuccess(response.message)
-        this.loadUsers(this.pageIndex, this.pageSize);
-      },
-      error: (err) => {
-        this.snackbarService.showError(err.error.message)
-      }
-    })
+  protected onSelectionChange(selectedItems: any[]): void {
+    // selection change handler
   }
 
-  private handleUpdateUser(userId: string, userdata: Partial<addUserInterface>): void {
-    this.userManagementService.updateUserInfo(userId, userdata).subscribe({
-      next: (response) => {
-        this.snackbarService.showSuccess(response.message)
-        this.loadUsers(this.pageIndex, this.pageSize);
-      },
-      error: (err) => {
-        this.snackbarService.showError(err.error.message)
-      }
-    })
-  }
-
-
-
-  public  loadUsers(page: number = 0, limit: number = 10) {
-    this.isLoading = true;
-    this.cdr.markForCheck();
-
-    this.userManagementService.getAllUsers({ page, perPage: limit })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.tableData = response.data.users;
-          this.filteredUsers = [...this.tableData];
-          this.totalUsers = response.data.count;
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.isLoading = false;
-          this.tableData = [];
-          this.filteredUsers = [];
-          this.totalUsers = 0;
-          this.cdr.markForCheck();
-        }
-      });
-  }
-
-
-  onUserSearch(results: User[]) {
-    this.filteredUsers = results;
-    this.cdr.markForCheck();
-  }
-
-  onUserSearchTermChange(term: string) {
-    this.isLoadingUsers = term.length > 0;
-      this.isLoadingUsers = false;
-      this.cdr.markForCheck();
-  }
-
-
-  onSelectionChange(selectedItems: any[]) {
-  }
-
-  public onActionClick(event: { action: string; item: any }) {
+  public onActionClick(event: { action: string; item: any }): void {
     if (event.action === 'edit') {
       this.openUserModal(event.item);
     } else if (event.action === 'change status') {
@@ -169,41 +111,15 @@ export class UserManagementComponent implements OnInit{
 
       modalRef.afterClosed().subscribe((newStatus: UserAccountStatus) => {
         if (newStatus && newStatus !== event.item.status) {
-          this.userManagementService.changeUserStatus(event.item.id, newStatus).subscribe({
-            next: (response) => {
-              this.snackbarService.showSuccess(response.message)
-              event.item.status = newStatus;
-              this.loadUsers(this.pageIndex, this.pageSize);
-            },
-            error: (err) => {
-              this.snackbarService.showError(err.error.message)
-            },
-          });
+          this.userManagementService.changeUserStatusAndRefresh(event.item.id, newStatus);
         }
       });
     }
   }
 
-
- public onPageChange(event: PageEvent) {
-    this.pageSize = event.pageSize;
-   this.pageIndex = event.pageIndex;
-
-   this.loadUsers(this.pageIndex, this.pageSize);
-  }
-
- public filterStatus(stats: string) {
-    this.isLoading = true
-    this.userManagementService.getAllUsers({q:stats}).subscribe({
-      next: (response) => {
-        this.filteredUsers = response.data.users;
-        this.isLoading = false
-      },
-      error: (err) => {
-        this.snackbarService.showError(err.error.message)
-        this.isLoading = false
-      }
-    })
-
+  public filterStatus(stats: string): void {
+    this.userManagementService.searchQuery = stats;
+    this.userManagementService.currentPage = 0;
+    this.userManagementService.getUsers({ useCache: false, showLoader: true });
   }
 }

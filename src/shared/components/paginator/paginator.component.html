@@ -1,0 +1,10 @@
+@if (isVisible()) {
+  <mat-paginator
+    [length]="totalItems()"
+    [pageSize]="pageSize()"
+    [pageIndex]="currentPage()"
+    [pageSizeOptions]="effectivePageSizeOptions()"
+    [showFirstLastButtons]="true"
+    (page)="onPageChange($event)"
+  />
+}

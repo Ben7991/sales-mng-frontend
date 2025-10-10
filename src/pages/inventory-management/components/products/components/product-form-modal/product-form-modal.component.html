@@ -1,0 +1,112 @@
+<div class="product-form-container">
+  <div class="modal-header">
+    <h2>{{ modalTitle }}</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+    <div class="form-row">
+      <div class="product-name-wrapper">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Product name</mat-label>
+          <input 
+            matInput 
+            formControlName="name" 
+            placeholder="Enter unique product name"
+            (input)="onProductNameInput($event)"
+            (focus)="onInputFocus()"
+            (blur)="onInputBlur()">
+          @if (productForm.get('name')?.hasError('required')) {
+            <mat-error>Product name is required</mat-error>
+          }
+          @if (productForm.get('name')?.hasError('minlength')) {
+            <mat-error>Product name must be at least 2 characters</mat-error>
+          }
+          @if (productForm.get('name')?.hasError('duplicate')) {
+            <mat-error>This product name already exists</mat-error>
+          }
+        </mat-form-field>
+
+        @if (showSearchDropdown()) {
+          <div class="search-dropdown">
+            <div class="search-dropdown-header">
+              Existing products
+            </div>
+            @if (isSearching()) {
+              <div class="search-dropdown-item loading">
+                Searching...
+              </div>
+            } @else {
+              @for (product of searchResults(); track product.id) {
+                <div 
+                  class="search-dropdown-item"
+                  (mousedown)="onSelectSearchResult(product.name, $event)">
+                  {{ product.name }}
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+  
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Product category</mat-label>
+        <mat-select formControlName="categoryId" placeholder="Select category">
+          @for (category of data.categories; track category.id) {
+            <mat-option [value]="category.id">
+              {{ toTitleCase(category.name) }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (productForm.get('categoryId')?.hasError('required')) {
+          <mat-error>Category is required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    @if (data.isEdit) {
+      <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Product status</mat-label>
+            <mat-select formControlName="status" placeholder="Select status">
+              @for (status of productStatuses; track status.value) {
+                <mat-option [value]="status.value">
+                  {{ status.label }}
+                </mat-option>
+              }
+            </mat-select>
+            @if (productForm.get('status')?.hasError('required')) {
+              <mat-error>Status is required</mat-error>
+            }
+          </mat-form-field>
+      </div>
+    }
+
+    <app-image-upload
+      label="Product image"
+      [existingImageUrl]="existingImageUrl"
+      (fileSelected)="onFileSelected($event)"
+      (uploadError)="onFileError($event)"
+    />
+
+  </form>
+
+  <div class="form-actions">
+    <app-button
+      text="Cancel"
+      variant="outlined"
+      type="button"
+      (click)="onCancel()"
+    />
+    <app-button
+      [text]="submitButtonText"
+      variant="filled"
+      type="submit"
+      [disabled]="productForm.invalid"
+      [isLoading]="isSubmitting()"
+      (click)="onSubmit()"
+    />
+  </div>
+</div>

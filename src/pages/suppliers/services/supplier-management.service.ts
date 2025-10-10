@@ -19,6 +19,7 @@ import {
   SupplierStatusInterface,
   UpdateSupplierInterface
 } from '../models/interface';
+import { SUPPLIERS_PAGE_SIZE } from '../constants/supplier.constant';
 
 export class SupplierTableDataAdapter {
   static adaptForTable(suppliers: Supplier[]): any[] {
@@ -36,8 +37,6 @@ export class SupplierTableDataAdapter {
   }
 }
 
-const SUPPLIERS_PAGE_SIZE = 25;
-
 const DEFAULT_SUPPLIER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
   useCache: false,
   showLoader: true
@@ -51,10 +50,12 @@ export class SupplierManagementService {
   private readonly snackbarService = inject(SnackbarService);
 
   public readonly suppliers = signal<Supplier[] | null>(null);
+  public readonly suppliersCount = signal<number>(0);
   public readonly isLoadingSuppiers = signal(false);
 
   public searchQuery = '';
   public currentPage = 0;
+  public currentPageSize = SUPPLIERS_PAGE_SIZE;
 
   public getSuppliers({ useCache, showLoader } = DEFAULT_SUPPLIER_FETCH_OPTIONS): void {
     if (useCache && this.suppliers()) {
@@ -63,13 +64,14 @@ export class SupplierManagementService {
 
     this.isLoadingSuppiers.set(showLoader ?? true);
     this.http.get<GetSupplierApiResponse>(
-      getSuppliersUrl(SUPPLIERS_PAGE_SIZE, this.currentPage, this.searchQuery)
+      getSuppliersUrl(this.currentPageSize, this.currentPage, this.searchQuery)
     )
       .pipe(
         tap((response) => {
           this.suppliers.set(
             SupplierTableDataAdapter.adaptForTable(response.data)
           );
+          this.suppliersCount.set(response.count);
         }),
         catchError((err: HttpErrorResponse) => {
           const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
@@ -84,7 +86,7 @@ export class SupplierManagementService {
 
   public addSupplier(supplierData: AddSupplierInterface): void {
     this.http.post<AddSupplierApiResponse>(
-      getSuppliersUrl(SUPPLIERS_PAGE_SIZE, this.currentPage, this.searchQuery),
+      getSuppliersUrl(this.currentPageSize, this.currentPage, this.searchQuery),
       supplierData
     )
       .subscribe({

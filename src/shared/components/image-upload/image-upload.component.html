@@ -1,0 +1,47 @@
+<div class="image-upload-container">
+  <label class="upload-label">{{ label() }}</label>
+  
+  <div
+    class="upload-area"
+    [class.dragging]="isDragging()"
+    [class.has-preview]="previewUrl() || existingImageUrl()"
+    [class.disabled]="disabled()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="triggerFileInput()">
+    
+    @if (previewUrl() || existingImageUrl()) {
+      <div class="image-preview">
+        <img [src]="previewUrl() || existingImageUrl()" alt="Preview" />
+        @if (!disabled()) {
+          <button
+            type="button"
+            class="remove-button"
+            (click)="removeImage(); $event.stopPropagation()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="upload-prompt">
+        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+        <p class="upload-text">Drag and drop an image here</p>
+        <p class="upload-subtext">or click to browse</p>
+        <p class="upload-info">Max file size: 10MB</p>
+      </div>
+    }
+    
+    <input
+      type="file"
+      id="file-input"
+      accept="image/*"
+      [disabled]="disabled()"
+      (change)="onFileInputChange($event)"
+      style="display: none" />
+  </div>
+
+  @if (fileName()) {
+    <p class="file-name">{{ fileName() }}</p>
+  }
+</div>

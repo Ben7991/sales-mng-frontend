@@ -1,11 +1,12 @@
-<div class="modal-header">
-  <h2>{{ isEdit ? 'Edit Supplier' : 'Add New Supplier' }}</h2>
-  <button mat-icon-button (click)="onCancel()">
-    <mat-icon>close</mat-icon>
-  </button>
-</div>
+<div class="supplier-form-container">
+  <div class="modal-header">
+    <h2>{{ isEdit ? 'Edit Supplier' : 'Add New Supplier' }}</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-<form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" class="supplier-form">
+  <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" class="supplier-form">
   <div class="form-row">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Supplier Name</mat-label>
@@ -105,3 +106,4 @@
     </app-button>
   </div>
 </form>
+</div>
