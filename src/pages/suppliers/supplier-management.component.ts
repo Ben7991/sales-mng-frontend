@@ -13,6 +13,7 @@ import { SearchConfig } from '@shared/components/search/interface';
 import { SearchComponent } from '@shared/components/search/search.component';
 import { StatusConfig, TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
 import { TableComponent } from '@shared/components/user-management/table/table.component';
+import { STATUS_COLORS } from '@shared/constants/colors.constant';
 import { SupplierFormModalComponent } from './components/supplier-form-modal/supplier-form-modal.component';
 import { supplierSearchConfig, supplierTableActions, supplierTableColumns } from './constants/supplier.constant';
 import { Supplier } from './models/interface';
@@ -41,8 +42,8 @@ export class SupplierManagementComponent implements OnInit {
   protected readonly supplierSearchConfig: SearchConfig = supplierSearchConfig;
 
   protected readonly statusConfig: StatusConfig = {
-    Active: { color: '#10b981', backgroundColor: '#d1fae5' },
-    Inactive: { color: '#ef4444', backgroundColor: '#fee2e2' }
+    Active: STATUS_COLORS.ACTIVE,
+    Inactive: STATUS_COLORS.INACTIVE
   };
 
   ngOnInit() {
@@ -102,6 +103,11 @@ export class SupplierManagementComponent implements OnInit {
   }
 
   protected onPageChange(event: any) {
-    console.log('Page changed:', event);
+    this.supplierManagementService.currentPage = event.pageIndex;
+    this.supplierManagementService.currentPageSize = event.pageSize;
+    this.supplierManagementService.getSuppliers({
+      useCache: false,
+      showLoader: true
+    });
   }
 }

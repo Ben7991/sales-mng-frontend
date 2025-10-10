@@ -1,6 +1,8 @@
 import {TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
 import {SearchConfig} from '@shared/components/search/interface';
 
+export const USERS_PAGE_SIZE = 25;
+
 const roleMap: Record<string, string> = {
   ADMIN: 'Admin',
   SALES_PERSON: 'Sales Person',
@@ -29,7 +31,7 @@ export const userSearchConfig: SearchConfig = {
   placeholder: 'Search users by name or email',
   searchFields: ['name', 'email'],
   appearance: 'outline',
-  debounceTime: 300,
+  debounceTime: 600,
   caseSensitive: false,
   minLength: 0,
 };

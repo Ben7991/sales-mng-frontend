@@ -1,0 +1,36 @@
+<div class="image-edit-container">
+  <div class="modal-header">
+    <h2>Edit Product Image</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <p class="product-name">{{ data.productName }}</p>
+    
+    <app-image-upload
+      label="Select new product image"
+      [existingImageUrl]="existingImageUrl"
+      (fileSelected)="onFileSelected($event)"
+      (uploadError)="onFileError($event)"
+    />
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      text="Cancel"
+      variant="outlined"
+      type="button"
+      (click)="onCancel()"
+    />
+    <app-button
+      text="Update Image"
+      variant="filled"
+      type="button"
+      (click)="onSubmit()"
+      [disabled]="!selectedFile()"
+      [isLoading]="isSubmitting()"
+    />
+  </div>
+</div>

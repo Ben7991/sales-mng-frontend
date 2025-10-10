@@ -54,4 +54,12 @@ export class SearchComponent implements OnInit {
     this.searchControl.setValue('');
     this.searchCleared.emit();
   }
+
+  protected getContainerWidth(): string {
+    if (this.config.width) {
+      return this.config.width;
+    }
+    
+    return '300px';
+  }
 }

@@ -9,7 +9,7 @@ import {
   signal,
   ViewChild
 } from '@angular/core';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {
   MatCell,
@@ -32,6 +32,7 @@ import {MatCheckbox} from '@angular/material/checkbox';
 import {MatIconButton} from '@angular/material/button';
 import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {PaginatorComponent} from '@shared/components/paginator/paginator.component';
 
 @Component({
   selector: 'app-table',
@@ -56,15 +57,14 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     MatIconButton,
     MatSortHeader,
     TitleCasePipe,
-    MatPaginator,
-    MatProgressSpinner
+    MatProgressSpinner,
+    PaginatorComponent
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent implements AfterViewInit {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   columns = input<TableColumn[]>([]);
@@ -73,14 +73,11 @@ export class TableComponent implements AfterViewInit {
   showCheckboxes = input(true);
   showPagination = input(true);
   pageSize = input(0);
+  currentPage = input<number>(0);
   totalItems = input<number | undefined>(0)
-  pageSizeOptions = input([]);
+  pageSizeOptions = input<number[]>([]);
   actions = input<TableAction[]>([]);
-  statusConfig = input<StatusConfig>({
-    ACTIVE: { color: '#10b981', backgroundColor: '#d1fae5' },
-    QUIT: { color: '#f59e0b', backgroundColor: '#fef3c7' },
-    FIRED: { color: '#ef4444', backgroundColor: '#fee2e2' }
-  });
+  statusConfig = input.required<StatusConfig>();
 
 
   selectionChange = output<any[]>();
@@ -134,9 +131,6 @@ export class TableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.showPagination()) {
-      this.dataSource().paginator = this.paginator;
-    }
     this.dataSource().sort = this.sort;
   }
 
