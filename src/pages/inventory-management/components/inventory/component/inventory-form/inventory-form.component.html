@@ -1,0 +1,209 @@
+<div class="inventory-form-container">
+  <div class="header">
+    <h3>Restock Product</h3>
+  </div>
+
+  <form [formGroup]="inventoryForm" (ngSubmit)="onSubmit()" class="inventory-form">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Product name</mat-label>
+      <mat-select
+        formControlName="productId"
+        placeholder="Select a product"
+        [class.error]="isFieldInvalid('productId')"
+        [disabled]="isLoadingProducts()"
+      >
+        @if (isLoadingProducts()) {
+          <mat-option disabled>Loading products...</mat-option>
+        } @else if (availableProducts().length === 0) {
+          <mat-option disabled>No products available</mat-option>
+        } @else {
+          @for (product of availableProducts(); track product.value) {
+            <mat-option [value]="product.value">
+              {{ product.label }}
+            </mat-option>
+          }
+        }
+      </mat-select>
+      @if (isFieldInvalid('productId')) {
+        <mat-error>Product is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Unit price (retail)</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="unitPriceRetail"
+        placeholder="Enter unit price"
+        [class.error]="isFieldInvalid('unitPriceRetail')"
+      />
+      @if (isFieldInvalid('unitPriceRetail')) {
+        <mat-error>Unit price is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Unit price (wholesale)</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="unitPriceWholesale"
+        placeholder="Enter wholesale unit price"
+        [class.error]="isFieldInvalid('unitPriceWholesale')"
+      />
+      @if (isFieldInvalid('unitPriceWholesale')) {
+        <mat-error>Wholesale unit price is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Special price (box)</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="specialPriceBox"
+        placeholder="Enter special price per box"
+        [class.error]="isFieldInvalid('specialPriceBox')"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Wholesale price (box)</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="wholesalePriceBox"
+        placeholder="Enter wholesale price per box"
+        [class.error]="isFieldInvalid('wholesalePriceBox')"
+      />
+      @if (isFieldInvalid('wholesalePriceBox')) {
+        <mat-error>Wholesale box price is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Total pieces</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="totalPieces"
+        placeholder="Enter total pieces"
+        [class.error]="isFieldInvalid('totalPieces')"
+      />
+      @if (isFieldInvalid('totalPieces')) {
+        <mat-error>Total pieces is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>No. of boxes</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="numberOfBoxes"
+        placeholder="Enter number of boxes"
+        [class.error]="isFieldInvalid('numberOfBoxes')"
+      />
+
+      @if (isEditMode()) {
+        <span matSuffix>
+      <button
+        mat-icon-button
+        matTooltip="Adds this number to the remaining boxes."
+        matTooltipPosition="above"
+        type="button"
+      >
+        <mat-icon>info_outline</mat-icon>
+      </button>
+    </span>
+      }
+
+      @if (isFieldInvalid('numberOfBoxes')) {
+        <mat-error>Number of boxes is required</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- MIN THRESHOLD FIELD -->
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Min threshold</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="minThreshold"
+        placeholder="Enter minimum threshold"
+        [class.error]="isFieldInvalid('minThreshold')"
+      />
+
+      <!-- 💡 FIX 2: Wrap the button in <mat-suffix> -->
+      <span matSuffix>
+    <button
+      mat-icon-button
+      matTooltip="Inventory level at which a restock notification is triggered."
+      matTooltipPosition="above"
+      type="button"
+    >
+      <mat-icon>info_outline</mat-icon>
+    </button>
+  </span>
+
+      @if (isFieldInvalid('minThreshold')) {
+        <mat-error>Minimum threshold is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field supplier-field">
+      <mat-label>Supplier</mat-label>
+      <mat-select
+        formControlName="supplier"
+        placeholder="Select supplier"
+        [class.error]="isFieldInvalid('supplier')"
+        [disabled]="isLoadingSuppliers()"
+      >
+        @if (isLoadingSuppliers()) {
+          <mat-option disabled>Loading suppliers...</mat-option>
+        } @else if (availableSuppliers().length === 0) {
+          <mat-option disabled>No active suppliers available</mat-option>
+        } @else {
+          @for (supplier of availableSuppliers(); track supplier.value) {
+            <mat-option [value]="supplier.value">
+              {{ supplier.label }}
+            </mat-option>
+          }
+        }
+      </mat-select>
+      @if (isFieldInvalid('supplier')) {
+        <mat-error>Supplier is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field description-field">
+      <mat-label>Description (optional)</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        placeholder="Enter product description"
+        rows="4"
+      ></textarea>
+    </mat-form-field>
+  </form>
+
+  <div class="form-actions">
+    <app-button
+      variant="outlined"
+      type="button"
+      (click)="onCancel()"
+      class="cancel-button"
+      text="Cancel"
+    />
+
+    <app-button
+      text="Restock Product"
+      type="submit"
+      [disabled]="inventoryForm.invalid || isSubmitting()"
+      [isLoading]="isSubmitting()"
+      class="submit-button"
+      (click)="onSubmit()"
+    />
+  </div>
+</div>

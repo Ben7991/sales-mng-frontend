@@ -1,0 +1,97 @@
+.inventory-form-container {
+  padding: 5%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow-x: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+}
+
+.inventory-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.supplier-field,
+.description-field {
+  grid-column: span 2;
+}
+
+.min-threshold-field {
+  .info-icon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancel-button {
+  width: 30%;
+  color: #666;
+  border-color: #ddd;
+}
+
+.submit-button {
+  min-width: 150px;
+}
+
+.error {
+  border-color: #f44336 !important;
+}
+
+/* Responsive adjustment for small screens */
+@media (max-width: 768px) {
+  .inventory-form {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+
+  .supplier-field,
+  .description-field {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .submit-button,
+  .cancel-button {
+    width: 100%;
+  }
+}
