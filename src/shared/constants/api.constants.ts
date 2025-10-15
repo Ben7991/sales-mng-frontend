@@ -31,6 +31,13 @@ export const supplierContactDeletionUrl =
     (supplierId: number, phoneId: number) => `${environment.serverUrl}/suppliers/${supplierId}/phone/${phoneId}`;
 
 
+// Inventory
+export const getInventoryUrl = `${environment.serverUrl}/products/stocks`
+export const addInventoryUrl =  `${environment.serverUrl}/products/restock`
+export const getStockHistoryUrl = `${environment.serverUrl}/products/restock-history`
+export const updateInventoryUrl = (inventoryId: number): string =>
+  `${environment.serverUrl}/products/restock/${inventoryId}`;
+
 /* PRODUCTS & CATEGORIES */
 export const getCategoriesUrl =
     (limit: number, page: number, query: string) => `${environment.serverUrl}/categories?perPage=${limit}&page=${page}&q=${query}`;
@@ -47,7 +54,7 @@ export const updateProductUrl =
 export const changeProductImageUrl =
     (id: number) => `${environment.serverUrl}/products/${id}/change-image`;
 
-export const productLiveSearchUrl = 
+export const productLiveSearchUrl =
     (query: string) => `${environment.serverUrl}/products/live-search?q=${query}`;
 
 
