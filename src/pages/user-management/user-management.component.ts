@@ -103,13 +103,15 @@ export class UserManagementComponent implements OnInit{
     if (event.action === 'edit') {
       this.openUserModal(event.item);
     } else if (event.action === 'change status') {
-      const modalRef = this.modalService.openCustomModal(ChangeStatusModalComponent, {
+      const statuses = ['ACTIVE', 'FIRED', 'QUIT'];
+      this.modalService.openCustomModal(ChangeStatusModalComponent, {
         width: '50%',
         maxWidth: '90vw',
-        data: { currentStatus: event.item.status }
-      });
-
-      modalRef.afterClosed().subscribe((newStatus: UserAccountStatus) => {
+        data: {
+          title: 'Change User Status',
+          currentStatus: event.item.status,
+          availableStatuses: statuses
+        }}).afterClosed().subscribe((newStatus: UserAccountStatus) => {
         if (newStatus && newStatus !== event.item.status) {
           this.userManagementService.changeUserStatusAndRefresh(event.item.id, newStatus);
         }
