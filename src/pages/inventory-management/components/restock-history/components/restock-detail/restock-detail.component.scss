@@ -1,0 +1,84 @@
+.modal-container {
+  padding: 24px;
+  background: white;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s;
+  padding: 0;
+
+  &:hover {
+    color: #374151;
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 30px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1f2937;
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280;
+  min-height: 1.25rem;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.description-field {
+  margin-top: 10px;
+}
+
+.description-text {
+  font-weight: 400;
+  color: #374151;
+  line-height: 1.4;
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .full-width {
+    grid-column: span 1;
+  }
+}
