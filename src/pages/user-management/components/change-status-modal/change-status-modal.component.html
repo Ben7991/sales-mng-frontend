@@ -1,10 +1,10 @@
 <div class="container">
-  <h3 >Change User Status</h3>
-  <mat-dialog-content>
-    <mat-radio-group [(ngModel)]="selectedStatus">
+  <h3 class="modal-title">{{ data.title }}</h3>
+  <mat-dialog-content class="dialog-content">
+    <mat-radio-group [(ngModel)]="selectedStatus" class="status-radio-group">
       @for (status of statuses; track $index) {
-        <mat-radio-button [value]="status">
-          {{ status }}
+        <mat-radio-button [value]="status" class="status-option">
+          {{ getCleanStatus(status) | titlecase }}
         </mat-radio-button>
       }
     </mat-radio-group>
@@ -22,3 +22,4 @@
     />
   </div>
 </div>
+

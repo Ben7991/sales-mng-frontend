@@ -1,44 +1,49 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogContent, MatDialogRef} from '@angular/material/dialog';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {FormsModule} from '@angular/forms';
-import {NgForOf} from '@angular/common';
-import {MatButton} from '@angular/material/button';
-import {UserAccountStatus} from '@shared/models/types';
 import {ButtonComponent} from '@shared/components/button/button.component';
+import {CommonModule, TitleCasePipe} from '@angular/common';
+
+export type StatusKey = string;
+
+export interface ChangeStatusModalData {
+  title: string;
+  currentStatus: StatusKey;
+  availableStatuses: StatusKey[];
+}
 
 @Component({
   selector: 'app-change-status-modal',
+  standalone: true,
   imports: [
-    MatDialogTitle,
     MatDialogContent,
     MatRadioGroup,
     FormsModule,
     MatRadioButton,
-    NgForOf,
-    MatDialogActions,
-    MatButton,
-    ButtonComponent
+    ButtonComponent,
+    CommonModule,
+    TitleCasePipe
   ],
   templateUrl: './change-status-modal.component.html',
   styleUrl: './change-status-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChangeStatusModalComponent {
-  statuses: UserAccountStatus[] = ['ACTIVE', 'FIRED', 'QUIT'];
-  selectedStatus!: UserAccountStatus;
+
+  public statuses: StatusKey[];
+  public selectedStatus: StatusKey;
 
   constructor(
     private dialogRef: MatDialogRef<ChangeStatusModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { currentStatus: UserAccountStatus }
+    @Inject(MAT_DIALOG_DATA) public data: ChangeStatusModalData
   ) {
+    this.statuses = data.availableStatuses;
     this.selectedStatus = data.currentStatus;
+  }
+
+  getCleanStatus(status: string): string {
+    return status.replace(/_/g, ' ');
   }
 
   onCancel() {
@@ -51,5 +56,4 @@ export class ChangeStatusModalComponent {
     }
     this.dialogRef.close(this.selectedStatus);
   }
-
 }
