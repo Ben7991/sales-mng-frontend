@@ -5,15 +5,15 @@
       <mat-icon>close</mat-icon>
     </button>
   </div>
-  
+
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
     <div class="form-row">
       <div class="product-name-wrapper">
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Product name</mat-label>
-          <input 
-            matInput 
-            formControlName="name" 
+          <input
+            matInput
+            formControlName="name"
             placeholder="Enter unique product name"
             (input)="onProductNameInput($event)"
             (focus)="onInputFocus()"
@@ -40,7 +40,7 @@
               </div>
             } @else {
               @for (product of searchResults(); track product.id) {
-                <div 
+                <div
                   class="search-dropdown-item"
                   (mousedown)="onSelectSearchResult(product.name, $event)">
                   {{ product.name }}
@@ -50,10 +50,10 @@
           </div>
         }
       </div>
-  
+
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Product category</mat-label>
-        <mat-select formControlName="categoryId" placeholder="Select category">
+        <mat-select  formControlName="categoryId" placeholder="Select category">
           @for (category of data.categories; track category.id) {
             <mat-option [value]="category.id">
               {{ toTitleCase(category.name) }}

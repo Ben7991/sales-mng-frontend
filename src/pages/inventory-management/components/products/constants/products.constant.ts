@@ -3,7 +3,7 @@ import { TableAction, TableColumn } from '@shared/components/user-management/tab
 import { toTitleCase } from '@shared/utils/string.util';
 
 export const CATEGORIES_PAGE_SIZE = 40;
-export const PRODUCTS_PAGE_SIZE = 25;
+export const PRODUCTS_PAGE_SIZE = 10;
 
 export const categorySearchConfig: SearchConfig = {
   placeholder: 'Search category',
