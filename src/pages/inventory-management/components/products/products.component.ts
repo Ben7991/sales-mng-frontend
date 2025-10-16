@@ -57,8 +57,8 @@ export class ProductsComponent implements OnInit {
   protected readonly productsPageSize = PRODUCTS_PAGE_SIZE;
 
   protected readonly productStatusConfig: StatusConfig = {
-    'IN_USE': STATUS_COLORS.ACTIVE,
-    'DISCONTINUED': STATUS_COLORS.INACTIVE
+    'In Use': STATUS_COLORS.ACTIVE,
+    'Discontinued': STATUS_COLORS.INACTIVE,
   };
 
   ngOnInit(): void {

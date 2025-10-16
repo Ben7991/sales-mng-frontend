@@ -35,10 +35,21 @@ export class InventoryComponent implements OnInit{
     this.onload(this.inventoryService.currentInventoryPage ,this.inventoryService.currentInventoryPerPage  )
   }
   protected readonly inventoryStatusConfig: StatusConfig = {
+    'IN STOCK': STATUS_COLORS.ACTIVE,
+    'LOW STOCK': STATUS_COLORS.QUIT,
+    'OUT OF STOCK': STATUS_COLORS.INACTIVE,
+
+    'In Stock': STATUS_COLORS.ACTIVE,
+    'Low Stock': STATUS_COLORS.QUIT,
+    'Out Of Stock': STATUS_COLORS.INACTIVE,
+
+    'UNKNOWN': STATUS_COLORS.INACTIVE,
+
     'IN_STOCK': STATUS_COLORS.ACTIVE,
     'LOW_STOCK': STATUS_COLORS.QUIT,
-    'OUT_OF_STOCK': STATUS_COLORS.INACTIVE
+    'OUT_OF_STOCK': STATUS_COLORS.INACTIVE,
   };
+
 
   public get tableData(): Inventory[] {
     return this.inventoryService.Inventories$();

@@ -57,7 +57,7 @@ export const productTableColumns: TableColumn[] = [
     width: '20%',
     type: 'status',
     formatter: (value: string) => {
-      return value === 'IN_USE' ? 'In use' : 'Discontinued';
+      return value === 'IN_USE' ? 'In Use' : 'Discontinued';
     }
   }
 ];

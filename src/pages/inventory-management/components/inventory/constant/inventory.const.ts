@@ -53,7 +53,10 @@ export const inventoryTableColumns: TableColumn[] = [
     label: 'Status',
     type: 'status',
     sortable: true,
-    formatter: (value: any, row: any) => (row.status || 'UNKNOWN')
+    formatter: (value: any, row: any) => {
+      const status = row.status || 'UNKNOWN';
+      return String(status).replace(/_/g, ' ');
+    }
   }
 ];
 
