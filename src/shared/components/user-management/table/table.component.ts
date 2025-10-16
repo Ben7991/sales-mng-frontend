@@ -9,7 +9,7 @@ import {
   signal,
   ViewChild
 } from '@angular/core';
-import {PageEvent} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {
   MatCell,
@@ -21,8 +21,7 @@ import {
   MatHeaderRowDef,
   MatRow,
   MatRowDef,
-  MatTable,
-  MatTableDataSource
+  MatTable
 } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatIconModule} from '@angular/material/icon';
@@ -30,7 +29,7 @@ import {NgStyle, TitleCasePipe} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {MatIconButton} from '@angular/material/button';
-import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
+import {StatusConfig, TableAction, TableColumn} from './interface/interface';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {PaginatorComponent} from '@shared/components/paginator/paginator.component';
 
@@ -55,9 +54,8 @@ import {PaginatorComponent} from '@shared/components/paginator/paginator.compone
     MatRow,
     MatMenu,
     MatIconButton,
-    MatSortHeader,
-    TitleCasePipe,
     MatProgressSpinner,
+    MatSortHeader,
     PaginatorComponent
   ],
   templateUrl: './table.component.html',
@@ -65,6 +63,7 @@ import {PaginatorComponent} from '@shared/components/paginator/paginator.compone
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent implements AfterViewInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   columns = input<TableColumn[]>([]);
@@ -84,8 +83,8 @@ export class TableComponent implements AfterViewInit {
   actionClick = output<{ action: string; item: any }>();
   pageChange = output<PageEvent>();
 
-  private dataSource = signal(new MatTableDataSource<any>([]));
   private selection = signal(new SelectionModel<any>(true, []));
+  private titleCasePipe = new TitleCasePipe();
 
   displayedColumns = computed(() => {
     const cols: string[] = [];
@@ -105,25 +104,14 @@ export class TableComponent implements AfterViewInit {
 
   isAllSelected = computed(() => {
     const numSelected = this.selection().selected.length;
-    const numRows = this.dataSource().data.length;
-    return numSelected === numRows;
+    const numRows = this.data().length;
+    return numSelected === numRows && numRows > 0;
   });
 
   hasValue = computed(() => this.selection().hasValue());
-
-  isIndeterminate = computed(() => {
-    return this.hasValue() && !this.isAllSelected();
-  });
+  isIndeterminate = computed(() => this.hasValue() && !this.isAllSelected());
 
   constructor() {
-    // Effect to update data source when data changes
-    effect(() => {
-      const currentDataSource = this.dataSource();
-      currentDataSource.data = this.data();
-      this.dataSource.set(currentDataSource);
-    });
-
-    // Effect to update selection model and emit changes
     effect(() => {
       const selectedItems = this.selection().selected;
       this.selectionChange.emit(selectedItems);
@@ -131,7 +119,13 @@ export class TableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource().sort = this.sort;
+    if (this.sort) {
+      this.sort.sortChange.subscribe(() => {
+        if (this.paginator) {
+          this.paginator.pageIndex = 0;
+        }
+      });
+    }
   }
 
   toggleAllRows() {
@@ -140,7 +134,7 @@ export class TableComponent implements AfterViewInit {
     if (this.isAllSelected()) {
       currentSelection.clear();
     } else {
-      this.dataSource().data.forEach((row) => currentSelection.select(row));
+      this.data().forEach((row) => currentSelection.select(row));
     }
 
     this.selection.set(currentSelection);
@@ -176,12 +170,46 @@ export class TableComponent implements AfterViewInit {
     return {};
   }
 
-  getDataSource() {
-    return this.dataSource();
-  }
-
   getSelection() {
     return this.selection();
+  }
+
+  getCellValue(element: any, column: TableColumn): any {
+    if (column.formatter) {
+      return column.formatter(element[column.key], element);
+    }
+
+    if (column.key.includes('.')) {
+      return column.key.split('.').reduce((obj, key) => obj?.[key], element);
+    }
+
+    return element[column.key];
+  }
+
+  getStatusValue(element: any, column: TableColumn): string {
+    const value = this.getCellValue(element, column);
+    return value != null ? String(value) : '';
+  }
+
+  formatCellValue(element: any, column: TableColumn): string {
+    const value = this.getCellValue(element, column);
+
+    if (value == null) {
+      return '-';
+    }
+
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    if (typeof value === 'string') {
+      if (column.type === 'status') {
+        return this.titleCasePipe.transform(value);
+      }
+      return value;
+    }
+
+    return String(value);
   }
 
 }
