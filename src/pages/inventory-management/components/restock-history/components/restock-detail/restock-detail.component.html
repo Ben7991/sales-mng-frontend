@@ -1,0 +1,62 @@
+<div class="modal-container">
+  <div class="header-container">
+    <h2 class="title">Restock Order Details</h2>
+    <button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="detail-grid">
+    <!-- Row 1: Product Name & Unit Price (Retail) -->
+    <div class="detail-item">
+      <span class="label">Product Name</span>
+      <span class="value">{{ detailData.product.name | titlecase }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Unit price (retail)</span>
+      <span class="value">{{ formatCurrency(detailData.retailUnitPrice) }}</span>
+    </div>
+
+    <!-- Row 2: Unit Price (Wholesale) & Special Price (Box) -->
+    <div class="detail-item">
+      <span class="label">Unit price (wholesale)</span>
+      <span class="value">{{ formatCurrency(detailData.wholesaleUnitPrice) }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Special price (box)</span>
+      <span class="value">{{ detailData.specialPrice && detailData.specialPrice !== '0' ? formatCurrency(detailData.specialPrice) : 'N/A' }}</span>
+    </div>
+
+    <!-- Row 3: Wholesale Price (Box) & Total Pieces -->
+    <div class="detail-item">
+      <span class="label">Wholesale price (box)</span>
+      <span class="value">{{ formatCurrency(detailData.wholesalePrice) }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Total pieces</span>
+      <span class="value">{{ detailData.totalPieces }}</span>
+    </div>
+
+    <!-- Row 4: No. of boxes & Min threshold -->
+    <div class="detail-item">
+      <span class="label">No. of boxes</span>
+      <span class="value">{{ detailData.numberOfBoxes }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Min threshold</span>
+      <span class="value">{{ detailData.minimumThreshold }}</span>
+    </div>
+
+    <!-- Row 5: Supplier (Spanning both columns) -->
+    <div class="detail-item full-width">
+      <span class="label">Supplier</span>
+      <span class="value">{{ detailData.supplier.name | titlecase }} ({{ detailData.supplier.companyName | titlecase }})</span>
+    </div>
+
+    <!-- Row 6: Description (Spanning both columns) -->
+    <div class="detail-item full-width description-field">
+      <span class="label">Description</span>
+      <p class="value description-text">{{ detailData.description || 'No description provided.' }}</p>
+    </div>
+  </div>
+</div>

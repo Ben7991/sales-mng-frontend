@@ -56,27 +56,27 @@
       </button>
     </div>
 
-    
+
     <div formArrayName="phones">
         <div class="phones">
           @for (phone of phonesFormArray.controls; track $index) {
             <div class="phone-row">
               <mat-form-field appearance="outline" class="phone-input">
                 <mat-label>Phone {{ $index + 1 }}</mat-label>
-    
+
                 <input matInput [formControlName]="$index" placeholder="Enter phone number">
                 @if (phone.hasError('required')) {
                   <mat-error> Phone number is required </mat-error>
                 }
-    
+
                 @if (phone.hasError('pattern')) {
                   <mat-error>Please enter a valid phone number</mat-error>
                 }
               </mat-form-field>
-          
-              <button 
-                type="button" 
-                mat-icon-button 
+
+              <button
+                type="button"
+                mat-icon-button
                 (click)="removePhone($index)"
                 [disabled]="phonesFormArray.length <= 1"
                 class="remove-phone-btn">

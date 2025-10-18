@@ -4,7 +4,7 @@
       [config]="userSearchConfig"
       (searchTermChange)="onUserSearchTermChange($event)"
     />
-    
+
   <div class="filter-actions">
     <app-button
       text="Filter"
@@ -22,6 +22,8 @@
       <button mat-menu-item [matMenuTriggerFor]="statusMenu">
         Filter by status
       </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="filterStatus('')">Clear filter</button>
     </mat-menu>
 
     <!-- Role submenu -->
@@ -29,8 +31,6 @@
       <button mat-menu-item (click)="filterStatus('ADMIN')">Admin</button>
       <button mat-menu-item (click)="filterStatus('SALES_PERSON')">Sale Person</button>
       <button mat-menu-item (click)="filterStatus('PROCUREMENT_OFFICER')">Procurement Person</button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="filterStatus('')">Clear filter</button>
     </mat-menu>
 
     <!-- Status submenu -->
@@ -38,8 +38,6 @@
       <button mat-menu-item (click)="filterStatus('ACTIVE')" >Active</button>
       <button mat-menu-item (click)="filterStatus('QUIT')">Quit</button>
       <button mat-menu-item (click)="filterStatus('FIRED')">Fired</button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="filterStatus('')">Clear filter</button>
     </mat-menu>
 
     <app-button

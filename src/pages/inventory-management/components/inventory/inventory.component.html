@@ -1,3 +1,37 @@
 <div>
+  <div class="header-container">
+    <app-search
+      [config]="inventorySearchConfig"
+      (searchTermChange)="onUserSearchTermChange($event)"
+    />
+    <app-button
+      (click)="openModal()"
+      icon="assets/addIcon.svg"
+      [isIconButton]="true"
+      text="Restock"
+      [styles]="{ height: '40px',width: '140px' }"
+    />
+  </div>
+
+  @if (inventoryService.isLoadingInventory()) {
+    <div class="loader">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    <app-table
+      [data]="tableData"
+      [columns]="tableColumns"
+      [actions]="tableActions"
+      [loading]="inventoryService.isLoadingInventory()"
+      [showCheckboxes]="false"
+      [showPagination]="inventoryService.totalInventory$()>10"
+      [statusConfig]="inventoryStatusConfig"
+      [totalItems]="inventoryService.totalInventory$()"
+      [pageSize]="inventoryService.currentInventoryPerPage"
+      [currentPage]="inventoryService.currentInventoryPage"
+      (pageChange)="onPageChange($event)"
+      (actionClick)="onActionClick($event)" >
+    </app-table>
+  }
 
 </div>

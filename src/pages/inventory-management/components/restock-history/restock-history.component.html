@@ -1,3 +1,70 @@
-<div>
-  
+<div class="restock-history-page">
+  <div class="header-container">
+    <app-search
+      [config]="inventoryHistorySearchConfig"
+      (searchTermChange)="onUserSearchTermChange($event)"
+    />
+    <div class="filter-actions">
+      <app-button
+        text="Filter"
+        variant="outlined"
+        [matMenuTriggerFor]="filterMenu"
+        class="filter-button"
+        [styles]="{ height: '40px',width: '120px' }"
+      >
+        <mat-icon>expand_more</mat-icon>
+      </app-button>
+
+      <mat-menu #filterMenu="matMenu" class="popup-menu">
+        <button mat-menu-item [matMenuTriggerFor]="supplierMenu">
+          Filter by supplier
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="fetchHistoryData()">Clear filter</button>
+      </mat-menu>
+
+      <mat-menu #supplierMenu="matMenu" class="popup-menu submenu">
+        <div class="supplier-list-scroll-container">
+          @if (isLoadingSuppliers()) {
+            <button mat-menu-item disabled>Loading suppliers...</button>
+          } @else if (suppliers() && suppliers()!.length === 0) {
+            <button mat-menu-item disabled>No suppliers found</button>
+          } @else {
+            @for (supplier of suppliers() || []; track supplier.id) {
+              <button
+                mat-menu-item
+                (click)="filterBySupplier(supplier)"
+                [class.active]="activeSupplierId() === supplier.id"
+              >
+                {{ supplier.companyName }}
+              </button>
+            }
+          }
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+
+  @if (historyService.isLoadingHistory()) {
+    <div class="loader">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    <div class="table-wrapper mat-elevation-z1">
+      <app-table
+        [columns]="stockHistoryTableColumns"
+        [data]="historyData$()"
+        [loading]="isLoading$()"
+        [showPagination]="historyService.totalHistory$()>10"
+        [pageSize]="historyService.currentHistoryPerPage"
+        [totalItems]="historyService.totalHistory$()"
+        [currentPage]="historyService.currentHistoryPage"
+        [statusConfig]="inventoryHistoryStatusConfig"
+        [actions]="stockHistoryTableActions"
+        [showCheckboxes]="false"
+        (pageChange)="onPageChange($event)"
+        (actionClick)="onActionClick($event)"
+      />
+    </div>
+  }
 </div>

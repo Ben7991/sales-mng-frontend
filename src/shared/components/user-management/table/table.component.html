@@ -1,7 +1,6 @@
 <div class="table-container">
-  <!-- Show table when there's data -->
   @if (data().length > 0) {
-    <mat-table [dataSource]="getDataSource()" matSort class="mat-elevation-0">
+    <mat-table [dataSource]="data()" matSort class="mat-elevation-0">
       <!-- Checkbox Column -->
       @if (showCheckboxes()) {
         <ng-container matColumnDef="select">
@@ -23,13 +22,16 @@
       }
 
       <!-- Dynamic Columns -->
-      @for (column of columns(); track $index) {
+      @for (column of columns(); track column.key) {
         <ng-container [matColumnDef]="column.key">
           <mat-header-cell
             *matHeaderCellDef
-            [mat-sort-header]="column.sortable ? column.key : ''"
             [style.width]="column.width">
-            {{ column.label }}
+            @if (column.sortable) {
+              <span [mat-sort-header]="column.key">{{ column.label }}</span>
+            } @else {
+              <span>{{ column.label }}</span>
+            }
           </mat-header-cell>
 
           <mat-cell *matCellDef="let element" [style.width]="column.width">
@@ -37,14 +39,12 @@
               @case ('status') {
                 <span
                   class="status-chip"
-                  [ngStyle]="getStatusStyles(element[column.key.toLowerCase()])">
-                  {{ column.formatter ? column.formatter(element[column.key], element) : (element[column.key] | titlecase) }}
+                  [ngStyle]="getStatusStyles(getStatusValue(element, column))">
+                  {{ formatCellValue(element, column) }}
                 </span>
               }
               @default {
-                <span>
-                  {{ column.formatter ? column.formatter(element[column.key], element) : (element[column.key] | titlecase) }}
-                </span>
+                <span>{{ formatCellValue(element, column) }}</span>
               }
             }
           </mat-cell>
@@ -60,7 +60,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu" class="popup-menu">
-              @for (action of actions(); track $index) {
+              @for (action of actions(); track action.action) {
                 <button
                   mat-menu-item
                   (click)="onActionClick(action.action, element)">
@@ -92,8 +92,7 @@
   }
   @else if (loading()) {
     <div class="empty-state">
-      <mat-spinner>
-      </mat-spinner>
+      <mat-spinner></mat-spinner>
     </div>
   }
   @else {

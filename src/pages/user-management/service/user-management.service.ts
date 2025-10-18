@@ -34,7 +34,7 @@ export class UserManagementService {
     }
 
     this.isLoadingUsers.set(showLoader ?? true);
-    
+
     let httpParams = new HttpParams();
     httpParams = httpParams.set('perPage', this.currentPageSize.toString());
     httpParams = httpParams.set('page', this.currentPage.toString());

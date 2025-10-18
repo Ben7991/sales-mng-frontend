@@ -1,7 +1,7 @@
 import { TableColumn, TableAction } from '@shared/components/user-management/table/interface/interface';
 import { SearchConfig } from '@shared/components/search/interface';
 
-export const SUPPLIERS_PAGE_SIZE = 25;
+export const SUPPLIERS_PAGE_SIZE = 10;
 
 export const supplierTableColumns: TableColumn[] = [
   {
@@ -32,7 +32,10 @@ export const supplierTableColumns: TableColumn[] = [
     key: 'status',
     label: 'Status',
     sortable: true,
-    type: 'status'
+    type: 'status',
+    formatter: (value: any) => value
+      ? value.toString().replace(/_/g, ' ')
+      : 'Unknown'
   }
 ];
 
