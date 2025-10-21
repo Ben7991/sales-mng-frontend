@@ -6,9 +6,9 @@
   width: 700px;
   max-width: 90vw;
   max-height: 90vh;
-  overflow-x: hidden;
   background-color: #ffffff;
   border-radius: 30px;
+  overflow-x: hidden;
 }
 
 .modal-header {
@@ -152,7 +152,8 @@ table {
 }
 
 button[matStepperNext],
-button[matStepperPrevious] ,.submit{
+button[matStepperPrevious],
+.submit {
   white-space: nowrap;
   border-radius: 8px;
   font-weight: 500;
@@ -162,7 +163,8 @@ button[matStepperPrevious] ,.submit{
   width: 140px;
 }
 
-button[matStepperNext] ,.submit{
+button[matStepperNext],
+.submit {
   border: none;
   padding: 10px;
 }
@@ -244,5 +246,24 @@ button[matStepperPrevious] {
       background-color: #ffffff !important;
       border-radius: 30px !important;
     }
+  }
+}
+
+.product-name-wrapper,
+.customer-name-container {
+  position: relative;
+  flex: 1;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  app-live-search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    margin-top: 4px;
   }
 }

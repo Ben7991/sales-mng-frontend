@@ -1,9 +1,7 @@
-// create-order-modal.component.ts - UPDATED
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {MatStep, MatStepper, MatStepperNext, MatStepperPrevious} from '@angular/material/stepper';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormField} from '@angular/material/form-field';
-import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
 import {MatInput} from '@angular/material/input';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatDialogRef} from '@angular/material/dialog';
@@ -17,8 +15,23 @@ import {
   MatTable
 } from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
-import {ProductI} from '../../models/interface';
+import {ProductI, CreateOrderRequest, orderSale, paymentMode} from '../../models/interface';
 import {ButtonComponent} from '@shared/components/button/button.component';
+import {LiveSearchDropdownComponent} from '@shared/components/live-search-dropdown/live-search-dropdown.component';
+import {LiveSearchItem} from '@shared/models/interface';
+import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
+import {
+  ProductsManagementService
+} from '../../../inventory-management/components/products/services/products-management.service';
+import {catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap, tap} from 'rxjs';
+import {CustomerManagementService} from '../../../customers/services/customer-management.service';
+import {SalesService} from '../../service/sales-service.service';
+
+const LIVE_SEARCH_DEBOUNCE_TIME = 300;
+
+interface AddedProductWithStock extends ProductI {
+  stockId: number;
+}
 
 @Component({
   selector: 'app-create-order-modal',
@@ -27,9 +40,6 @@ import {ButtonComponent} from '@shared/components/button/button.component';
     MatStep,
     ReactiveFormsModule,
     MatFormField,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
     MatInput,
     MatButton,
     MatIconModule,
@@ -47,7 +57,8 @@ import {ButtonComponent} from '@shared/components/button/button.component';
     MatStepperNext,
     MatStepperPrevious,
     MatSelectModule,
-    ButtonComponent
+    ButtonComponent,
+    LiveSearchDropdownComponent
   ],
   templateUrl: './create-order-modal.component.html',
   styleUrl: './create-order-modal.component.scss',
@@ -56,39 +67,182 @@ import {ButtonComponent} from '@shared/components/button/button.component';
 export class CreateOrderModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<CreateOrderModalComponent>);
+  private readonly productsService = inject(ProductsManagementService);
+  private readonly snackbarService = inject(SnackbarService);
+  private readonly customerService = inject(CustomerManagementService);
+  private readonly salesService = inject(SalesService);
+
 
   productsForm!: FormGroup;
   customerForm!: FormGroup;
   paymentForm!: FormGroup;
 
-  addedProducts: ProductI[] = [];
-  displayedColumns = ['product', 'qty', 'price', 'actions'];
-  orderTypes = ['retail', 'wholesale', 'online'];
-  selectedOrderType = '';
-
-  showExistingProducts = false;
-  selectedExistingProduct: { id?: string; name: any; price?: number; } | null = null;
-
-  existingProducts: ({ id: string; name: string; price: number })[] = [
-    { id: '1', name: 'Paper cup small', price: 50 },
-    { id: '2', name: 'Paper cup medium', price: 75 },
-    { id: '3', name: 'Paper cup large', price: 100 },
-    { id: '4', name: 'Paper roll', price: 125 }
+  addedProducts: AddedProductWithStock[] = [];
+  displayedColumns = ['product', 'qty', 'actions'];
+  orderTypes: { value: orderSale; label: string }[] = [
+    { value: 'RETAIL', label: 'Retail' },
+    { value: 'WHOLESALE', label: 'Wholesale' },
+    {value: 'SPECIAL_PURCHASE', label:'Special Order' }
   ];
+  selectedOrderType: orderSale | '' = '';
 
-  filteredProducts: any[] = [];
+  // Live search properties
+  protected readonly searchResults = signal<LiveSearchItem[]>([]);
+  protected readonly isSearching = signal(false);
+  protected readonly showSearchDropdown = signal(false);
+  protected readonly productNotFound = signal(false);
+  private readonly searchSubject = new Subject<string>();
+  private selectedProduct: any = null;
+
+  // Customer live search
+  protected readonly customerSearchResults = signal<LiveSearchItem[]>([]);
+  protected readonly isCustomerSearching = signal(false);
+  protected readonly showCustomerSearchDropdown = signal(false);
+  private readonly customerSearchSubject = new Subject<string>();
+
 
   ngOnInit() {
     this.initForms();
-    this.filteredProducts = this.existingProducts;
+    this.setupProductSearch();
     this.setupProductNameListener();
+    this.setupCustomerSearch();
+    this.setupCustomerNameListener();
+
   }
 
+
+  private setupProductSearch() {
+    this.searchSubject.pipe(
+      debounceTime(LIVE_SEARCH_DEBOUNCE_TIME),
+      distinctUntilChanged(),
+      tap(() => {
+        this.searchResults.set([]);
+        this.showSearchDropdown.set(false);
+        this.productNotFound.set(false);
+      }),
+      switchMap((query) => {
+        if (!query || query.trim().length < 2) {
+          this.isSearching.set(false);
+          return of({data: []});
+        }
+
+        this.isSearching.set(true);
+        return this.productsService.searchProducts(query.trim()).pipe(
+          catchError(() => {
+            this.isSearching.set(false);
+            return of({data: []});
+          })
+        );
+      })
+    ).subscribe((response) => {
+      this.isSearching.set(false);
+      const currentQuery = this.productsForm.get('productName')?.value?.trim();
+
+      if (currentQuery && currentQuery.length >= 2) {
+        if (response.data.length === 0) {
+          this.productNotFound.set(true);
+        } else {
+          this.searchResults.set(response.data);
+          this.showSearchDropdown.set(true);
+        }
+      }
+    });
+  }
+
+  setupProductNameListener() {
+    this.productsForm.get('productName')?.valueChanges.subscribe(value => {
+      if (this.selectedProduct && value !== this.selectedProduct.name) {
+        this.selectedProduct = null;
+      }
+
+      if (value && value.length >= 2) {
+        this.searchSubject.next(value);
+      } else {
+        this.searchResults.set([]);
+        this.showSearchDropdown.set(false);
+        this.productNotFound.set(false);
+      }
+    });
+  }
+
+  protected onProductNameInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchSubject.next(input.value);
+  }
+
+  protected onSelectSearchResult(item: LiveSearchItem): void {
+    this.productsForm.get('productName')?.setValue(item.name);
+    this.showSearchDropdown.set(false);
+    this.productNotFound.set(false);
+    this.selectedProduct = item;
+  }
+
+  protected onInputFocus(): void {
+    const currentValue = this.productsForm.get('productName')?.value || '';
+    if (currentValue.trim().length >= 2) {
+      if (this.searchResults().length > 0) {
+        this.showSearchDropdown.set(true);
+      } else if (this.productNotFound()) {
+      }
+    }
+  }
+
+  protected onInputBlur(): void {
+    setTimeout(() => {
+      this.showSearchDropdown.set(false);
+    }, 200);
+  }
+
+  private setupCustomerSearch() {
+    this.customerSearchSubject.pipe(
+      debounceTime(LIVE_SEARCH_DEBOUNCE_TIME),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query || query.trim().length < 2) {
+          this.showCustomerSearchDropdown.set(false);
+          return of({data: []});
+        }
+
+        this.isCustomerSearching.set(true);
+        this.showCustomerSearchDropdown.set(true);
+
+        return this.customerService.searchCustomers(query.trim()).pipe(
+          catchError(() => {
+            this.isCustomerSearching.set(false);
+            this.showCustomerSearchDropdown.set(false);
+            return of({data: []});
+          })
+        );
+      })
+    ).subscribe(response => {
+      this.isCustomerSearching.set(false);
+      const results: LiveSearchItem[] = response.data.map((customer: any) => ({
+        id: customer.id.toString(),
+        name: customer.name
+      }));
+      this.customerSearchResults.set(results);
+      this.showCustomerSearchDropdown.set(results.length > 0);
+    });
+  }
+
+  private setupCustomerNameListener() {
+    this.customerForm.get('customerName')?.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(value => {
+        if (value && value.trim().length >= 2) {
+          this.customerSearchSubject.next(value);
+        } else {
+          this.customerSearchResults.set([]);
+          this.showCustomerSearchDropdown.set(false);
+        }
+      });
+  }
+
+
   initForms() {
-    // Make the products form optional since we're checking products array instead
     this.productsForm = this.fb.group({
-      productName: [''],  // Removed required validator
-      quantity: ['', Validators.min(1)],  // Removed required validator
+      productName: [''],
+      quantity: ['', [Validators.required, Validators.min(1)]],
     });
 
     this.customerForm = this.fb.group({
@@ -101,86 +255,139 @@ export class CreateOrderModalComponent implements OnInit {
     });
   }
 
-  setupProductNameListener() {
-    this.productsForm.get('productName')?.valueChanges.subscribe(value => {
-      if (value && value.length > 0) {
-        this.showExistingProducts = true;
-        this.filteredProducts = this.existingProducts.filter(p =>
-          p.name.toLowerCase().includes(value.toLowerCase())
-        );
-      } else {
-        this.showExistingProducts = false;
-        this.filteredProducts = this.existingProducts;
-      }
-    });
+  protected onCustomerInputBlur() {
+    setTimeout(() => {
+      this.showCustomerSearchDropdown.set(false);
+    }, 200);
   }
 
-  selectExistingProduct(product: { id?: string; name: any; price?: number; } | null) {
-    this.selectedExistingProduct = product;
-    this.productsForm.patchValue({
-      productName: product!.name
-    });
-    this.showExistingProducts = false;
-  }
-
-  onProductSelect(productName: string) {
-    const product = this.existingProducts.find(p => p.name === productName);
-    if (product) {
-      this.selectedExistingProduct = product;
-    }
+  protected onCustomerSelected(item: LiveSearchItem) {
+    this.customerForm.get('customerName')?.setValue(item.name);
+    this.showCustomerSearchDropdown.set(false);
   }
 
   addProduct() {
     const productName = this.productsForm.get('productName')?.value;
     const quantity = this.productsForm.get('quantity')?.value;
 
-    // Validate that both fields have values before adding
-    if (productName && quantity && quantity > 0) {
-      const product: ProductI = {
-        name: productName,
-        quantity: quantity,
-        orderType: this.selectedOrderType,
-        price: this.selectedExistingProduct?.price || 125
-      };
-
-      this.addedProducts = [...this.addedProducts, product];
-
-      // Reset form
-      this.productsForm.patchValue({
-        productName: '',
-        quantity: '',
-      });
-      this.selectedExistingProduct = null;
-      this.showExistingProducts = false;
+    if (!productName || productName.trim().length === 0) {
+      this.snackbarService.showError('Please enter a product name');
+      return;
     }
+
+    if (!quantity || quantity <= 0) {
+      this.snackbarService.showError('Please enter a valid quantity');
+      return;
+    }
+
+    if (!this.selectedProduct) {
+      this.snackbarService.showError('Product does not exist. Please check if product name is correct');
+      return;
+    }
+
+    if (!this.selectedProduct.id) {
+      this.snackbarService.showError('Invalid product selected');
+      return;
+    }
+
+    const existingProduct = this.addedProducts.find(p => p.stockId === this.selectedProduct.id);
+    if (existingProduct) {
+      this.snackbarService.showError('This product is already added to the order');
+      return;
+    }
+
+    const product: AddedProductWithStock = {
+      stockId: this.selectedProduct.id,
+      name: this.selectedProduct.name,
+      quantity: quantity,
+      price: this.selectedProduct.price || 0,
+      imagePath: this.selectedProduct.imagePath,
+      status: this.selectedProduct.status,
+      category: this.selectedProduct.category
+    };
+
+    this.addedProducts = [...this.addedProducts, product];
+
+    this.productsForm.patchValue({
+      productName: '',
+      quantity: '',
+    });
+    this.selectedProduct = null;
+    this.searchResults.set([]);
+    this.productNotFound.set(false);
   }
 
   removeProduct(index: number) {
     this.addedProducts = this.addedProducts.filter((_, i) => i !== index);
   }
 
-  selectOrderType(type: string) {
+  selectOrderType(type: orderSale) {
     this.selectedOrderType = type;
   }
 
-  // Getter to check if we can proceed to next step
-  canProceedToCustomer(): boolean {
-    return this.addedProducts.length > 0 && this.selectedOrderType !== '';
-  }
-
   submitOrder() {
-    if (this.addedProducts.length > 0 && this.customerForm.valid && this.paymentForm.valid) {
-      const orderData = {
-        products: this.addedProducts,
-        customer: this.customerForm.value,
-        payment: this.paymentForm.value,
-        orderType: this.selectedOrderType
-      };
-
-      console.log(orderData);
-      this.dialogRef.close(orderData);
+    if (this.addedProducts.length === 0) {
+      this.snackbarService.showError('Please add at least one product to the order');
+      return;
     }
+
+    if (!this.selectedOrderType) {
+      this.snackbarService.showError('Please select an order type');
+      return;
+    }
+
+    if (!this.customerForm.valid) {
+      this.snackbarService.showError('Please enter customer name');
+      return;
+    }
+
+    if (!this.paymentForm.valid) {
+      this.snackbarService.showError('Please complete payment details');
+      return;
+    }
+
+    const paymentMethodMap: { [key: string]: paymentMode } = {
+      'cash': 'CASH',
+      'mobile': 'MOBILE_MONEY',
+      'bank': 'BANK_TRANSFER',
+      'card': 'CHEQUE'
+    };
+
+    const paymentMethod = this.paymentForm.get('paymentMethod')?.value;
+    const mappedPaymentMethod = paymentMethodMap[paymentMethod] ;
+
+    const orderRequest: CreateOrderRequest = {
+      orderItems: this.addedProducts.map(product => ({
+        stockId: product.stockId,
+        quantity: product.quantity!
+      })),
+      orderSale: this.selectedOrderType as orderSale,
+      paymentMode: mappedPaymentMethod,
+      amountPaid: this.paymentForm.get('amountPaid')?.value,
+      customer: this.customerForm.get('customerName')?.value
+    };
+
+    this.salesService.createOrder(orderRequest).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+      }
+    });
   }
+
+  protected goToCustomerStep(stepper: any) {
+    if (this.addedProducts.length === 0) {
+      this.snackbarService.showError('Please add at least one product to the order');
+      return;
+    }
+
+    if (!this.selectedOrderType) {
+      this.snackbarService.showError('Please select an order type before proceeding');
+      return;
+    }
+
+    stepper.next();
+  }
+
 
   closeDialog() {
     this.dialogRef.close();

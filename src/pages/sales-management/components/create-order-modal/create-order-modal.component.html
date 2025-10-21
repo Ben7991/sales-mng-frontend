@@ -15,21 +15,29 @@
 
           <form [formGroup]="productsForm" class="product-form">
             <div class="form-row">
-              <mat-form-field appearance="outline" class="flex-1">
-                <mat-label>Enter product name</mat-label>
-                <input
-                  matInput
-                  formControlName="productName"
-                  [matAutocomplete]="auto"
-                  placeholder="Enter product name">
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductSelect($event.option.value)">
-                  @for (product of filteredProducts;track $index){
-                    <mat-option [value]="product.name">
-                      {{ product?.name }}
-                    </mat-option>
+              <div class="product-name-wrapper">
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Enter product name</mat-label>
+                  <input
+                    matInput
+                    formControlName="productName"
+                    placeholder="Enter product name"
+                    (input)="onProductNameInput($event)"
+                    (focus)="onInputFocus()"
+                    (blur)="onInputBlur()">
+                  @if (productNotFound()) {
+                    <mat-error>Product does not exist</mat-error>
                   }
-                </mat-autocomplete>
-              </mat-form-field>
+                </mat-form-field>
+
+                <app-live-search-dropdown
+                  [show]="showSearchDropdown()"
+                  [isSearching]="isSearching()"
+                  [searchResults]="searchResults()"
+                  headerText="Available products"
+                  (itemSelected)="onSelectSearchResult($event)"
+                />
+              </div>
 
               <mat-form-field appearance="outline" class="quantity-field">
                 <mat-label>Enter Quantity</mat-label>
@@ -88,9 +96,9 @@
                 @for (type of orderTypes;track $index){
                   <button
                     mat-button
-                    [class.active]="selectedOrderType === type"
-                    (click)="selectOrderType(type)">
-                    {{ type }}
+                    [class.active]="selectedOrderType === type.value"
+                    (click)="selectOrderType(type.value)">
+                    {{ type.label.toLowerCase() }}
                   </button>
                 }
               </div>
@@ -107,10 +115,11 @@
               text="Cancel"
             />
             <button
+              class="submit"
               matButton="filled"
               color="primary"
-              matStepperNext
-              [disabled]="addedProducts.length === 0">
+              [disabled]="addedProducts.length === 0 || !selectedOrderType"
+              (click)="goToCustomerStep(stepper)">
               Next Step
             </button>
           </div>
@@ -121,17 +130,33 @@
       <mat-step label="Customer">
         <div class="step-content">
           <h3>Select Customer</h3>
+
           <form [formGroup]="customerForm">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Customer Name</mat-label>
-              <input matInput formControlName="customerName" placeholder="Enter customer name">
-            </mat-form-field>
+            <div class="customer-name-container">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Customer Name</mat-label>
+                <input
+                  matInput
+                  formControlName="customerName"
+                  placeholder="Enter customer name"
+                  (blur)="onCustomerInputBlur()">
+              </mat-form-field>
+
+              <app-live-search-dropdown
+                [show]="showCustomerSearchDropdown()"
+                [isSearching]="isCustomerSearching()"
+                [searchResults]="customerSearchResults()"
+                headerText="Existing Customers"
+                (itemSelected)="onCustomerSelected($event)"
+              />
+            </div>
           </form>
 
           <div class="info-notice">
             <mat-icon class="info-icon">info</mat-icon>
             <p class="info-text">
-              If the customer does not exist and you want to add this name as a new customer for the order, please enter the customer name and click “Next Step” to continue.
+              If the customer does not exist and you want to add this name as a new customer for the order,
+              please enter the customer name and click "Next Step" to continue.
             </p>
           </div>
 
@@ -157,9 +182,9 @@
               <mat-label>Payment Method</mat-label>
               <mat-select formControlName="paymentMethod">
                 <mat-option value="cash">Cash</mat-option>
-                <mat-option value="card">Card</mat-option>
+                <mat-option value="card">Bank Transfer</mat-option>
                 <mat-option value="mobile">Mobile Money</mat-option>
-                <mat-option value="bank">Bank Transfer</mat-option>
+                <mat-option value="bank">Cheque</mat-option>
               </mat-select>
             </mat-form-field>
 
