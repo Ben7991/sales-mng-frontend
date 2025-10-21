@@ -1,10 +1,10 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
-import { APISalesOrderResponse, salesOrder } from '../models/interface';
-import { getSalesOrdersUrl } from '@shared/constants/api.constants';
+import { APISalesOrderResponse, CreateOrderRequest, salesOrder } from '../models/interface';
+import { changeOrderStatusUrl, getSalesOrdersUrl } from '@shared/constants/api.constants';
 
 const DEFAULT_SALES_ORDER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
   useCache: false,
@@ -13,7 +13,6 @@ const DEFAULT_SALES_ORDER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: bool
 
 const SALES_ORDERS_PAGE_SIZE = 10;
 
-// Placeholder for the required params interface (matching the logic used)
 interface SalesOrderApiParams {
   perPage?: number;
   page?: number;
@@ -39,11 +38,12 @@ export class SalesService {
   private readonly http = inject(HttpClient);
   private readonly snackbarService = inject(SnackbarService);
 
-  public readonly orders = signal<salesOrder[] | null>(null);
-  public readonly ordersCount = signal<number>(0);
   public readonly isLoadingOrders = signal(false);
+  public readonly isCreatingOrder = signal(false);
 
   public readonly salesOrderResponse = signal<APISalesOrderResponse | null>(null);
+  public readonly orders = computed(() => this.salesOrderResponse()?.data ? SalesOrderTableDataAdapter.adaptForTable(this.salesOrderResponse()!.data) : null);
+  public readonly ordersCount = computed(() => this.salesOrderResponse()?.count ?? 0);
 
   public searchQuery = '';
   public currentPage = 0;
@@ -51,7 +51,6 @@ export class SalesService {
 
   public getOrders(
     params?: SalesOrderApiParams,
-    // Corrected the destructuring of fetch options
     { useCache, showLoader } = DEFAULT_SALES_ORDER_FETCH_OPTIONS
   ): void {
     if (useCache && this.salesOrderResponse()) {
@@ -65,9 +64,11 @@ export class SalesService {
     if (params) {
       if (params.perPage !== undefined) {
         httpParams = httpParams.set('perPage', params.perPage.toString());
+        this.currentPageSize = params.perPage;
       }
       if (params.page !== undefined) {
         httpParams = httpParams.set('page', params.page.toString());
+        this.currentPage = params.page;
       }
       if (params.q !== undefined && params.q !== '') {
         httpParams = httpParams.set('q', params.q);
@@ -87,8 +88,6 @@ export class SalesService {
       .pipe(
         tap((response) => {
           this.salesOrderResponse.set(response);
-          this.orders.set(SalesOrderTableDataAdapter.adaptForTable(response.data));
-          this.ordersCount.set(response.count);
         }),
         catchError((err: HttpErrorResponse) => {
           const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
@@ -99,5 +98,49 @@ export class SalesService {
         finalize(() => this.isLoadingOrders.set(false))
       )
       .subscribe()
+  }
+
+  public createOrder(payload: CreateOrderRequest) {
+    this.isCreatingOrder.set(true);
+
+    return this.http.post<salesOrder>(getSalesOrdersUrl, payload).pipe(
+      tap((order) => {
+        this.snackbarService.showSuccess("Order created successfully");
+
+        this.salesOrderResponse.update((response) => {
+          if (!response) {
+            return { data: [order], count: 1 } as APISalesOrderResponse;
+          }
+          return {
+            ...response,
+            data: [order, ...response.data],
+            count: response.count + 1,
+          };
+        });
+      }),
+      catchError((err: HttpErrorResponse) => {
+        const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
+        this.snackbarService.showError(msg);
+        return EMPTY;
+      }),
+      finalize(() => this.isCreatingOrder.set(false))
+    );
+  }
+
+  public changeOrderStatusAndRefresh(orderId: string | number, newStatus: string): void {
+    this.http
+      .patch(changeOrderStatusUrl(orderId), { status: newStatus })
+      .pipe(
+        tap(() => {
+          this.snackbarService.showSuccess('Order status updated successfully');
+          this.getOrders();
+        }),
+        catchError((err: HttpErrorResponse) => {
+          const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
+          this.snackbarService.showError(msg);
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 }

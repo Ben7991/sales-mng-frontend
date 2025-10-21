@@ -3,7 +3,7 @@ import {TableAction, TableColumn} from '@shared/components/user-management/table
 
 export const salesSearchConfig: SearchConfig = {
   placeholder: 'Search order',
-  searchFields: ['name', 'email'],
+  searchFields: ['customer', 'orderStatus','paidStatus'],
   appearance: 'outline',
   debounceTime: 600,
   caseSensitive: false,
@@ -21,7 +21,15 @@ export const salesTableColumns: TableColumn[] = [
     key: 'createdAt',
     label: 'Order Date',
     sortable: true,
-    type: 'text'
+    type: 'text',
+    formatter: (value: any) => {
+      if (!value) return '—';
+      const date = new Date(value);
+      const yy = date.getFullYear().toString().slice(-2);
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      return `${dd}/${mm}/${yy}`;
+    },
   },
   {
     key: 'customer',
@@ -63,8 +71,7 @@ export const salesTableColumns: TableColumn[] = [
 
 export const salesTableActions: TableAction[] = [
   {
-    icon: 'edit',
-    label: 'Edit',
+    label: 'Mark as Delivered',
     action: 'edit'
   },
 ];

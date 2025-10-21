@@ -1,4 +1,4 @@
-import {Category, ProductStatus} from '../../inventory-management/components/products/models/interface';
+import {Category} from '../../inventory-management/components/products/models/interface';
 
 export interface salesOrder {
   "id": number,
@@ -9,7 +9,7 @@ export interface salesOrder {
   "orderTotal": number,
   "paidStatus": PaidStatus
 }
-
+export type ProductStatus = 'IN_USE' | 'DISCONTINUED';
 export interface APISalesOrderResponse {
   "count": number,
   "data": salesOrder[]
@@ -17,6 +17,8 @@ export interface APISalesOrderResponse {
 
 export type PaidStatus = 'PAID' | 'OUTSTANDING' ;
 export type orderStatus = 'OPEN' | 'DELIVERED' ;
+export type orderSale = 'WHOLESALE' | 'RETAIL' | 'SPECIAL_PURCHASE' ;
+export type paymentMode = 'CASH' | 'BANK_TRANSFER' | 'MOBILE_MONEY' |'CHEQUE' ;
 
 export interface ProductI{
   id?: number;
@@ -27,4 +29,17 @@ export interface ProductI{
   orderType?: string;
   quantity?: number;
   price?: number;
+}
+
+export interface CreateOrderRequest {
+  orderItems: OrderItem[];
+  orderSale: orderSale;
+  paymentMode: paymentMode;
+  amountPaid: number;
+  customer: string;
+}
+
+export interface OrderItem {
+  stockId: number;
+  quantity: number;
 }
