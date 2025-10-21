@@ -48,7 +48,7 @@ export const supplierTableActions: TableAction[] = [
 ];
 
 export const supplierSearchConfig: SearchConfig = {
-  placeholder: 'Search suppliers...',
+  placeholder: 'Search suppliers',
   searchFields: ['name', 'companyName', 'email'],
   debounceTime: 600
 };

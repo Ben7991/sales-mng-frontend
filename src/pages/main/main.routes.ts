@@ -3,6 +3,7 @@ import { SupplierManagementComponent } from "pages/suppliers/supplier-management
 import { UserManagementComponent } from "pages/user-management/user-management.component";
 import { SettingsComponent } from '../settings/settings.component';
 import { InventoryManagementComponent } from "pages/inventory-management/inventory-management.component";
+import { CustomersComponent } from "pages/customers/customers.component";
 
 export const mainRoutePaths: Routes = [
   {
@@ -14,6 +15,10 @@ export const mainRoutePaths: Routes = [
     component: SupplierManagementComponent
   },
   {
+    path: 'customers',
+    component: CustomersComponent,
+  },
+   {
     path: 'inventory',
     component: InventoryManagementComponent,
   },
