@@ -8,11 +8,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { ImageUploadComponent } from '@shared/components/image-upload/image-upload.component';
+import { LiveSearchDropdownComponent } from '@shared/components/live-search-dropdown/live-search-dropdown.component';
 import environment from '@shared/environments/environment';
+import { LiveSearchItem } from '@shared/models/interface';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { toTitleCase } from '@shared/utils/string.util';
 import { catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap, tap } from 'rxjs';
-import { Category, Product, ProductLiveSearchItem, ProductStatus } from '../../models/interface';
+import { Category, Product } from '../../models/interface';
+import { ProductStatus } from '../../models/type';
 import { ProductsManagementService } from '../../services/products-management.service';
 
 const LIVE_SEARCH_DEBOUNCE_TIME = 50;
@@ -34,7 +37,8 @@ interface ProductFormModalData {
     MatInputModule,
     ReactiveFormsModule,
     ButtonComponent,
-    ImageUploadComponent
+    ImageUploadComponent,
+    LiveSearchDropdownComponent
   ],
   templateUrl: './product-form-modal.component.html',
   styleUrl: './product-form-modal.component.scss',
@@ -56,7 +60,7 @@ export class ProductFormModalComponent implements OnInit {
   ];
 
   // Live search properties
-  protected readonly searchResults = signal<ProductLiveSearchItem[]>([]);
+  protected readonly searchResults = signal<LiveSearchItem[]>([]);
   protected readonly isSearching = signal(false);
   protected readonly showSearchDropdown = signal(false);
   protected readonly isDuplicateName = signal(false);
@@ -188,17 +192,12 @@ export class ProductFormModalComponent implements OnInit {
     this.searchSubject.next(titleCased);
   }
 
-  protected onSelectSearchResult(productName: string, event?: MouseEvent): void {
-    // Prevent default to avoid input losing focus or text selection issues
-    if (event) {
-      event.preventDefault();
-    }
-
-    this.productForm.get('name')?.setValue(productName);
+  protected onSelectSearchResult(item: LiveSearchItem): void {
+    this.productForm.get('name')?.setValue(item.name);
     this.showSearchDropdown.set(false);
 
     // Check if this is a duplicate (case-insensitive)
-    const selectedNameLower = productName.toLowerCase();
+    const selectedNameLower = item.name.toLowerCase();
     let isDuplicate = false;
 
     // For edit mode, check if it's not the current product

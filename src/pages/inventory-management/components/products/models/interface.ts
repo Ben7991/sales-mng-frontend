@@ -1,4 +1,5 @@
-export type ProductStatus = 'IN_USE' | 'DISCONTINUED';
+import { LiveSearchItem } from "@shared/models/interface";
+import { ProductStatus } from "./type";
 
 export interface Category {
   id: number;
@@ -57,11 +58,6 @@ export interface ProductApiResponse {
   data: Product;
 }
 
-export interface ProductLiveSearchItem {
-  id: number;
-  name: string;
-}
-
 export interface ProductLiveSearchApiResponse {
-  data: ProductLiveSearchItem[];
+  data: LiveSearchItem[];
 }

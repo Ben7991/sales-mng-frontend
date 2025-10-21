@@ -1,0 +1,20 @@
+@if (show()) {
+  <div class="search-dropdown">
+    <div class="search-dropdown-header">
+      {{ headerText() }}
+    </div>
+    @if (isSearching()) {
+      <div class="search-dropdown-item loading">
+        Searching...
+      </div>
+    } @else {
+      @for (item of searchResults(); track item.id) {
+        <div
+          class="search-dropdown-item"
+          (mousedown)="onItemClick(item, $event)">
+          {{ item.name }}
+        </div>
+      }
+    }
+  </div>
+}
