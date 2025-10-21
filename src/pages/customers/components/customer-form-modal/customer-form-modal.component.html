@@ -1,0 +1,99 @@
+<div class="customer-form-container">
+  <div class="modal-header">
+    <h2>{{ isEdit ? 'Edit Customer' : 'Add New Customer' }}</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="customer-form">
+    <div class="form-row">
+      <div class="name-field-container">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Customer Name</mat-label>
+          <input 
+            matInput 
+            formControlName="name" 
+            placeholder="Enter customer name"
+            (blur)="onNameInputBlur()"
+            [readonly]="isEdit">
+          @if (customerForm.get('name')?.hasError('required')) {
+            <mat-error>Customer name is required</mat-error>
+          }
+        </mat-form-field>
+        
+        @if (!isEdit) {
+          <app-live-search-dropdown
+            [show]="showLiveSearch()"
+            [isSearching]="isSearching()"
+            [searchResults]="searchResults()"
+            [headerText]="'Existing customers'"
+            (itemSelected)="onLiveSearchItemSelected($event)"
+          />
+        }
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="address" placeholder="Enter customer address">
+        @if (customerForm.get('address')?.hasError('required')) {
+          <mat-error>Address is required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="phone-section">
+      <div class="section-header">
+        <label>Phone Numbers</label>
+        <button type="button" mat-icon-button (click)="addPhone()" class="add-phone-btn">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <div formArrayName="phones">
+        <div class="phones">
+          @for (phone of phonesFormArray.controls; track $index) {
+            <div class="phone-row">
+              <mat-form-field appearance="outline" class="phone-input">
+                <mat-label>Phone {{ $index + 1 }}</mat-label>
+                <input matInput [formControlName]="$index" placeholder="Enter phone number">
+                @if (phone.hasError('required')) {
+                  <mat-error>Phone number is required</mat-error>
+                }
+                @if (phone.hasError('pattern')) {
+                  <mat-error>Please enter a valid phone number</mat-error>
+                }
+              </mat-form-field>
+
+              <button
+                type="button"
+                mat-icon-button
+                (click)="removePhone($index)"
+                [disabled]="phonesFormArray.length <= 1"
+                class="remove-phone-btn">
+                <mat-icon>remove</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <app-button
+        variant="outlined"
+        type="button"
+        (click)="onCancel()"
+        class="cancel-button"
+        text="Cancel"
+      />
+
+      <app-button
+        [text]="isEdit ? 'Update Customer' : 'Add Customer'"
+        type="submit"
+        [disabled]="!customerForm.valid"
+        class="submit-button"
+      />
+    </div>
+  </form>
+</div>
