@@ -16,6 +16,8 @@ export const CHNANGE_USER_STATUS = `${environment.serverUrl}/users/{id}/change-s
 
 /* SALES */
 export const getSalesOrdersUrl =`${environment.serverUrl}/sales`;
+export const changeOrderStatusUrl = (id: string | number) =>
+  `${environment.serverUrl}/sales/${id}/order-delivered`;
 
 /* SUPPLIERS */
 export const getSuppliersUrl =
