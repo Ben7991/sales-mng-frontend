@@ -1,6 +1,8 @@
 @use "@styles/mixins/_general.scss" as generalStyles;
 @use "@styles/mixins/_filter-section.scss" as filter;
+@use "@styles/mixins/_table.scss" as table;
 
+@include table.table;
 .sales-management-container{
   @include filter.filter-section;
 }
@@ -9,4 +11,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.supplier-list-scroll-container{
+  height: 250px;
 }
