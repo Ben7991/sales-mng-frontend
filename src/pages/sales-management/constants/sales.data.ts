@@ -41,7 +41,8 @@ export const salesTableColumns: TableColumn[] = [
     key: 'orderTotal',
     label: 'Order Total',
     sortable: false,
-    type: 'text'
+    type: 'text',
+    formatter: (value: string) => value ? `GH₵ ${value}` : '-'
   },
   {
     key: 'orderStatus',
@@ -56,7 +57,8 @@ export const salesTableColumns: TableColumn[] = [
     key: 'amountPaid',
     label: 'Amount Paid',
     sortable: false,
-    type: 'text'
+    type: 'text',
+    formatter: (value: string) => value ? `GH₵ ${value}` : '-'
   },
   {
     key: 'paidStatus',
