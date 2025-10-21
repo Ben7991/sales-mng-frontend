@@ -39,3 +39,8 @@ export interface PasswordChange{
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface LiveSearchItem {
+  id: string;
+  name: string;
+}
