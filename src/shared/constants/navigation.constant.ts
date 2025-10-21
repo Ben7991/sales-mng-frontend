@@ -13,6 +13,9 @@ export const NAVIGATION_ROUTES = {
     USERS: {
         HOME: 'main/user-management',
     },
+    CUSTOMERS: {
+        HOME: 'main/customers',
+    },
     INVENTORY: {
         HOME: 'main/inventory',
     },

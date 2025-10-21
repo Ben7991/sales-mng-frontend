@@ -6,6 +6,7 @@ export const menuItems = signal<MenuItem[]>([
   { name: 'Dashboard', icon: 'assets/dashboardIcon.svg', route: NAVIGATION_ROUTES.DASHBOARD.HOME, active: false },
   { name: 'Suppliers', icon: 'assets/suppliersIcon.svg', route: NAVIGATION_ROUTES.SUPPLIERS.HOME, active: false },
   { name: 'Users', icon: 'assets/usersIcon.svg', route: NAVIGATION_ROUTES.USERS.HOME, active: false },
+  { name: 'Customers', icon: 'assets/customerIcon.svg', route: NAVIGATION_ROUTES.CUSTOMERS.HOME, active: false },
   { name: 'Inventory', icon: 'assets/inventoryIcon.svg', route: NAVIGATION_ROUTES.INVENTORY.HOME, active: false },
   {name:'Sales', icon:'assets/salesIcon.svg', route:NAVIGATION_ROUTES.SALES.HOME, active:false},
   { name: 'Reports', icon: 'assets/reportsIcon.svg', route: NAVIGATION_ROUTES.REPORTS.HOME, active: false },

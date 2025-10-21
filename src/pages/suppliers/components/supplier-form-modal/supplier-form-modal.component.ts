@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -89,7 +88,7 @@ export class SupplierFormModalComponent implements OnInit {
     }
   }
 
-  get phonesFormArray(): FormArray {
+  protected get phonesFormArray(): FormArray {
     return this.supplierForm.get('phones') as FormArray;
   }
 

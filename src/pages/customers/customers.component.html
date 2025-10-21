@@ -1,0 +1,40 @@
+<div class="customer-management-container">
+  <div class="filter-section">
+    <app-search
+      [config]="customerSearchConfig"
+      (searchTermChange)="onCustomerSearchTermChange($event)"
+    />
+    
+    <div class="filter-actions">
+      <app-button
+        (click)="openAddCustomerModal()"
+        icon="assets/addIcon.svg"
+        text="Add new customer"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="table-name">Customers ({{customerManagementService.customers()?.length}})</div>
+
+@if (customerManagementService.isLoadingCustomers()) {
+  <div class="loader">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+}
+@else {
+  <app-table
+    [columns]="tableColumns"
+    [data]="customerManagementService.customers() ?? []"
+    [actions]="tableActions"
+    [showCheckboxes]="false"
+    [showPagination]="true"
+    [pageSize]="customerManagementService.currentPageSize"
+    [currentPage]="customerManagementService.currentPage"
+    [totalItems]="customerManagementService.customersCount()"
+    [statusConfig]="{}"
+    (selectionChange)="onSelectionChange($event)"
+    (actionClick)="onActionClick($event)"
+    (pageChange)="onPageChange($event)"
+  />
+}

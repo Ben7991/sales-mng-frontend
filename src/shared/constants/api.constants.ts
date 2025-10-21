@@ -33,6 +33,21 @@ export const supplierContactAdditionUrl =
 export const supplierContactDeletionUrl =
     (supplierId: number, phoneId: number) => `${environment.serverUrl}/suppliers/${supplierId}/phone/${phoneId}`;
 
+/* CUSTOMERS */
+export const getCustomersUrl =
+    (limit: number, page: number, query: string) => `${environment.serverUrl}/customers?perPage=${limit}&page=${page}&q=${query}`;
+
+export const customerBasicInfoUpdateUrl =
+    (customerId: number) => `${environment.serverUrl}/customers/${customerId}`;
+
+export const customerContactAdditionUrl =
+    (customerId: number) => `${environment.serverUrl}/customers/${customerId}/phone`;
+
+export const customerContactDeletionUrl =
+    (customerId: number, phoneId: number) => `${environment.serverUrl}/customers/${customerId}/phone/${phoneId}`;
+
+export const customerLiveSearchUrl =
+    (query: string) => `${environment.serverUrl}/customers/live-search?q=${query}`;
 
 // Inventory
 export const getInventoryUrl = `${environment.serverUrl}/products/stocks`
