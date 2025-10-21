@@ -1,0 +1,12 @@
+@use "@styles/mixins/_general.scss" as generalStyles;
+@use "@styles/mixins/_filter-section.scss" as filter;
+
+.sales-management-container{
+  @include filter.filter-section;
+}
+.loader {
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
