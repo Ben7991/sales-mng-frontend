@@ -1,12 +1,20 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
-import {AuthService} from '@shared/services/auth/auth.service';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {TitleCasePipe, UpperCasePipe} from '@angular/common';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {MatIconModule} from '@angular/material/icon';
-import {NavigationEnd, Router} from '@angular/router';
-import {NAVIGATION_ROUTES} from '@shared/constants/navigation.constant';
-import { Location } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  Input,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
+import { isPlatformBrowser, TitleCasePipe, UpperCasePipe, Location } from '@angular/common';
+import { AuthService } from '@shared/services/auth/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { NavigationEnd, Router } from '@angular/router';
+import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
 
 @Component({
   selector: 'app-header',
@@ -16,47 +24,60 @@ import { Location } from '@angular/common';
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
-  private authService = inject(AuthService)
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly location = inject(Location);
+  private readonly platformId = inject(PLATFORM_ID);
+
   @Input() pageTitle: string = '';
+  @Input() toggleSidenavCallback: () => void = () => {};
+
   public userName: string = '';
   public userInitials: string = '';
   public hasNotifications: boolean = false;
-  public isMenuTriggered = false
-  private readonly router = inject(Router);
-  @Input() toggleSidenavCallback: () => void = () => {};
-  private readonly destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
-  private readonly location = inject(Location);
-
+  public isMenuTriggered = false;
 
   ngOnInit() {
-    this.authService.getUserDetails()
+    this.authService
+      .getUserDetails()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
           this.userName = user.data.name;
           const nameParts = this.userName.split(' ');
-          const firstChars = nameParts.map((word) => word.charAt(0));
-          this.userInitials = firstChars.join('');
+          this.userInitials = nameParts.map((word) => word.charAt(0)).join('');
           this.cdr.markForCheck();
         },
       });
 
-    const initialPath = window.location.pathname || this.router.url || this.location.path();
+
+    let initialPath = '';
+    if (isPlatformBrowser(this.platformId)) {
+      initialPath =
+        window.location.pathname ||
+        this.router.url ||
+        this.location.path();
+    } else {
+      initialPath = this.router.url || this.location.path();
+    }
+
     this.setPageTitleFromUrl(initialPath);
+
 
     this.router.events
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(event => {
+      .subscribe((event) => {
         if (event instanceof NavigationEnd) {
-          const url = (event as NavigationEnd).urlAfterRedirects || (event as NavigationEnd).url;
+          const url = event.urlAfterRedirects || event.url;
           this.setPageTitleFromUrl(url);
         }
       });
@@ -68,12 +89,13 @@ export class HeaderComponent implements OnInit {
       this.cdr.markForCheck();
       return;
     }
-    const path = rawUrl.split('?')[0].split('#')[0];
 
+    const path = rawUrl.split('?')[0].split('#')[0];
     const segments = path.split('/').filter(Boolean);
 
     const mainIndex = segments.indexOf('main');
     let candidate: string;
+
     if (mainIndex !== -1 && segments.length > mainIndex + 1) {
       candidate = segments[mainIndex + 1];
     } else if (segments.length) {
@@ -94,12 +116,12 @@ export class HeaderComponent implements OnInit {
 
     return spaced
       .split(' ')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
   }
 
   public navigateToSettings(): void {
-    void this.router.navigateByUrl(NAVIGATION_ROUTES.SETTINGS.HOME)
+    void this.router.navigateByUrl(NAVIGATION_ROUTES.SETTINGS.HOME);
   }
 
   toggleSidenav() {

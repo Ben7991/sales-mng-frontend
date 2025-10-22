@@ -25,4 +25,7 @@ export const NAVIGATION_ROUTES = {
     SETTINGS: {
         HOME: 'main/settings',
     },
+    SALES: {
+        HOME: 'main/sales-management',
+    }
 }

@@ -14,6 +14,11 @@ export const GET_USERS_URL = `${environment.serverUrl}/users`;
 export const UPDATE_USER_INFO = `${environment.serverUrl}/users/{id}`;
 export const CHNANGE_USER_STATUS = `${environment.serverUrl}/users/{id}/change-status`;
 
+/* SALES */
+export const getSalesOrdersUrl =`${environment.serverUrl}/sales`;
+export const changeOrderStatusUrl = (id: string | number) =>
+  `${environment.serverUrl}/sales/${id}/order-delivered`;
+
 /* SUPPLIERS */
 export const getSuppliersUrl =
     (limit: number, page: number, query: string) => `${environment.serverUrl}/suppliers?perPage=${limit}&page=${page}&q=${query}`;
