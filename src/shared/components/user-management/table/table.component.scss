@@ -4,6 +4,7 @@
   .mat-mdc-table {
     width: 100%;
     background: white;
+    table-layout: auto;
   }
 
   .mat-mdc-header-row {
@@ -14,8 +15,11 @@
   .mat-mdc-row {
     border-bottom: 1px solid #f3f4f6;
 
-    &:hover {
-      background-color: #f9fafb;
+    &.clickable {
+      &:hover {
+        cursor: pointer;
+        background-color: #f9fafb;
+      }
     }
   }
 
@@ -23,11 +27,15 @@
     font-weight: 600;
     color: #374151;
     border-bottom: none;
+    white-space: nowrap;
+    padding: 0 16px;
   }
 
   .mat-mdc-cell {
     border-bottom: none;
     color: #1f2937;
+    // white-space: nowrap;
+    padding: 0 16px;
   }
 
   .status-chip {

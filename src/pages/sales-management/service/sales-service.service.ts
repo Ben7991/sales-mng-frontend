@@ -3,7 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, EMPTY, finalize, tap } from 'rxjs';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
-import { APISalesOrderResponse, CreateOrderRequest, salesOrder } from '../models/interface';
+import { APISalesOrderResponse, CreateOrderRequest, SalesOrder } from '../models/interface';
 import { changeOrderStatusUrl, getSalesOrdersUrl } from '@shared/constants/api.constants';
 
 const DEFAULT_SALES_ORDER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
@@ -22,7 +22,7 @@ interface SalesOrderApiParams {
 }
 
 export class SalesOrderTableDataAdapter {
-  static adaptForTable(orders: salesOrder[]): any[] {
+  static adaptForTable(orders: SalesOrder[]): any[] {
     return orders.map(order => ({
       ...order,
       orderStatus: order.orderStatus.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
@@ -103,7 +103,7 @@ export class SalesService {
   public createOrder(payload: CreateOrderRequest) {
     this.isCreatingOrder.set(true);
 
-    return this.http.post<salesOrder>(getSalesOrdersUrl, payload).pipe(
+    return this.http.post<SalesOrder>(getSalesOrdersUrl, payload).pipe(
       tap((order) => {
         this.snackbarService.showSuccess("Order created successfully");
 

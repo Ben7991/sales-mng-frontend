@@ -71,26 +71,43 @@
     </div>
   </div>
 </div>
-
-<div class="table-name">Orders ({{ SalesManagementService.ordersCount() }})</div>
 @if (SalesManagementService.isLoadingOrders()) {
   <div class="loader">
     <mat-spinner diameter="50"></mat-spinner>
   </div>
 }
 @else {
-  <app-table
-    [columns]="tableColumns"
-    [data]="SalesManagementService.orders() ?? []"
-    [actions]="tableActions"
-    [loading]="isLoading$()"
-    [showCheckboxes]="false"
-    [showPagination]="SalesManagementService.ordersCount() > 10"
-    [pageSize]="SalesManagementService.currentPageSize"
-    [currentPage]="SalesManagementService.currentPage"
-    [totalItems]="SalesManagementService.ordersCount()"
-    [statusConfig]="statusConfig"
-    (actionClick)="onActionClick($event)"
-    (pageChange)="onPageChange($event)"
-  />
+  <div class="sales-table--canvas">
+    <div class="sales-table">
+      <div class="table-name">Orders ({{ SalesManagementService.ordersCount() }})</div>
+
+      <app-table
+        [columns]="tableColumns"
+        [data]="SalesManagementService.orders() ?? []"
+        [actions]="tableActions"
+        [loading]="isLoading$()"
+        [showCheckboxes]="false"
+        [isRowClickable]="true"
+        [showPagination]="SalesManagementService.ordersCount() > 10"
+        [pageSize]="SalesManagementService.currentPageSize"
+        [currentPage]="SalesManagementService.currentPage"
+        [totalItems]="SalesManagementService.ordersCount()"
+        [statusConfig]="statusConfig"
+        (actionClick)="onActionClick($event)"
+        (pageChange)="onPageChange($event)"
+        (clickedRow)="onRowItemClick($event)"
+      />
+    </div>
+
+    @if (clickedRow()) {
+      <div class="canvas">
+        <app-order-details-canvas
+          [orderId]="clickedRow()!.id"
+          [openUpdatePaymentModal]="openUpdatePaymentModal"
+          (canvasClose)="clearClickedRowItem()"
+        />
+      </div>
+    }
+  </div>
 }
+

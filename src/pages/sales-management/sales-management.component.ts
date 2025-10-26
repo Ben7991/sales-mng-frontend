@@ -1,4 +1,9 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdatePaymentModalComponent } from './components/update-payment-modal/update-payment-modal.component';
+import { OrderDetailsCanvasComponent } from './components/order-details-canvas/order-details-canvas.component';
+import { getUpdateOrderPaymentUrl } from '@shared/constants/api.constants';
+import { HttpClient } from '@angular/common/http';
 import {ButtonComponent} from '@shared/components/button/button.component';
 import {MatDivider} from '@angular/material/divider';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
@@ -12,13 +17,13 @@ import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-ma
 import {PageEvent} from '@angular/material/paginator';
 import {STATUS_COLORS} from '@shared/constants/colors.constant';
 import {CreateOrderModalComponent} from './components/create-order-modal/create-order-modal.component';
-import {MatDialog} from '@angular/material/dialog';
 import {CustomerManagementService} from '../customers/services/customer-management.service';
 import {Customer} from '../customers/models/interface';
 import {
   stockHistoryTableActions,
   stockHistoryTableColumns
 } from '../inventory-management/components/restock-history/constant/history.const';
+import { SalesOrder } from './models/interface';
 
 @Component({
   selector: 'app-sales-management',
@@ -31,24 +36,27 @@ import {
     SearchComponent,
     MatMenuTrigger,
     MatProgressSpinner,
-    TableComponent
+    TableComponent,
+    OrderDetailsCanvasComponent
   ],
   templateUrl: './sales-management.component.html',
   styleUrl: './sales-management.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SalesManagementComponent implements OnInit {
-  private dialog = inject(MatDialog);
-  protected SalesManagementService = inject(SalesService)
+  private readonly dialog = inject(MatDialog);
+  protected readonly SalesManagementService = inject(SalesService)
   protected readonly customerService = inject(CustomerManagementService)
 
   public readonly isLoadingCustomers = this.customerService.isLoadingCustomers;
   public readonly isLoading$ = this.SalesManagementService.isLoadingOrders;
   public readonly customers = this.customerService.customers;
-  public activeCustomerId = signal<number | null>(null);
+  public readonly activeCustomerId = signal<number | null>(null);
 
-  public readonly currentPage = signal(0);
-  public readonly currentPerPage = signal(10);
+  protected readonly currentPage = signal(0);
+  protected readonly currentPerPage = signal(10);
+  protected readonly clickedRow = signal<SalesOrder | null>(null);
+  private readonly http = inject(HttpClient);
 
   onUserSearchTermChange($event: string) {
     this.SalesManagementService.searchQuery = $event;
@@ -106,10 +114,40 @@ export class SalesManagementComponent implements OnInit {
     });
   }
 
+  onRowItemClick(row: any): void {
+    this.clickedRow.set(row as SalesOrder);
+  }
+
+  openUpdatePaymentModal = (orderId: number) => {
+    const dialogRef = this.dialog.open(UpdatePaymentModalComponent, {
+      width: '350px',
+      maxWidth: '90vw',
+      data: { orderId },
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.http.post(getUpdateOrderPaymentUrl(orderId), result).subscribe({
+          next: () => {
+            this.SalesManagementService.getOrders();
+            if (this.clickedRow()) {
+              this.clickedRow.set(this.clickedRow());
+            }
+          }
+        });
+      }
+    });
+  }
+
   onActionClick(event: { action: string; item: any }) {
     if (event.action === 'edit') {
       this.SalesManagementService.changeOrderStatusAndRefresh(event.item.id, 'DELIVERED');
     }
+  }
+
+  clearClickedRowItem(): void {
+    this.clickedRow.set(null);
   }
 
   onPageChange(event: PageEvent) {
