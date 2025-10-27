@@ -1,0 +1,22 @@
+<div class="main-wrapper">
+  <div class="container" >
+    <h1 class="headerTxt">
+      {{ metricTitle() }}
+    </h1>
+
+    <p class="number">
+      {{ formattedNumber() }}
+    </p>
+
+    @if (showActions()) {
+      <div class="actions">
+        <button class="action-link" (click)="viewAction()">
+          View
+          <svg class="arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </button>
+      </div>
+    }
+  </div>
+</div>

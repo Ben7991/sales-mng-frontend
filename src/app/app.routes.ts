@@ -18,7 +18,7 @@ export const routes: Routes = [
     path: 'main',
     component: MainComponent,
     loadChildren: () =>
-      import('../pages/main/main.routes').then(m => m.mainRoutePaths)
+        import('../pages/main/main.routes').then(m => m.mainRoutePaths)
   },
   {
     path: '**',

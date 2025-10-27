@@ -5,8 +5,13 @@ import { SettingsComponent } from '../settings/settings.component';
 import { InventoryManagementComponent } from "pages/inventory-management/inventory-management.component";
 import {SalesManagementComponent} from '../sales-management/sales-management.component';
 import { CustomersComponent } from "pages/customers/customers.component";
+import {DashboardComponent} from '../dashboard/dashboard.component';
 
 export const mainRoutePaths: Routes = [
+  {
+    path:'dashboard',
+    component:DashboardComponent
+  },
   {
     path: 'user-management',
     component: UserManagementComponent
