@@ -24,9 +24,7 @@
       <!-- Dynamic Columns -->
       @for (column of columns(); track column.key) {
         <ng-container [matColumnDef]="column.key">
-          <mat-header-cell
-            *matHeaderCellDef
-            [style.width]="column.width">
+          <mat-header-cell *matHeaderCellDef>
             @if (column.sortable) {
               <span [mat-sort-header]="column.key">{{ column.label }}</span>
             } @else {
@@ -34,7 +32,7 @@
             }
           </mat-header-cell>
 
-          <mat-cell *matCellDef="let element" [style.width]="column.width">
+          <mat-cell *matCellDef="let element">
             @switch (column.type) {
               @case ('status') {
                 <span
@@ -54,8 +52,8 @@
       <!-- Actions Column -->
       @if (actions().length > 0) {
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
-          <mat-cell *matCellDef="let element">
+          <mat-header-cell *matHeaderCellDef style="width: 60px; max-width: 60px;"></mat-header-cell>
+          <mat-cell *matCellDef="let element" style="width: 60px; max-width: 60px;">
             <button mat-icon-button [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -76,7 +74,10 @@
       }
 
       <mat-header-row *matHeaderRowDef="displayedColumns()"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns();"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns();" 
+        (click)="isRowClickable() && onRowClick(row)" 
+        [class.clickable]="isRowClickable()"
+      ></mat-row>
     </mat-table>
 
     @if (showPagination()) {

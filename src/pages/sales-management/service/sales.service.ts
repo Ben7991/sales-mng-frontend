@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, EMPTY, finalize, tap } from 'rxjs';
-import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
+import { changeOrderStatusUrl, getOrderUrl, getSalesReceiptDataUrl, getSalesOrdersUrl } from '@shared/constants/api.constants';
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
-import { APISalesOrderResponse, CreateOrderRequest, salesOrder } from '../models/interface';
-import { changeOrderStatusUrl, getSalesOrdersUrl } from '@shared/constants/api.constants';
+import { ReportDownloadService } from '@shared/services/report-download/report-download.service';
+import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
+import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
+import { APISalesOrderResponse, CreateOrderRequest, SalesOrder } from '../models/interface';
 
 const DEFAULT_SALES_ORDER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
   useCache: false,
@@ -22,7 +23,7 @@ interface SalesOrderApiParams {
 }
 
 export class SalesOrderTableDataAdapter {
-  static adaptForTable(orders: salesOrder[]): any[] {
+  static adaptForTable(orders: SalesOrder[]): any[] {
     return orders.map(order => ({
       ...order,
       orderStatus: order.orderStatus.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
@@ -37,17 +38,38 @@ export class SalesOrderTableDataAdapter {
 export class SalesService {
   private readonly http = inject(HttpClient);
   private readonly snackbarService = inject(SnackbarService);
+  private readonly reportDownloadService = inject(ReportDownloadService);
 
   public readonly isLoadingOrders = signal(false);
+  public readonly isLoadingSingleOrder = signal(false);
+  public readonly singleOrderLoadingError = signal(false);
   public readonly isCreatingOrder = signal(false);
 
   public readonly salesOrderResponse = signal<APISalesOrderResponse | null>(null);
+  public readonly singleOrder = signal<any>(null);
   public readonly orders = computed(() => this.salesOrderResponse()?.data ? SalesOrderTableDataAdapter.adaptForTable(this.salesOrderResponse()!.data) : null);
   public readonly ordersCount = computed(() => this.salesOrderResponse()?.count ?? 0);
 
   public searchQuery = '';
   public currentPage = 0;
   public currentPageSize = SALES_ORDERS_PAGE_SIZE;
+
+  public getSingleOrder(orderId: number): Observable<{ data: SalesOrder }> {
+    this.isLoadingSingleOrder.set(true);
+    this.singleOrderLoadingError.set(false);
+
+    return this.http.get<any>(getOrderUrl(orderId))
+      .pipe(
+        tap(({ data }) => {
+          this.singleOrder.set(data);
+        }),
+        catchError(() => {
+          this.singleOrderLoadingError.set(true);
+          return EMPTY;
+        }),
+        finalize(() => this.isLoadingSingleOrder.set(false))
+      );
+  }
 
   public getOrders(
     params?: SalesOrderApiParams,
@@ -62,7 +84,7 @@ export class SalesService {
     let httpParams = new HttpParams();
 
     if (params) {
-      if (params.perPage !== undefined) {
+      if (params.perPage) {
         httpParams = httpParams.set('perPage', params.perPage.toString());
         this.currentPageSize = params.perPage;
       }
@@ -70,13 +92,13 @@ export class SalesService {
         httpParams = httpParams.set('page', params.page.toString());
         this.currentPage = params.page;
       }
-      if (params.q !== undefined && params.q !== '') {
+      if (params.q && params.q !== '') {
         httpParams = httpParams.set('q', params.q);
       }
-      if (params.orderStatus !== undefined && params.orderStatus !== '') {
+      if (params.orderStatus && params.orderStatus !== '') {
         httpParams = httpParams.set('orderStatus', params.orderStatus);
       }
-      if (params.paidStatus !== undefined && params.paidStatus !== '') {
+      if (params.paidStatus && params.paidStatus !== '') {
         httpParams = httpParams.set('paidStatus', params.paidStatus);
       }
     }
@@ -103,7 +125,7 @@ export class SalesService {
   public createOrder(payload: CreateOrderRequest) {
     this.isCreatingOrder.set(true);
 
-    return this.http.post<salesOrder>(getSalesOrdersUrl, payload).pipe(
+    return this.http.post<SalesOrder>(getSalesOrdersUrl, payload).pipe(
       tap((order) => {
         this.snackbarService.showSuccess("Order created successfully");
 
@@ -142,5 +164,28 @@ export class SalesService {
         })
       )
       .subscribe();
+  }
+  public downloadOrPrintReceipt(orderId: number, action: 'download' | 'print'): Observable<any> {
+    const errMsg = `Failed to ${action === 'print' ? 'print' : 'download'} receipt`;
+
+    return this.http.get<any>(getSalesReceiptDataUrl(orderId))
+      .pipe(
+        tap((reportData) => {
+          try {
+            if (action === 'print') {
+              this.reportDownloadService.printReceipt(reportData);
+            } else {
+              const filename = `Sales Receipt - ${new Date().toUTCString()}.pdf`;
+              this.reportDownloadService.downloadReceipt(reportData, filename);
+            }
+          } catch {
+            this.snackbarService.showError(errMsg);
+          }
+        }),
+        catchError(() => {
+          this.snackbarService.showError(errMsg);
+          return EMPTY;
+        })
+      );
   }
 }

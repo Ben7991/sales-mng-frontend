@@ -73,6 +73,7 @@ export class TableComponent implements AfterViewInit {
   showPagination = input(true);
   pageSize = input(0);
   currentPage = input<number>(0);
+  isRowClickable = input(false);
   totalItems = input<number | undefined>(0)
   pageSizeOptions = input<number[]>([]);
   actions = input<TableAction[]>([]);
@@ -82,9 +83,10 @@ export class TableComponent implements AfterViewInit {
   selectionChange = output<any[]>();
   actionClick = output<{ action: string; item: any }>();
   pageChange = output<PageEvent>();
+  clickedRow = output<any>();
 
-  private selection = signal(new SelectionModel<any>(true, []));
-  private titleCasePipe = new TitleCasePipe();
+  private readonly selection = signal(new SelectionModel<any>(true, []));
+  private readonly titleCasePipe = new TitleCasePipe();
 
   displayedColumns = computed(() => {
     const cols: string[] = [];
@@ -149,6 +151,10 @@ export class TableComponent implements AfterViewInit {
 
   isRowSelected(row: any): boolean {
     return this.selection().isSelected(row);
+  }
+
+  onRowClick(row: any) {
+    this.clickedRow.emit(row);
   }
 
   onActionClick(action: string, item: any) {

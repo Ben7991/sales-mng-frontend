@@ -1,6 +1,6 @@
 import {Category} from '../../inventory-management/components/products/models/interface';
 
-export interface salesOrder {
+export interface SalesOrder {
   "id": number,
   "createdAt": Date,
   "customer": string,
@@ -12,7 +12,7 @@ export interface salesOrder {
 export type ProductStatus = 'IN_USE' | 'DISCONTINUED';
 export interface APISalesOrderResponse {
   "count": number,
-  "data": salesOrder[]
+  "data": SalesOrder[]
 }
 
 export type PaidStatus = 'PAID' | 'OUTSTANDING' ;

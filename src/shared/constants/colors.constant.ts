@@ -16,7 +16,7 @@ export const STATUS_COLORS = {
     backgroundColor: '#fee2e2'
   },
   
-  // Quit status 
+  // Quit/Outstanding status 
   QUIT: {
     color: '#f59e0b',
     backgroundColor: '#fef3c7'

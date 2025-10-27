@@ -25,7 +25,7 @@ import {
 } from '../../../inventory-management/components/products/services/products-management.service';
 import {catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap, tap} from 'rxjs';
 import {CustomerManagementService} from '../../../customers/services/customer-management.service';
-import {SalesService} from '../../service/sales-service.service';
+import {SalesService} from '../../service/sales.service';
 
 const LIVE_SEARCH_DEBOUNCE_TIME = 300;
 

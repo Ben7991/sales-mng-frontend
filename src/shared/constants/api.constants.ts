@@ -19,6 +19,15 @@ export const getSalesOrdersUrl =`${environment.serverUrl}/sales`;
 export const changeOrderStatusUrl = (id: string | number) =>
   `${environment.serverUrl}/sales/${id}/order-delivered`;
 
+export const getOrderUrl = (id: number) =>
+  `${environment.serverUrl}/sales/${id}`;
+
+export const getSalesReceiptDataUrl = (id: number) =>
+  `${environment.serverUrl}/sales/${id}/print-receipt`;
+
+export const getUpdateOrderPaymentUrl = (id: number) =>
+  `${environment.serverUrl}/sales/${id}/add-payment`;
+
 /* SUPPLIERS */
 export const getSuppliersUrl =
     (limit: number, page: number, query: string) => `${environment.serverUrl}/suppliers?perPage=${limit}&page=${page}&q=${query}`;
