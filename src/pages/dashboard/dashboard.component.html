@@ -1,0 +1,106 @@
+@if (isMetricSummaryLoading()){
+  <div class="loader">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+} @else {
+<div class="dashboard-container">
+  <!-- Metrics Section (your existing code) -->
+  <div class="metricSection">
+    @for (metric of metrics; track $index) {
+
+        <app-metricscard
+          [showActions]="metric.showAction"
+          [metricTitle]="metric.metricsName"
+          [metricNumber]="metric.metricsNumber"
+        />
+    }
+  </div>
+
+  <!-- Order Summary Bar Chart -->
+  <div class="orderSummary">
+    <div class="chart-header">
+      <h2>Order Summary</h2>
+      <select [(ngModel)]="selectedYear" class="year-select" (change)="onYearChange()">
+        @for (year of years;track $index){
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="chart-container" >
+      <canvas
+        baseChart
+        type="bar"
+        [data]="barChartData"
+        [options]="barChartOptions">
+      </canvas>
+    </div>
+  </div>
+
+
+  <!-- Bottom Section with Two Charts -->
+  <div class="bottomSection">
+    <!-- High Value Customers Doughnut Chart -->
+    <div class="doughnutChart chart-card">
+      <div class="chart-header">
+        <h2>High Value Customers</h2>
+        <select [(ngModel)]="selectedMonth" class="month-select" (change)="onMonthChange()">
+          @for (month of months.reverse();track $index){
+            <option [value]="month">{{ month }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="doughnut-content">
+        <div class="chart-wrapper">
+          <canvas
+            baseChart
+            type="doughnut"
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions">
+          </canvas>
+        </div>
+
+        <div class="legend">
+          @for (item of doughnutLegend;track $index){
+            <div class="legend-item">
+              <div class="legend-info">
+                <span class="legend-dot" [style.background-color]="item.color"></span>
+                <span class="legend-name">{{ item.name }}</span>
+              </div>
+              <span class="legend-value">{{ item.value }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Order Payment Status Pie Chart -->
+    <div class="pieChart chart-card">
+      <h2>Order Payment Status</h2>
+      <div class="pie-content">
+        <div class="chart-wrapper">
+          <canvas
+            baseChart
+            type="pie"
+            [data]="pieChartData"
+            [options]="pieChartOptions">
+          </canvas>
+        </div>
+        <div class="pie-legend">
+          @for (item of pieLegend;track $index){
+            <div  class="pie-legend-item">
+              <span class="pie-legend-dot" [style.background-color]="item.color"></span>
+              <span class="pie-legend-label">{{ item.label }}</span>
+              <span class="pie-legend-value">{{ item.value }}</span>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+}
