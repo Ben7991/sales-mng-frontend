@@ -105,8 +105,8 @@
                         <div class="progress" [style.width.%]="getTotalPaidPercent()"></div>
                     </div>
                 </div>
-                
-                <app-button text="Update Payment" (click)="onUpdatePayment()" />
+
+                <app-button text="Update Payment" (click)="getBalance() !== 0 && onUpdatePayment()" [disabled]="getBalance() === 0" />              
             </div>
         </section>
 
