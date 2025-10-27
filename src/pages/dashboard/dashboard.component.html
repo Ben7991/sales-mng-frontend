@@ -28,14 +28,20 @@
       </select>
     </div>
 
-    <div class="chart-container" >
-      <canvas
-        baseChart
-        type="bar"
-        [data]="barChartData"
-        [options]="barChartOptions">
-      </canvas>
-    </div>
+    @if (isOrderSummaryLoading() ||!barChartData){
+      <div class="loader">
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+    } @else {
+      <div class="chart-container"  >
+        <canvas
+          baseChart
+          type="bar"
+          [data]="barChartData"
+          [options]="barChartOptions">
+        </canvas>
+      </div>
+    }
   </div>
 
 
@@ -51,29 +57,35 @@
           }
         </select>
       </div>
-
-      <div class="doughnut-content">
-        <div class="chart-wrapper">
-          <canvas
-            baseChart
-            type="doughnut"
-            [data]="doughnutChartData"
-            [options]="doughnutChartOptions">
-          </canvas>
+      @if (isHighValueSummaryLoading()|| !doughnutChartData){
+        <div class="loader">
+          <mat-spinner diameter="50"></mat-spinner>
         </div>
+      } @else {
+        <div class="doughnut-content">
+          <div class="chart-wrapper">
+            <canvas
+              baseChart
+              type="doughnut"
+              [data]="doughnutChartData"
+              [options]="doughnutChartOptions">
+            </canvas>
+          </div>
 
-        <div class="legend">
-          @for (item of doughnutLegend;track $index){
-            <div class="legend-item">
-              <div class="legend-info">
-                <span class="legend-dot" [style.background-color]="item.color"></span>
-                <span class="legend-name">{{ item.name }}</span>
+          <div class="legend">
+            @for (item of doughnutLegend; track $index) {
+              <div class="legend-item">
+                <div class="legend-info">
+                  <span class="legend-dot" [style.background-color]="item.color"></span>
+                  <span class="legend-name">{{ item.name }}</span>
+                </div>
+                <span class="legend-value">{{ item.value }}</span>
               </div>
-              <span class="legend-value">{{ item.value }}</span>
-            </div>
-          }
+            }
+          </div>
         </div>
-      </div>
+      }
+
     </div>
 
 

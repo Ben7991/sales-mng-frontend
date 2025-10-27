@@ -32,6 +32,8 @@ export class DashboardComponent implements OnInit {
 
   summaryData = signal<DashboardSummary | null>(null);
   protected isMetricSummaryLoading = this.dashboardService.isLoadingDashboard;
+  protected isHighValueSummaryLoading = this.dashboardService.isLoadingHighValueCustomers;
+  protected isOrderSummaryLoading = this.dashboardService.isLoadingOrderSummary;
 
   public metrics: any[] = [];
 

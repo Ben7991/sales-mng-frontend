@@ -29,8 +29,12 @@ export class DashboardService {
   private readonly orderSummary = signal<OrderSummaryResponse | null>(null);
   private readonly highValueCustomers = signal<HighValueCustomersResponse | null>(null);
 
-
-  public readonly isLoadingDashboard = signal(false);
+  public readonly isLoadingDashboard = computed(() =>
+    this.isLoadingDashboardSummary()
+  );
+  public readonly isLoadingDashboardSummary = signal(false);
+  public readonly isLoadingOrderSummary = signal(false);
+  public readonly isLoadingHighValueCustomers = signal(false);
 
 
   public readonly dashboardSummary$ = computed(() => this.dashboardSummary());
@@ -41,7 +45,7 @@ export class DashboardService {
   public getDashboardSummary({ useCache, showLoader } = DEFAULT_FETCH_OPTIONS): void {
     if (useCache && this.dashboardSummary()) return;
 
-    this.isLoadingDashboard.set(showLoader ?? true);
+    this.isLoadingDashboardSummary.set(showLoader ?? true);
 
     this.http
       .get<DashboardSummaryResponse>(getSummaryUrl)
@@ -52,7 +56,7 @@ export class DashboardService {
           this.snackbarService.showError(msg);
           return EMPTY;
         }),
-        finalize(() => this.isLoadingDashboard.set(false))
+        finalize(() => this.isLoadingDashboardSummary.set(false))
       )
       .subscribe();
   }
@@ -60,7 +64,7 @@ export class DashboardService {
   public getOrderSummary(year: string, { useCache, showLoader } = DEFAULT_FETCH_OPTIONS): void {
     if (useCache && this.orderSummary()) return;
 
-    this.isLoadingDashboard.set(showLoader ?? true);
+    this.isLoadingOrderSummary.set(showLoader ?? true);
 
     const params = new HttpParams().set('year', year);
 
@@ -73,7 +77,7 @@ export class DashboardService {
           this.snackbarService.showError(msg);
           return EMPTY;
         }),
-        finalize(() => this.isLoadingDashboard.set(false))
+        finalize(() => this.isLoadingOrderSummary.set(false))
       )
       .subscribe();
   }
@@ -82,7 +86,7 @@ export class DashboardService {
 
     if (useCache && this.highValueCustomers()) return;
 
-    this.isLoadingDashboard.set(showLoader ?? true);
+    this.isLoadingHighValueCustomers.set(showLoader ?? true);
 
     const params = new HttpParams().set('month', month);
 
@@ -95,7 +99,7 @@ export class DashboardService {
           this.snackbarService.showError(msg);
           return EMPTY;
         }),
-        finalize(() => this.isLoadingDashboard.set(false))
+        finalize(() => this.isLoadingHighValueCustomers.set(false))
       )
       .subscribe();
   }
