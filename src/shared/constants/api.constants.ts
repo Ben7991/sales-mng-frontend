@@ -87,3 +87,7 @@ export const productLiveSearchUrl =
     (query: string) => `${environment.serverUrl}/products/live-search?q=${query}`;
 
 
+/*DASHBOARD*/
+export const getSummaryUrl= `${environment.serverUrl}/dashboard/summary`;
+export const getOrderSummaryUrl = `${environment.serverUrl}/dashboard/order-summary`;
+export const getHighValueCustomersUrl = `${environment.serverUrl}/dashboard/high-value-customers`;
