@@ -36,8 +36,8 @@ export class UpdatePaymentModalComponent {
   protected readonly paymentModes: paymentMode[] = ['CASH', 'BANK_TRANSFER', 'MOBILE_MONEY', 'CHEQUE'];
 
   constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<UpdatePaymentModalComponent>,
+    private readonly fb: FormBuilder,
+    private readonly dialogRef: MatDialogRef<UpdatePaymentModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
     this.paymentForm = this.fb.group({

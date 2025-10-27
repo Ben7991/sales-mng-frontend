@@ -22,10 +22,7 @@ export const changeOrderStatusUrl = (id: string | number) =>
 export const getOrderUrl = (id: number) =>
   `${environment.serverUrl}/sales/${id}`;
 
-export const getSalesReceiptExportUrl = (id: number) =>
-  `${environment.serverUrl}/sales/${id}/export-receipt`;
-
-export const getPrintSalesReceiptUrl = (id: number) =>
+export const getSalesReceiptDataUrl = (id: number) =>
   `${environment.serverUrl}/sales/${id}/print-receipt`;
 
 export const getUpdateOrderPaymentUrl = (id: number) =>

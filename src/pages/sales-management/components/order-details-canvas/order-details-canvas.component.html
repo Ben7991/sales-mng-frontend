@@ -1,16 +1,13 @@
 <div class="order-details-canvas">
-    @if (!order()) {
+    @if (!salesService.singleOrder()) {
         <div class="section loader">
             <mat-spinner diameter="40"></mat-spinner>
         </div>
     }
-    @else if (loadingError()) {
+    @else if (salesService.singleOrderLoadingError()) {
         <div class="section loading-error">
             <div>Error loading order details</div>
-            <app-button
-                text="Retry"
-                (click)="fetchOrder()"
-            />
+            <app-button text="Retry" (click)="fetchSingleOrder()" />
         </div>
     }
     @else {
@@ -23,7 +20,7 @@
             <div class="section">
                 <div class="section-title--order-type">
                     <div class="section-title">Products Purchased</div>
-                    <span class="order-type">{{ (order().orderSale ?? '') | titlecase}}</span>
+                    <span class="order-type">{{ (salesService.singleOrder()?.orderSale ?? '') | titlecase}}</span>
                 </div>
                 <table class="products-table">
                 <thead>
@@ -34,7 +31,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (item of order().orderItems; track $index) {
+                    @for (item of salesService.singleOrder().orderItems; track $index) {
                         <tr>
                             <td>{{ item.name }}</td>
                             <td>{{ item.quantity }}</td>
@@ -52,12 +49,12 @@
                 <h3 class="section-title">Summary</h3>
                 <div class="summary-row">
                     <div>Order ID</div> 
-                    <div>{{ order().id }}</div>
+                    <div>{{ salesService.singleOrder().id }}</div>
                 </div>
     
                 <div class="summary-row">
                     <div>Order date</div>
-                    <div>{{ order().orderDate | date:'mediumDate' }}</div>
+                    <div>{{ salesService.singleOrder().orderDate | date:'mediumDate' }}</div>
                 </div>
     
                 <div class="total--receipts">
@@ -67,7 +64,7 @@
                         text="Export receipt"
                         iconType="material"
                         icon="download"
-                        (click)="exportReceipt()"
+                        (click)="downloadReceipt()"
                     />
     
                     <app-button
@@ -86,17 +83,30 @@
                 <h3 class="section-title">Payment Status</h3>
 
                 <div class="status-badge--balance">
-                    <div class="status-badge" [ngClass]="order().paidStatus?.toLowerCase()">{{ order().paidStatus }}</div>
+                    @let orderPaidStatus = salesService.singleOrder().paidStatus;
+                    <div 
+                        class="status-badge" 
+                        [ngClass]="salesService.singleOrder().paidStatus?.toLowerCase()"
+                        [style.background-color]="
+                            orderPaidStatus === 'OUTSTANDING' ? 
+                                statusColors.QUIT.backgroundColor : 
+                                statusColors.ACTIVE.backgroundColor          
+                            "
+                         [style.color]="
+                            orderPaidStatus === 'OUTSTANDING' ? 
+                                statusColors.QUIT.color : 
+                                statusColors.ACTIVE.color          
+                            "
+                    >
+                        {{ salesService.singleOrder().paidStatus | titlecase }}
+                    </div>
                     <div class="balance">Balance {{ getBalance() | number:'1.2-2' }}</div>
                     <div class="progress-bar">
                         <div class="progress" [style.width.%]="getTotalPaidPercent()"></div>
                     </div>
                 </div>
                 
-                <app-button
-                    text="Update Payment"
-                    (click)="onUpdatePayment()"
-                />
+                <app-button text="Update Payment" (click)="onUpdatePayment()" />
             </div>
         </section>
 

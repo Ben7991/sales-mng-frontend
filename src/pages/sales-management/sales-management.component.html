@@ -101,6 +101,7 @@
 
     @if (clickedRow()) {
       <div class="canvas">
+        
         <app-order-details-canvas
           [orderId]="clickedRow()!.id"
           [openUpdatePaymentModal]="openUpdatePaymentModal"

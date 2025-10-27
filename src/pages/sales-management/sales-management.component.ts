@@ -12,17 +12,13 @@ import {MatIconModule} from '@angular/material/icon';
 import {salesSearchConfig, salesTableActions, salesTableColumns} from './constants/sales.data';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {TableComponent} from '@shared/components/user-management/table/table.component';
-import {SalesService} from './service/sales-service.service';
+import {SalesService} from './service/sales.service';
 import {StatusConfig, TableAction, TableColumn} from '@shared/components/user-management/table/interface/interface';
 import {PageEvent} from '@angular/material/paginator';
 import {STATUS_COLORS} from '@shared/constants/colors.constant';
 import {CreateOrderModalComponent} from './components/create-order-modal/create-order-modal.component';
 import {CustomerManagementService} from '../customers/services/customer-management.service';
 import {Customer} from '../customers/models/interface';
-import {
-  stockHistoryTableActions,
-  stockHistoryTableColumns
-} from '../inventory-management/components/restock-history/constant/history.const';
 import { SalesOrder } from './models/interface';
 
 @Component({
@@ -78,7 +74,7 @@ export class SalesManagementComponent implements OnInit {
 
   protected readonly statusConfig: StatusConfig = {
     'Outstanding': STATUS_COLORS.QUIT,
-    'paid': STATUS_COLORS.ACTIVE,
+    'Paid': STATUS_COLORS.ACTIVE,
     'Open': STATUS_COLORS.ACTIVE,
     'Delivered': STATUS_COLORS.INACTIVE
   };
@@ -87,7 +83,7 @@ export class SalesManagementComponent implements OnInit {
   tableColumns: TableColumn[]= salesTableColumns;
 
   ngOnInit() {
-    this.SalesManagementService.getOrders();
+    this.SalesManagementService.getOrders({}, { useCache: true });
     this.customerService.getCustomers();
   }
 

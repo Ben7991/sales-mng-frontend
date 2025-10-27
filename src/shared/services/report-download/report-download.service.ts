@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { SnackbarService } from '../snackbar/snackbar.service';
 
 interface SalesReportData {
   data: {
@@ -24,6 +25,8 @@ const docDefinitionMinusData: TDocDefinitionMinusData = {
   providedIn: 'root'
 })
 export class ReportDownloadService {
+  private readonly snackbar = inject(SnackbarService);
+
   private fontsInitialized = false;
 
   constructor() {
@@ -45,7 +48,9 @@ export class ReportDownloadService {
     this.fontsInitialized = true;
   }
 
-  public downloadPDF(reportData: SalesReportData, filename: string = 'sales-report.pdf'): void {
+  public downloadReceipt(reportData: SalesReportData, filename: string = 'Sales report.pdf'): void {
+    this.snackbar.showInfo('Preparing download...', 2000);
+
     try {
       const docDefinition: TDocumentDefinitions = {
         ...reportData.data,
@@ -54,31 +59,11 @@ export class ReportDownloadService {
 
       pdfMake.createPdf(docDefinition).download(filename);
     } catch {
-      //
+      this.snackbar.showError('Failed to download the report. Please try again.');
     }
   }
 
-  /**
-   * Get print-friendly PDF blob (for printing)
-   */
-  public async getPrintBlob(reportData: SalesReportData): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      try {
-        const docDefinition: TDocumentDefinitions = {
-          ...reportData.data,
-          ...docDefinitionMinusData,
-        };
-
-        pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
-          resolve(blob);
-        });
-      } catch {
-        //
-      }
-    });
-  }
-
-  public printPDF(reportData: SalesReportData): void {
+  public printReceipt(reportData: SalesReportData): void {
     try {
       const docDefinition: TDocumentDefinitions = {
         ...reportData.data,
@@ -87,7 +72,7 @@ export class ReportDownloadService {
 
       pdfMake.createPdf(docDefinition).print();
     } catch {
-      //
+      this.snackbar.showError('Failed to print the report. Please try again.');
     }
   }
 }
