@@ -14,6 +14,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { DashboardService } from './service/dashboard.service';
 import { MetricscardComponent } from './components/metricscard/metricscard.component';
 import { DashboardSummary } from './models/interface';
+import {NAVIGATION_ROUTES} from '@shared/constants/navigation.constant';
 
 const colorPalette = ['#4B5563', '#93A8AC', '#D1D5DB', '#E5E7EB', '#E15759', '#76B7B2'];
 
@@ -82,10 +83,10 @@ export class DashboardComponent implements OnInit {
     this.summaryData.set(summary);
 
     this.metrics = [
-      { metricsName: 'TOTAL CUSTOMERS', metricsNumber: summary.totalCustomers, showAction: true },
-      { metricsName: 'TOTAL SUPPLIERS', metricsNumber: summary.totalSuppliers, showAction: true },
-      { metricsName: 'TOTAL PRODUCTS', metricsNumber: summary.totalProducts, showAction: true },
-      { metricsName: 'TOTAL CATEGORIES', metricsNumber: summary.totalCategories, showAction: true },
+      { metricsName: 'TOTAL CUSTOMERS', metricsNumber: summary.totalCustomers, showAction: true ,route: NAVIGATION_ROUTES.CUSTOMERS.HOME,},
+      { metricsName: 'TOTAL SUPPLIERS', metricsNumber: summary.totalSuppliers, showAction: true ,route: NAVIGATION_ROUTES.SUPPLIERS.HOME,},
+      { metricsName: 'TOTAL PRODUCTS', metricsNumber: summary.totalProducts, showAction: true ,route:NAVIGATION_ROUTES.INVENTORY.HOME,},
+      { metricsName: 'TOTAL CATEGORIES', metricsNumber: summary.totalCategories, showAction: true ,route:NAVIGATION_ROUTES.INVENTORY.HOME,},
     ];
 
     const paid = summary.orders.paidPercent;
