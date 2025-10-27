@@ -73,7 +73,7 @@
           </div>
 
           <div class="legend">
-            @for (item of doughnutLegend; track $index) {
+            @for (item of doughnutLegend.reverse(); track $index) {
               <div class="legend-item">
                 <div class="legend-info">
                   <span class="legend-dot" [style.background-color]="item.color"></span>
