@@ -7,7 +7,8 @@ import {
   input,
   output,
   signal,
-  ViewChild
+  ViewChild,
+  TemplateRef
 } from '@angular/core';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
@@ -25,7 +26,7 @@ import {
 } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatIconModule} from '@angular/material/icon';
-import {NgStyle, TitleCasePipe} from '@angular/common';
+import {NgStyle, NgTemplateOutlet, TitleCasePipe} from '@angular/common';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {MatIconButton} from '@angular/material/button';
@@ -56,7 +57,8 @@ import {PaginatorComponent} from '@shared/components/paginator/paginator.compone
     MatIconButton,
     MatProgressSpinner,
     MatSortHeader,
-    PaginatorComponent
+    PaginatorComponent,
+    NgTemplateOutlet
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -74,11 +76,11 @@ export class TableComponent implements AfterViewInit {
   pageSize = input(0);
   currentPage = input<number>(0);
   isRowClickable = input(false);
-  totalItems = input<number | undefined>(0)
+  totalItems = input<number | undefined>(0);
   pageSizeOptions = input<number[]>([]);
   actions = input<TableAction[]>([]);
+  actionsTemplate = input<TemplateRef<any> | null>(null); // Custom template for actions
   statusConfig = input.required<StatusConfig>();
-
 
   selectionChange = output<any[]>();
   actionClick = output<{ action: string; item: any }>();
@@ -97,7 +99,8 @@ export class TableComponent implements AfterViewInit {
 
     cols.push(...this.columns().map((col) => col.key));
 
-    if (this.actions().length > 0) {
+    // Show actions column if either actions array or custom template is provided
+    if (this.actions().length > 0 || this.actionsTemplate()) {
       cols.push('actions');
     }
 
@@ -217,5 +220,4 @@ export class TableComponent implements AfterViewInit {
 
     return String(value);
   }
-
 }

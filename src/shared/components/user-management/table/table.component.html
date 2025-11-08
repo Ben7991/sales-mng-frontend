@@ -50,33 +50,45 @@
       }
 
       <!-- Actions Column -->
-      @if (actions().length > 0) {
+      @if (actions().length > 0 || actionsTemplate()) {
         <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef style="width: 60px; max-width: 60px;"></mat-header-cell>
-          <mat-cell *matCellDef="let element" style="width: 60px; max-width: 60px;">
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="popup-menu">
-              @for (action of actions(); track action.action) {
-                <button
-                  mat-menu-item
-                  (click)="onActionClick(action.action, element)">
-                  @if (action.icon) {
-                    <mat-icon>{{ action.icon }}</mat-icon>
-                  }
-                  <span>{{ action.label }}</span>
-                </button>
-              }
-            </mat-menu>
+          <mat-header-cell *matHeaderCellDef
+                           [style.width]="actionsTemplate() ? '140px' : '60px'"
+                           [style.max-width]="actionsTemplate() ? '140px' : '60px'">
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element"
+                    [style.width]="actionsTemplate() ? '140px' : '60px'"
+                    [style.max-width]="actionsTemplate() ? '140px' : '60px'">
+            @if (actionsTemplate()) {
+              <ng-container
+                *ngTemplateOutlet="actionsTemplate()!; context: { $implicit: element }">
+              </ng-container>
+            }
+            @else if (actions().length > 0) {
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu" class="popup-menu">
+                @for (action of actions(); track action.action) {
+                  <button
+                    mat-menu-item
+                    (click)="onActionClick(action.action, element)">
+                    @if (action.icon) {
+                      <mat-icon>{{ action.icon }}</mat-icon>
+                    }
+                    <span>{{ action.label }}</span>
+                  </button>
+                }
+              </mat-menu>
+            }
           </mat-cell>
         </ng-container>
       }
 
       <mat-header-row *matHeaderRowDef="displayedColumns()"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns();" 
-        (click)="isRowClickable() && onRowClick(row)" 
-        [class.clickable]="isRowClickable()"
+      <mat-row *matRowDef="let row; columns: displayedColumns();"
+               (click)="isRowClickable() && onRowClick(row)"
+               [class.clickable]="isRowClickable()"
       ></mat-row>
     </mat-table>
 
