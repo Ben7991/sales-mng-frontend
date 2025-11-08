@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h2 class="modal-title">Arrears of {{ data.customerName }}</h2>
+  <button mat-icon-button (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="modal-content">
+  <app-table
+    [columns]="orderColumns"
+    [data]="data.orders"
+    [showCheckboxes]="false"
+    [showPagination]="false"
+    [actionsTemplate]="actionsTemplate"
+    [statusConfig]="{}"
+  />
+
+  <ng-template #actionsTemplate let-order>
+    <a
+      class="go-to-order-link"
+      (click)="goToOrder(order)">
+      Go to order
+    </a>
+  </ng-template>
+</div>
