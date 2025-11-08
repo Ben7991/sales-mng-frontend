@@ -20,12 +20,12 @@ import {ButtonComponent} from '@shared/components/button/button.component';
 import {LiveSearchDropdownComponent} from '@shared/components/live-search-dropdown/live-search-dropdown.component';
 import {LiveSearchItem} from '@shared/models/interface';
 import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
+import {catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap, tap} from 'rxjs';
+import {SalesService} from '../../service/sales.service';
 import {
   ProductsManagementService
-} from '../../../inventory-management/components/products/services/products-management.service';
-import {catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap, tap} from 'rxjs';
-import {CustomerManagementService} from '../../../customers/services/customer-management.service';
-import {SalesService} from '../../service/sales.service';
+} from '../../../../../inventory-management/components/products/services/products-management.service';
+import {CustomerManagementService} from '../../../../../customers/services/customer-management.service';
 
 const LIVE_SEARCH_DEBOUNCE_TIME = 300;
 

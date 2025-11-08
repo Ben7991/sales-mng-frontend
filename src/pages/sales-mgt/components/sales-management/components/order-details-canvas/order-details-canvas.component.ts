@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ButtonComponent } from "@shared/components/button/button.component";
 import { STATUS_COLORS } from '@shared/constants/colors.constant';
-import { SalesService } from 'pages/sales-management/service/sales.service';
+import {SalesService} from '../../service/sales.service';
 
 @Component({
     selector: 'app-order-details-canvas',

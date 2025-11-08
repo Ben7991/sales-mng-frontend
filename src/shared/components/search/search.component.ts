@@ -6,7 +6,8 @@ import {
   inject,
   Input,
   OnInit,
-  Output
+  Output,
+  effect
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -26,6 +27,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 })
 export class SearchComponent implements OnInit {
   @Input() config: SearchConfig = {};
+  @Input() set value(val: string) {
+    if (val !== this.searchControl.value) {
+      this.searchControl.setValue(val, { emitEvent: false });
+    }
+  }
 
   @Output() searchTermChange = new EventEmitter<string>();
   @Output() searchCleared = new EventEmitter<void>();
@@ -55,11 +61,12 @@ export class SearchComponent implements OnInit {
     this.searchCleared.emit();
   }
 
+
   protected getContainerWidth(): string {
     if (this.config.width) {
       return this.config.width;
     }
-    
+
     return '300px';
   }
 }

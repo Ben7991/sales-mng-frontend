@@ -5,6 +5,7 @@
 @include table.table;
 
 .sales-management-container {
+  margin: 2rem 2rem 0 0;
   @include filter.filter-section;
 }
 

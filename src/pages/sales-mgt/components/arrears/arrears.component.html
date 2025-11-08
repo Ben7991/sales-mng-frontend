@@ -1,0 +1,40 @@
+<div class="arreas-container">
+  <div class="filter-section">
+    <app-search
+      [config]="salesSearchConfig"
+      (searchTermChange)="onUserSearchTermChange($event)"
+    />
+  </div>
+
+  @if (isLoadingArrears()) {
+    <div class="loader">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  }
+  @else{
+    <div class="table-name">Arrears ({{ arrearsCount() }})</div>
+    <app-table
+      [columns]="tableColumns"
+      [data]="customerArrears() ?? []"
+      [loading]="isLoadingArrears()"
+      [showCheckboxes]="false"
+      [isRowClickable]="true"
+      [showPagination]="arrearsCount() > currentPageSize"
+      [pageSize]="currentPageSize"
+      [currentPage]="currentPage"
+      [totalItems]="arrearsCount()"
+      [statusConfig]="{}"
+      (pageChange)="onPageChange($event)"
+      [actionsTemplate]="customActions"
+    />
+    <ng-template #customActions let-row>
+      <app-button
+        text=" View details"
+        variant="filled"
+        class="view-details-btn"
+        (click)="viewDetails(row)" />
+
+    </ng-template>
+  }
+
+</div>

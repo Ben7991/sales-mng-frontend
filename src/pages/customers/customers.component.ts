@@ -26,7 +26,8 @@ import { CustomerManagementService } from './services/customer-management.servic
     ButtonComponent,
     MatIconModule,
     SearchComponent,
-    MatProgressSpinner
+    MatProgressSpinner,
+    TableComponent
   ],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.scss',

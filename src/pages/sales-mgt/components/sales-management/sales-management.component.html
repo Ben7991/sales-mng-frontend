@@ -2,7 +2,9 @@
   <div class="filter-section">
     <app-search
       [config]="salesSearchConfig"
+      [value]="searchTerm()"
       (searchTermChange)="onUserSearchTermChange($event)"
+      (searchCleared)="onSearchCleared()"
     />
 
     <div class="filter-actions">
@@ -71,7 +73,7 @@
     </div>
   </div>
 </div>
-@if (SalesManagementService.isLoadingOrders()) {
+@if (salesService.isLoadingOrders()) {
   <div class="loader">
     <mat-spinner diameter="50"></mat-spinner>
   </div>
@@ -79,19 +81,19 @@
 @else {
   <div class="sales-table--canvas">
     <div class="sales-table">
-      <div class="table-name">Orders ({{ SalesManagementService.ordersCount() }})</div>
+      <div class="table-name">Orders ({{ salesService.ordersCount() }})</div>
 
       <app-table
         [columns]="tableColumns"
-        [data]="SalesManagementService.orders() ?? []"
+        [data]="salesService.orders() ?? []"
         [actions]="tableActions"
         [loading]="isLoading$()"
         [showCheckboxes]="false"
         [isRowClickable]="true"
-        [showPagination]="SalesManagementService.ordersCount() > 10"
-        [pageSize]="SalesManagementService.currentPageSize"
-        [currentPage]="SalesManagementService.currentPage"
-        [totalItems]="SalesManagementService.ordersCount()"
+        [showPagination]="salesService.ordersCount() > 10"
+        [pageSize]="salesService.currentPageSize"
+        [currentPage]="salesService.currentPage"
+        [totalItems]="salesService.ordersCount()"
         [statusConfig]="statusConfig"
         (actionClick)="onActionClick($event)"
         (pageChange)="onPageChange($event)"
@@ -101,7 +103,7 @@
 
     @if (clickedRow()) {
       <div class="canvas">
-        
+
         <app-order-details-canvas
           [orderId]="clickedRow()!.id"
           [openUpdatePaymentModal]="openUpdatePaymentModal"

@@ -1,4 +1,4 @@
-import {Category} from '../../inventory-management/components/products/models/interface';
+import {Category} from '../../../../inventory-management/components/products/models/interface';
 
 export interface SalesOrder {
   "id": number,
