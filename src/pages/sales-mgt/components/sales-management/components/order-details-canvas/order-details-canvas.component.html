@@ -1,0 +1,114 @@
+<div class="order-details-canvas">
+    @if (!salesService.singleOrder()) {
+        <div class="section loader">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+    }
+    @else if (salesService.singleOrderLoadingError()) {
+        <div class="section loading-error">
+            <div>Error loading order details</div>
+            <app-button text="Retry" (click)="fetchSingleOrder()" />
+        </div>
+    }
+    @else {
+        <section>
+            <div class="header">
+                <h3>Order Details</h3>
+                <mat-icon (click)="onCloseCanvas()">close</mat-icon>
+            </div>
+    
+            <div class="section">
+                <div class="section-title--order-type">
+                    <div class="section-title">Products Purchased</div>
+                    <span class="order-type">{{ (salesService.singleOrder()?.orderSale ?? '') | titlecase}}</span>
+                </div>
+                <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Products</th>
+                        <th>Qty</th>
+                        <th>Amt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of salesService.singleOrder().orderItems; track $index) {
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.amount }}</td>
+                        </tr>
+                    }
+                </tbody>
+                </table>
+            </div>
+    
+            <mat-divider></mat-divider>
+    
+            <!--Summary-->
+            <div class="section summary">
+                <h3 class="section-title">Summary</h3>
+                <div class="summary-row">
+                    <div>Order ID</div> 
+                    <div>{{ salesService.singleOrder().id }}</div>
+                </div>
+    
+                <div class="summary-row">
+                    <div>Order date</div>
+                    <div>{{ salesService.singleOrder().orderDate | date:'mediumDate' }}</div>
+                </div>
+    
+                <div class="total--receipts">
+                    <h4 class="total">Total: GH₵ {{ getTotal() | number:'1.2-2' }}</h4>
+    
+                    <app-button
+                        text="Export receipt"
+                        iconType="material"
+                        icon="download"
+                        (click)="downloadReceipt()"
+                    />
+    
+                    <app-button
+                        text="Print receipt"
+                        iconType="material"
+                        icon="print"
+                        (click)="printReceipt()"
+                    />
+                </div>
+            </div>
+        </section>
+
+        <!--Payment status-->
+        <section>
+            <div class="payment-status">
+                <h3 class="section-title">Payment Status</h3>
+
+                <div class="status-badge--balance">
+                    @let orderPaidStatus = salesService.singleOrder().paidStatus;
+                    <div 
+                        class="status-badge" 
+                        [ngClass]="salesService.singleOrder().paidStatus?.toLowerCase()"
+                        [style.background-color]="
+                            orderPaidStatus === 'OUTSTANDING' ? 
+                                statusColors.QUIT.backgroundColor : 
+                                statusColors.ACTIVE.backgroundColor          
+                            "
+                         [style.color]="
+                            orderPaidStatus === 'OUTSTANDING' ? 
+                                statusColors.QUIT.color : 
+                                statusColors.ACTIVE.color          
+                            "
+                    >
+                        {{ salesService.singleOrder().paidStatus | titlecase }}
+                    </div>
+                    <div class="balance">Balance {{ getBalance() | number:'1.2-2' }}</div>
+                    <div class="progress-bar">
+                        <div class="progress" [style.width.%]="getTotalPaidPercent()"></div>
+                    </div>
+                </div>
+
+                <app-button text="Update Payment" (click)="getBalance() !== 0 && onUpdatePayment()" [disabled]="getBalance() === 0" />              
+            </div>
+        </section>
+
+    }
+</div>
