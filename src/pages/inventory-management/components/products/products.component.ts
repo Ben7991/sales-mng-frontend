@@ -34,7 +34,8 @@ import { ProductsManagementService } from './services/products-management.servic
     MatIconModule,
     SearchComponent,
     MatProgressSpinner,
-    PaginatorComponent
+    PaginatorComponent,
+    TableComponent
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',

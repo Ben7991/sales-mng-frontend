@@ -35,7 +35,8 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     MatMenuTrigger,
     MatDivider,
     MatProgressSpinner,
-    SearchComponent
+    SearchComponent,
+    TableComponent
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss',

@@ -27,7 +27,8 @@ import { SupplierManagementService } from './services/supplier-management.servic
     ButtonComponent,
     MatIconModule,
     SearchComponent,
-    MatProgressSpinner
+    MatProgressSpinner,
+    TableComponent
   ],
   templateUrl: './supplier-management.component.html',
   styleUrl: './supplier-management.component.scss',

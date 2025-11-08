@@ -38,6 +38,7 @@ import {Supplier} from '../../../suppliers/models/interface';
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    TableComponent,
   ],
   templateUrl: './restock-history.component.html',
   styleUrl: './restock-history.component.scss'

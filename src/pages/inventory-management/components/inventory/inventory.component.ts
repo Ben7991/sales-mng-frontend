@@ -19,7 +19,8 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner';
     SearchComponent,
     ButtonComponent,
     TableComponent,
-    MatProgressSpinner
+    MatProgressSpinner,
+    TableComponent
   ],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss'

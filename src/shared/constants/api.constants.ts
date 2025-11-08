@@ -28,6 +28,20 @@ export const getSalesReceiptDataUrl = (id: number) =>
 export const getUpdateOrderPaymentUrl = (id: number) =>
   `${environment.serverUrl}/sales/${id}/add-payment`;
 
+/*ARREARS*/
+export const getArrearsUrl = (perPage: number, page: number, q: string): string => {
+  const params = new URLSearchParams();
+  params.set('perPage', perPage.toString());
+  params.set('page', page.toString());
+  if (q) {
+    params.set('q', q);
+  }
+  return `${environment.serverUrl}/report/arrears?${params.toString()}`;
+};
+
+export const getArrearDetailsUrl = (customerId: number): string =>
+  `${environment.serverUrl}/report/arrears/${customerId}`;
+
 /* SUPPLIERS */
 export const getSuppliersUrl =
     (limit: number, page: number, query: string) => `${environment.serverUrl}/suppliers?perPage=${limit}&page=${page}&q=${query}`;
