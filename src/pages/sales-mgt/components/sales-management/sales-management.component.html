@@ -106,7 +106,7 @@
 
         <app-order-details-canvas
           [orderId]="clickedRow()!.id"
-          [openUpdatePaymentModal]="openUpdatePaymentModal"
+          [openUpdatePaymentModal]="openUpdatePaymentModal.bind(this)"
           (canvasClose)="clearClickedRowItem()"
         />
       </div>
