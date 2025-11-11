@@ -1,7 +1,7 @@
-import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { finalize } from 'rxjs';
+import { inject, Injectable, signal } from '@angular/core';
 import { getMoneyShareUrl } from '@shared/constants/api.constants';
+import { finalize } from 'rxjs';
 import { MoneyShareData, MoneyShareResponse } from '../models/interface';
 
 @Injectable({
@@ -18,17 +18,29 @@ export class ReportsService {
   public currentPage = 0;
   public currentPageSize = 10;
   public searchQuery = '';
-  public startDate: number | undefined;
-  public endDate: number | undefined;
+  public startDate: string;
+  public endDate: string;
 
   private cache = new Map<string, MoneyShareResponse>();
 
-  getMoneyShareReport(options?: {
+  constructor() {
+    // Set default start date to midnight of current day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    this.startDate = today.toISOString();
+
+    // Set default end date to last moment of current day
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+    this.endDate = endOfDay.toISOString();
+  }
+
+  public getMoneyShareReport(options?: {
     page?: number;
     perPage?: number;
     q?: string;
-    startDate?: number;
-    endDate?: number;
+    startDate?: string;
+    endDate?: string;
     useCache?: boolean;
     showLoader?: boolean;
   }) {
@@ -58,22 +70,17 @@ export class ReportsService {
       .get<MoneyShareResponse>(getMoneyShareUrl(perPage, page, q, startDate, endDate))
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: response => {
+        next: (response) => {
           this.moneyShareData.set(response.data);
           this.totalCount.set(response.count);
           this.bonus.set(response.bonus);
           this.cache.set(cacheKey, response);
         },
-        error: error => {
-          console.error('Error fetching money share report:', error);
+        error: () => {
           this.moneyShareData.set([]);
           this.totalCount.set(0);
           this.bonus.set(0);
         }
       });
-  }
-
-  clearCache() {
-    this.cache.clear();
   }
 }

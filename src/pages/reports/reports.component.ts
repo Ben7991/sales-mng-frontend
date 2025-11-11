@@ -3,10 +3,14 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal }
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { SearchConfig } from '@shared/components/search/interface';
 import { SearchComponent } from '@shared/components/search/search.component';
 import { TableColumn } from '@shared/components/user-management/table/interface/interface';
@@ -26,7 +30,13 @@ import { ReportsService } from './services/reports.service';
     MatNativeDateModule,
     MatFormFieldModule,
     MatInputModule,
-    DecimalPipe
+    DecimalPipe,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatIconModule,
+    MatDivider,
+    ButtonComponent
   ],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss',
@@ -42,8 +52,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   readonly dateRange = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null)
+    start: new FormControl<Date | null>(new Date()),
+    end: new FormControl<Date | null>(new Date())
   });
 
   ngOnInit() {
@@ -78,18 +88,23 @@ export class ReportsComponent implements OnInit, OnDestroy {
     const startDate = this.dateRange.value.start;
     const endDate = this.dateRange.value.end;
 
-    // Convert dates to timestamps
-    const startTimestamp = startDate ? startDate.getTime() : undefined;
-    const endTimestamp = endDate ? endDate.getTime() : undefined;
+    if (startDate) {
+      const startOfDay = new Date(startDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      this.reportsService.startDate = startOfDay.toISOString();
+    }
+    if (endDate) {
+      const endOfDay = new Date(endDate);
+      endOfDay.setHours(23, 59, 59, 999);
+      this.reportsService.endDate = endOfDay.toISOString();
+    }
 
-    this.reportsService.startDate = startTimestamp;
-    this.reportsService.endDate = endTimestamp;
     this.reportsService.currentPage = 0;
 
     this.reportsService.getMoneyShareReport({
       page: 0,
-      startDate: startTimestamp,
-      endDate: endTimestamp,
+      startDate: this.reportsService.startDate,
+      endDate: this.reportsService.endDate,
       useCache: false,
       showLoader: true
     });
@@ -107,7 +122,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   protected clearDateFilter() {
-    this.dateRange.reset();
+    this.dateRange.setValue({
+      start: new Date(),
+      end: new Date()
+    })
   }
 
   protected get hasDateFilter(): boolean {
