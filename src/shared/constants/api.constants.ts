@@ -105,3 +105,20 @@ export const productLiveSearchUrl =
 export const getSummaryUrl= `${environment.serverUrl}/dashboard/summary`;
 export const getOrderSummaryUrl = `${environment.serverUrl}/dashboard/order-summary`;
 export const getHighValueCustomersUrl = `${environment.serverUrl}/dashboard/high-value-customers`;
+
+/* REPORTS */
+export const getMoneyShareUrl = (perPage: number, page: number, q: string, startDate?: number, endDate?: number): string => {
+  const params = new URLSearchParams();
+  params.set('perPage', perPage.toString());
+  params.set('page', page.toString());
+  if (q) {
+    params.set('q', q);
+  }
+  if (startDate) {
+    params.set('startDate', startDate.toString());
+  }
+  if (endDate) {
+    params.set('endDate', endDate.toString());
+  }
+  return `${environment.serverUrl}/report/money-sharing?${params.toString()}`;
+};

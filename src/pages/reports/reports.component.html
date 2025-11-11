@@ -1,0 +1,59 @@
+@let bonus = reportsService.bonus();
+
+<div class="reports-container">
+  <div class="filter-section">
+    <app-search
+      [config]="searchConfig"
+      [value]="searchTerm()"
+      (searchTermChange)="onSearchTermChange($event)"
+    />
+    
+    <div class="filter-actions">
+      <mat-form-field class="date-range-picker" appearance="outline">
+        <mat-label>Filter by date</mat-label>
+        <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Start date">
+          <input matEndDate formControlName="end" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+
+      @if (hasDateFilter) {
+        <button class="clear-filter-btn" (click)="clearDateFilter()">
+          Clear date filter
+        </button>
+      }
+    </div>
+  </div>
+  
+  @if(bonus) {
+      <div class="bonus-section">
+          <span class="bonus-text">2% Bonus Calculations is: </span>
+          <span class="bonus-amount">GH{{ reportsService.bonus() | number:'1.2-2' }}₵</span>
+      </div>
+  }
+</div>
+
+@if (reportsService.isLoading()) {
+  <div class="loader">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+}
+@else {
+   @if (bonus) {
+       <div class="table-name">Reports ({{ reportsService.totalCount() }})</div>
+   }
+  
+  <app-table
+    [columns]="tableColumns"
+    [data]="reportsService.moneyShareData() ?? []"
+    [showCheckboxes]="false"
+    [showPagination]="reportsService.totalCount() > 10"
+    [pageSize]="reportsService.currentPageSize"
+    [currentPage]="reportsService.currentPage"
+    [totalItems]="reportsService.totalCount()"
+    [statusConfig]="{}"
+    (pageChange)="onPageChange($event)"
+  />
+}
