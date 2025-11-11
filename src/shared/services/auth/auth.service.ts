@@ -4,6 +4,7 @@ import {
   AUTH_FORGOT_PASSWORD_URL,
   AUTH_IN_APP_PASSWORD_CHANGE,
   AUTH_LOGIN_URL,
+  AUTH_LOGOUT_URL,
   AUTH_REFRESH_TOKEN_URL,
   AUTH_RESET_PASSWORD_URL,
   AUTH_USER_UPDATE,
@@ -72,5 +73,14 @@ export class AuthService {
 
   public refreshToken(): Observable<{ token: string }> {
     return this.http.get<{ token: string }>(AUTH_REFRESH_TOKEN_URL);
+  }
+
+  public logout(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(AUTH_LOGOUT_URL, {});
+  }
+
+  public clearAuthData(): void {
+    this.accessToken = null;
+    this.localStorageService.removeLocalStorageItem(LocalStorageKeys.ACCESS_TOKEN);
   }
 }
