@@ -60,7 +60,7 @@
     [columns]="tableColumns"
     [data]="reportsService.moneyShareData() ?? []"
     [showCheckboxes]="false"
-    [showPagination]="reportsService.totalCount() > 10"
+    [showPagination]="true"
     [pageSize]="reportsService.currentPageSize"
     [currentPage]="reportsService.currentPage"
     [totalItems]="reportsService.totalCount()"

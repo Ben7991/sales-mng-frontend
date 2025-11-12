@@ -1,6 +1,8 @@
 import { TableColumn } from '@shared/components/user-management/table/interface/interface';
 import { SearchConfig } from '@shared/components/search/interface';
 
+export const REPORTS_PAGE_SIZE = 10;
+
 export const reportsTableColumns: TableColumn[] = [
   { 
     key: 'createdAt', 

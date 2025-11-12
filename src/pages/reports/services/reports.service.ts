@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { getMoneyShareUrl } from '@shared/constants/api.constants';
-import { finalize } from 'rxjs';
+import { finalize, map } from 'rxjs';
 import { MoneyShareData, MoneyShareResponse } from '../models/interface';
+import { transformMoneyShareResponse } from '../helpers/reports.adapter';
+import { REPORTS_PAGE_SIZE } from '../constants/reports.constant';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class ReportsService {
   public readonly isLoading = signal<boolean>(false);
 
   public currentPage = 0;
-  public currentPageSize = 10;
+  public currentPageSize = REPORTS_PAGE_SIZE;
   public searchQuery = '';
   public startDate: string;
   public endDate: string;
@@ -68,7 +70,10 @@ export class ReportsService {
 
     this.http
       .get<MoneyShareResponse>(getMoneyShareUrl(perPage, page, q, startDate, endDate))
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        map(transformMoneyShareResponse),
+        finalize(() => this.isLoading.set(false))
+      )
       .subscribe({
         next: (response) => {
           this.moneyShareData.set(response.data);

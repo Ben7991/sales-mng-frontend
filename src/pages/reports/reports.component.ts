@@ -114,8 +114,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.reportsService.currentPage = event.pageIndex;
     this.reportsService.currentPageSize = event.pageSize;
     this.reportsService.getMoneyShareReport({
-      page: event.pageIndex,
-      perPage: event.pageSize,
       useCache: false,
       showLoader: true
     });
