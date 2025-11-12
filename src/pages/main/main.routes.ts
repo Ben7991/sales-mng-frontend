@@ -8,6 +8,7 @@ import {DashboardComponent} from '../dashboard/dashboard.component';
 import {SalesMgtComponent} from '../sales-mgt/sales-mgt.component';
 import {SalesManagementComponent} from '../sales-mgt/components/sales-management/sales-management.component';
 import {ArrearsComponent} from '../sales-mgt/components/arrears/arrears.component';
+import { ReportsComponent } from "pages/reports/reports.component";
 
 export const mainRoutePaths: Routes = [
   {
@@ -40,6 +41,10 @@ export const mainRoutePaths: Routes = [
     ]
   },
   {
+    path: 'reports',
+    component: ReportsComponent
+  },
+   {
     path: 'settings',
     component: SettingsComponent
   }

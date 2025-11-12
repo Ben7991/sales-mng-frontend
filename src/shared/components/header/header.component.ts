@@ -1,3 +1,4 @@
+import { isPlatformBrowser, Location, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,13 +9,13 @@ import {
   OnInit,
   PLATFORM_ID,
 } from '@angular/core';
-import { isPlatformBrowser, TitleCasePipe, UpperCasePipe, Location } from '@angular/common';
-import { AuthService } from '@shared/services/auth/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { NavigationEnd, Router } from '@angular/router';
 import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
+import { AuthService } from '@shared/services/auth/auth.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -39,7 +40,7 @@ export class HeaderComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
 
   @Input() pageTitle: string = '';
-  @Input() toggleSidenavCallback: () => void = () => {};
+  @Input() toggleSidenavCallback: () => void = () => { };
 
   public userName: string = '';
   public userInitials: string = '';
@@ -122,6 +123,19 @@ export class HeaderComponent implements OnInit {
 
   public navigateToSettings(): void {
     void this.router.navigateByUrl(NAVIGATION_ROUTES.SETTINGS.HOME);
+  }
+
+  public handleLogout(): void {
+    this.authService
+      .logout()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.authService.clearAuthData();
+          void this.router.navigate([NAVIGATION_ROUTES.AUTH.LOGIN]);
+        })
+      )
+      .subscribe();
   }
 
   toggleSidenav() {

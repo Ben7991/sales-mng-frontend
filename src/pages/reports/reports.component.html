@@ -1,0 +1,70 @@
+@let bonus = reportsService.bonus();
+
+<div class="reports-container">
+  <div class="filter-section">
+    <app-search
+      [config]="searchConfig"
+      [value]="searchTerm()"
+      (searchTermChange)="onSearchTermChange($event)"
+    />
+    
+    <div class="filter-actions">
+      <app-button
+        text="Filter by date"
+        variant="outlined"
+        [matMenuTriggerFor]="dateFilterMenu"
+        class="filter-button"
+      >
+        <mat-icon>expand_more</mat-icon>
+      </app-button>
+
+      <mat-menu #dateFilterMenu="matMenu" class="popup-menu date-filter-menu">
+        <div class="date-range-container" (click)="$event.stopPropagation()">
+          <mat-form-field class="date-range-picker" appearance="outline">
+            <mat-label>Select date range</mat-label>
+            <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker">
+              <input matStartDate formControlName="start" placeholder="Start date">
+              <input matEndDate formControlName="end" placeholder="End date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </mat-form-field>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="clearDateFilter()" [disabled]="!hasDateFilter">
+          Clear date filter
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+  
+  @if(bonus) {
+      <div class="bonus-section">
+          <span class="bonus-text">2% Bonus Calculations is: </span>
+          <span class="bonus-amount">GH₵ {{ reportsService.bonus() | number:'1.2-2' }}</span>
+      </div>
+  }
+</div>
+
+@if (reportsService.isLoading()) {
+  <div class="loader">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+}
+@else {
+   @if (bonus) {
+       <div class="table-name">Reports ({{ reportsService.totalCount() }})</div>
+   }
+  
+  <app-table
+    [columns]="tableColumns"
+    [data]="reportsService.moneyShareData() ?? []"
+    [showCheckboxes]="false"
+    [showPagination]="true"
+    [pageSize]="reportsService.currentPageSize"
+    [currentPage]="reportsService.currentPage"
+    [totalItems]="reportsService.totalCount()"
+    [statusConfig]="{}"
+    (pageChange)="onPageChange($event)"
+  />
+}

@@ -1,0 +1,91 @@
+.reports-container {
+  margin-bottom: 1.5rem;
+
+  .filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .filter-button {
+        height: 40px;
+      }
+    }
+  }
+
+  .bonus-section {
+    padding: 1rem;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .bonus-text {
+      font-size: 1rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .bonus-amount {
+      font-size: 1.25rem;
+      color: #2c3e50;
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.table-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+::ng-deep {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: white;
+    }
+  }
+
+  .date-filter-menu {
+    max-width: none !important;
+    
+    .mat-mdc-menu-content {
+      padding: 0;
+    }
+
+    .date-range-container {
+      padding: 16px 16px 0;
+      min-width: 250px;
+      width: 250px;
+
+      .date-range-picker {
+        width: 100%;
+      }
+    }
+  }
+}
