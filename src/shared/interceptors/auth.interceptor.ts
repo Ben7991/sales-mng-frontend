@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AUTH_FORGOT_PASSWORD_URL, AUTH_LOGIN_URL, AUTH_REFRESH_TOKEN_URL, AUTH_RESET_PASSWORD_URL } from '@shared/constants/api.constants';
 import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
-import { AuthService } from '@shared/services/auth/auth.service';
+import { AuthenticationService } from '@shared/services/auth/authentication.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 const WHITE_LISTED_URLS = [
@@ -17,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (
     req: HttpRequest<unknown>,
     next: HttpHandlerFn
 ) => {
-    const authService = inject(AuthService);
+    const authService = inject(AuthenticationService);
     const router = inject(Router);
 
     const accessToken = authService.getAccessToken();

@@ -4,7 +4,7 @@ import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {ButtonComponent} from '@shared/components/button/button.component';
 import {passwordMatchValidator} from '../../../auth/validators/password-match.validator';
-import {AuthService} from '@shared/services/auth/auth.service';
+import {AuthenticationService} from '@shared/services/auth/authentication.service';
 import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
 import {User} from '@shared/models/interface';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
@@ -24,7 +24,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PasswordComponent implements OnInit{
-  public authUser = inject(AuthService);
+  public authUser = inject(AuthenticationService);
   private readonly fb = inject(FormBuilder);
   private readonly snackbarService = inject(SnackbarService)
   private destroyRef =inject(DestroyRef)
@@ -44,7 +44,7 @@ export class PasswordComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.authUser.getUserDetails().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.authUser.fetchUserDetails().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         this.currentUser =response.data
       },

@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { NavigationEnd, Router } from '@angular/router';
 import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
-import { AuthService } from '@shared/services/auth/auth.service';
+import { AuthenticationService } from '@shared/services/auth/authentication.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -32,7 +32,7 @@ import { finalize } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+  private readonly authService = inject(AuthenticationService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.authService
-      .getUserDetails()
+      .fetchUserDetails()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {

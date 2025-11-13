@@ -1,5 +1,5 @@
-import {HttpClient} from '@angular/common/http';
-import {inject, Injectable} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import {
   AUTH_FORGOT_PASSWORD_URL,
   AUTH_IN_APP_PASSWORD_CHANGE,
@@ -10,20 +10,22 @@ import {
   AUTH_USER_UPDATE,
   GET_AUTH_USER
 } from '@shared/constants/api.constants';
-import {Observable} from 'rxjs';
-import {LoginForm, LoginResponse, PasswordResetForm} from '../../../pages/auth/models/interface';
-import {LocalStorageKeys, LocalStorageService} from '../localstorage/localstorage.service';
-import {PasswordChange, UserResponse} from '@shared/models/interface';
-import {addUserApiResponse, addUserInterface} from '../../../pages/user-management/interface';
+import { Observable, tap } from 'rxjs';
+import { LoginForm, LoginResponse, PasswordResetForm } from '../../../pages/auth/models/interface';
+import { LocalStorageKeys, LocalStorageService } from '../localstorage/localstorage.service';
+import { PasswordChange, User, UserResponse } from '@shared/models/interface';
+import { addUserApiResponse, addUserInterface } from '../../../pages/user-management/interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthenticationService {
   private readonly http = inject(HttpClient);
   private readonly localStorageService = inject(LocalStorageService);
 
   private accessToken: string | null = null;
+
+  private user: User | null = null;
 
   constructor() {
     this.accessToken =
@@ -43,12 +45,19 @@ export class AuthService {
     return this.http.post<LoginResponse>(AUTH_LOGIN_URL, form);
   }
 
-  public getUserDetails():Observable<UserResponse>{
+  public fetchUserDetails(): Observable<UserResponse> {
     return this.http.get<UserResponse>(GET_AUTH_USER)
+      .pipe(
+        tap(({ data: user }) => this.user = user)
+      )
   }
 
-  public updateDetails(userData: Partial<addUserInterface>): Observable<addUserApiResponse>{
-    return this.http.post<addUserApiResponse>(AUTH_USER_UPDATE,userData)
+  public getUser(): User | null {
+    return this.user;
+  }
+
+  public updateDetails(userData: Partial<addUserInterface>): Observable<addUserApiResponse> {
+    return this.http.post<addUserApiResponse>(AUTH_USER_UPDATE, userData)
   }
 
   public changePassword(userData: PasswordChange) {

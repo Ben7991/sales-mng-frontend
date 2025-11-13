@@ -1,23 +1,41 @@
-import {computed, effect, inject, Injectable, signal} from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import {menuItems} from '@shared/components/sidenav/menu-items';
-import {LocalStorageKeys, LocalStorageService} from '@shared/services/localstorage/localstorage.service';
-import {MenuItem} from '@shared/components/sidenav/sidenav.interface';
+import { menuItems } from '@shared/components/sidenav/menu-items';
+import { LocalStorageKeys, LocalStorageService } from '@shared/services/localstorage/localstorage.service';
+import { MenuItem } from '@shared/components/sidenav/sidenav.interface';
 import { filter } from 'rxjs/operators';
+import { AuthenticationService } from '@shared/services/auth/authentication.service';
+import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SidenavService {
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly authService = inject(AuthenticationService);
   private router = inject(Router);
   private isCollapsed = signal<boolean>(false);
   private isMobileOpen = signal<boolean>(false);
-  private menuItems = signal<MenuItem[]>(menuItems());
+  private menuItems = signal<MenuItem[]>(menuItems);
 
   isCollapsed$ = computed(() => this.isCollapsed());
   isMobileOpen$ = computed(() => this.isMobileOpen());
-  menuItems$ = computed(() => this.menuItems());
+  // menuItems$ = computed(() => {
+  //   const user = this.authService.getUser();
+  //   if (!user) {
+  //     console.log("not");
+  //     void this.router.navigateByUrl(NAVIGATION_ROUTES.AUTH.LOGIN);
+  //     return [];
+  //   }
+
+  //   // Filter menu items based on user role
+  //   const useRole = user.role;
+
+  //  
+
+  // });
+
+   menuItems$ = computed(() => this.menuItems());
 
   constructor() {
     const savedState = this.localStorageService.getLocalStorageItem(LocalStorageKeys.SIDEBAR_STATE_KEY);

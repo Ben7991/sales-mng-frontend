@@ -4,7 +4,7 @@ import {MatInput} from '@angular/material/input';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
 import {User} from '@shared/models/interface';
-import {AuthService} from '@shared/services/auth/auth.service';
+import {AuthenticationService} from '@shared/services/auth/authentication.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ButtonComponent} from '@shared/components/button/button.component';
 import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
@@ -25,7 +25,7 @@ import {SnackbarService} from '@shared/services/snackbar/snackbar.service';
 export class GeneralComponent implements OnInit {
   private readonly snackbarService = inject(SnackbarService);
   private readonly formBuilder = inject(FormBuilder);
-  public authUser = inject(AuthService);
+  public authUser = inject(AuthenticationService);
   public destroyRef = inject(DestroyRef);
   public user!: User;
   protected readonly isSubmittingForm = signal(false);
@@ -48,7 +48,7 @@ export class GeneralComponent implements OnInit {
   }
 
   public getUserData() {
-    this.authUser.getUserDetails()
+    this.authUser.fetchUserDetails()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
