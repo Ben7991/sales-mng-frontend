@@ -4,21 +4,23 @@
   </div>
 } @else {
 <div class="dashboard-container">
-  <!-- Metrics Section (your existing code) -->
-  <div class="metricSection">
-    @for (metric of metrics; track $index) {
-
+  <!-- Metrics Section (Top Cards - Admin Only) -->
+  @if (canViewTopCards) {
+    <div class="metricSection">
+      @for (metric of metrics; track $index) {
         <app-metricscard
           [showActions]="metric.showAction"
           [metricTitle]="metric.metricsName"
           [metricNumber]="metric.metricsNumber"
           [routePath]="metric.route"
         />
-    }
-  </div>
+      }
+    </div>
+  }
 
   <!-- Order Summary Bar Chart -->
-  <div class="orderSummary">
+  @if (canViewCharts) {
+    <div class="orderSummary">
     <div class="chart-header">
       <h2>Order Summary</h2>
       <select [(ngModel)]="selectedYear" class="year-select" (change)="onYearChange()">
@@ -43,9 +45,11 @@
       </div>
     }
   </div>
+  }
 
 
   <!-- Bottom Section with Two Charts -->
+  @if (canViewCharts) {
   <div class="bottomSection">
     <!-- High Value Customers Doughnut Chart -->
     <div class="doughnutChart chart-card">
@@ -115,5 +119,6 @@
     </div>
 
   </div>
+  }
 </div>
 }

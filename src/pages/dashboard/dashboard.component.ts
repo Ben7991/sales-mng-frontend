@@ -14,7 +14,10 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { DashboardService } from './service/dashboard.service';
 import { MetricscardComponent } from './components/metricscard/metricscard.component';
 import { DashboardSummary } from './models/interface';
-import {NAVIGATION_ROUTES} from '@shared/constants/navigation.constant';
+import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
+import { AuthorizationService } from '@shared/services/auth/authorization.service';
+import { Page } from '@shared/models/enums';
+import { DASHBOARD_FEATURES } from '@shared/constants/rbac.constants';
 
 const colorPalette = ['#4B5563', '#93A8AC', '#D1D5DB', '#E5E7EB', '#E15759', '#76B7B2'];
 
@@ -29,6 +32,7 @@ const colorPalette = ['#4B5563', '#93A8AC', '#D1D5DB', '#E5E7EB', '#E15759', '#7
 export class DashboardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   dashboardService = inject(DashboardService);
+  private authorizationService = inject(AuthorizationService);
 
   summaryData = signal<DashboardSummary | null>(null);
   protected isMetricSummaryLoading = this.dashboardService.isLoadingDashboard;
@@ -36,6 +40,11 @@ export class DashboardComponent implements OnInit {
   protected isOrderSummaryLoading = this.dashboardService.isLoadingOrderSummary;
 
   public metrics: any[] = [];
+
+  // Permission checks
+  public canViewTopCards = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_TOP_CARDS);
+  public canViewCharts = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_CHARTS);
+  public canViewRecentActivities = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_RECENT_ACTIVITIES);
 
   public barChartData?: ChartConfiguration<'bar'>['data'];
   public doughnutChartData?: ChartConfiguration<'doughnut'>['data'];
