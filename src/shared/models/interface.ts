@@ -1,7 +1,8 @@
-import { UserAccountStatus, UserRole } from "./types";
+import { Page } from "./enums";
+import { HTTPAction, UserAccountStatus, UserRole } from "./types";
 
 export interface UserResponse {
-    data: User;
+  data: User;
 }
 export interface userArrayResponse {
     data: {
@@ -44,3 +45,8 @@ export interface LiveSearchItem {
   id: string;
   name: string;
 }
+
+export type RoleBasedAccess = Record<Page, {
+  roles: UserRole[];
+  features: 'ALL' | string[];
+}[]>;

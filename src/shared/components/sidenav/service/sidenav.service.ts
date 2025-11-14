@@ -1,41 +1,45 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { menuItems } from '@shared/components/sidenav/menu-items';
-import { LocalStorageKeys, LocalStorageService } from '@shared/services/localstorage/localstorage.service';
 import { MenuItem } from '@shared/components/sidenav/sidenav.interface';
+import { AuthorizationService } from '@shared/services/auth/authorization.service';
+import { LocalStorageKeys, LocalStorageService } from '@shared/services/localstorage/localstorage.service';
+import { UserService } from '@shared/services/state/user/user.service';
 import { filter } from 'rxjs/operators';
-import { AuthenticationService } from '@shared/services/auth/authentication.service';
-import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SidenavService {
   private readonly localStorageService = inject(LocalStorageService);
-  private readonly authService = inject(AuthenticationService);
+  private readonly userService = inject(UserService);
+  private readonly authorizationService = inject(AuthorizationService);
   private router = inject(Router);
   private isCollapsed = signal<boolean>(false);
   private isMobileOpen = signal<boolean>(false);
   private menuItems = signal<MenuItem[]>(menuItems);
 
-  isCollapsed$ = computed(() => this.isCollapsed());
-  isMobileOpen$ = computed(() => this.isMobileOpen());
-  // menuItems$ = computed(() => {
-  //   const user = this.authService.getUser();
-  //   if (!user) {
-  //     console.log("not");
-  //     void this.router.navigateByUrl(NAVIGATION_ROUTES.AUTH.LOGIN);
-  //     return [];
-  //   }
+  public isCollapsed$ = computed(() => this.isCollapsed());
+  public isMobileOpen$ = computed(() => this.isMobileOpen());
 
-  //   // Filter menu items based on user role
-  //   const useRole = user.role;
+  public menuItems$ = computed(() => {
+    const user = this.userService.user;
 
-  //  
+    // If no user, return empty menu items (they will be loaded when user is fetched)
+    if (!user) {
+      return [];
+    }
 
-  // });
+    // Filter menu items based on user permissions
+    return this.menuItems().filter(item => {
+      // If menu item has no page assigned, show it (unrestricted access)
+      if (item.feature === undefined) {
+        return true;
+      }
 
-   menuItems$ = computed(() => this.menuItems());
+      return this.authorizationService.canAccessPage(item.feature);
+    });
+  });
 
   constructor() {
     const savedState = this.localStorageService.getLocalStorageItem(LocalStorageKeys.SIDEBAR_STATE_KEY);

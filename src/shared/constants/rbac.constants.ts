@@ -1,81 +1,46 @@
-import { Feature } from "@shared/models/enums";
+import { Page } from "@shared/models/enums";
 import { RoleBasedAccess } from "@shared/models/interface";
+import { UserRole } from "@shared/models/types";
 
-export const RBAC: RoleBasedAccess[] = [
-    {
-        [Feature.SUPPLIERS]: [
-            {
-                role: ['ANY'],
-                resource: /\/suppliers\?/,
-                actions: ['GET']
-            },
-            {
-                role: ['ADMIN'],
-                resource: /\/suppliers/,
-                actions: ['GET', 'POST', 'PATCH', 'DELETE']
-            }
-        ],
-        [Feature.USERS]: [
-            {
-                role: ['ADMIN'],
-                resource: /\/users/,
-                actions: ['GET', 'POST', 'PATCH', 'DELETE']
-            }
-        ],
-        [Feature.CUSTOMERS]: [
-            {
-                role: ['ADMIN', 'SALES_PERSON'],
-                resource: /\/customers/,
-                actions: ['GET', 'POST', 'PATCH', 'DELETE']
-            }
-        ],
-        [Feature.PRODUCTS]: [
-            {
-                role: ['ANY'],
-                resource: /\/products\?/,
-                actions: ['GET']
-            },
-            {
-                role: ['ADMIN'],
-                resource: /\/products/,
-                actions: ['GET', 'POST', 'PATCH', 'DELETE']
-            },
-            {
-                role: ['PROCUREMENT_OFFICER'],
-                resource: /\/products\/(live-search|restock|stocks|restock-history)/,
-                actions: ['GET', 'POST', 'PATCH']
-            },
-            {
-                role: ['SALES_PERSON'],
-                resource: /\/products\/stock-live-search/,
-                actions: ['GET']
-            }
-        ],
-        [Feature.PRODUCT_CATEGORIES]: [
-            {
-                role: ['ADMIN'],
-                resource: /\/categories/,
-                actions: ['GET', 'POST', 'PATCH']
-            }
-        ],
-        [Feature.SALES]: [
-            {
-                role: ['ADMIN', 'SALES_PERSON'],
-                resource: /\/sales/,
-                actions: ['GET', 'POST', 'PATCH']
-            }
-        ],
-        [Feature.REPORTS]: [
-            {
-                role: ['ADMIN'],
-                resource: /\/reports/,
-                actions: ['GET']
-            },
-            {
-                role: ['SALES_PERSON'],
-                resource: /\/report\/arrears/,
-                actions: ['GET']
-            }
-        ]
-    }
-]
+export const RBAC: RoleBasedAccess = {
+    [Page.DASHBOARD]: [
+        { roles: ['ADMIN'], features: 'ALL' },
+        { roles: ['SALES_PERSON', 'PROCUREMENT_OFFICER'], features: ['VIEW_CHARTS', 'VIEW_RECENT_ACTIVITIES'] }
+    ],
+    [Page.SUPPLIERS]: [
+        { roles: ['ADMIN'], features: 'ALL' },
+        { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_SUPPLIERS'] }
+    ],
+    [Page.USERS]: [
+        { roles: ['ADMIN'], features: 'ALL' }
+    ],
+    [Page.CUSTOMERS]: [
+        { roles: ['ADMIN', 'SALES_PERSON'], features: 'ALL' }
+    ],
+    [Page.INVENTORY]: [
+        { roles: ['ADMIN'], features: 'ALL' },
+        { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_INVENTORY', 'ADD_PRODUCT', 'EDIT_PRODUCT'] }
+    ],
+    [Page.SALES]: [
+        { roles: ['ADMIN'], features: 'ALL' },
+        { roles: ['SALES_PERSON'], features: ['VIEW_SALES', 'CREATE_SALE'] }
+    ],
+    [Page.REPORTS]: [
+        { roles: ['ADMIN'], features: 'ALL' }
+    ]
+};
+
+// Dashboard feature constants
+export const DASHBOARD_FEATURES = {
+    VIEW_TOP_CARDS: 'VIEW_TOP_CARDS',
+    VIEW_CHARTS: 'VIEW_CHARTS',
+    VIEW_RECENT_ACTIVITIES: 'VIEW_RECENT_ACTIVITIES'
+} as const;
+
+// Supplier feature constants
+export const SUPPLIER_FEATURES = {
+    VIEW_SUPPLIERS: 'VIEW_SUPPLIERS',
+    ADD_SUPPLIER: 'ADD_SUPPLIER',
+    EDIT_SUPPLIER: 'EDIT_SUPPLIER',
+    DELETE_SUPPLIER: 'DELETE_SUPPLIER'
+} as const;

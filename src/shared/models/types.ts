@@ -4,3 +4,5 @@ export type UserAccountStatus = 'ACTIVE' | 'FIRED' | 'QUIT';
 
 export type LoadingIndicatorSize = 'small' | 'medium' | 'large';
 
+export type HTTPAction = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+

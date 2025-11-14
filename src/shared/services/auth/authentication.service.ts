@@ -15,6 +15,7 @@ import { LoginForm, LoginResponse, PasswordResetForm } from '../../../pages/auth
 import { LocalStorageKeys, LocalStorageService } from '../localstorage/localstorage.service';
 import { PasswordChange, User, UserResponse } from '@shared/models/interface';
 import { addUserApiResponse, addUserInterface } from '../../../pages/user-management/interface';
+import { UserService } from '../state/user/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +23,9 @@ import { addUserApiResponse, addUserInterface } from '../../../pages/user-manage
 export class AuthenticationService {
   private readonly http = inject(HttpClient);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly userService = inject(UserService);
 
   private accessToken: string | null = null;
-
-  private user: User | null = null;
 
   constructor() {
     this.accessToken =
@@ -48,12 +48,8 @@ export class AuthenticationService {
   public fetchUserDetails(): Observable<UserResponse> {
     return this.http.get<UserResponse>(GET_AUTH_USER)
       .pipe(
-        tap(({ data: user }) => this.user = user)
-      )
-  }
-
-  public getUser(): User | null {
-    return this.user;
+        tap(({ data: user }) => this.userService.user = user)
+      );
   }
 
   public updateDetails(userData: Partial<addUserInterface>): Observable<addUserApiResponse> {
@@ -90,6 +86,7 @@ export class AuthenticationService {
 
   public clearAuthData(): void {
     this.accessToken = null;
+    this.userService.user = null;
     this.localStorageService.removeLocalStorageItem(LocalStorageKeys.ACCESS_TOKEN);
   }
 }
