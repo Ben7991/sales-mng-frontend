@@ -27,7 +27,6 @@
     font-weight: 600;
     color: #374151;
     border-bottom: none;
-    white-space: nowrap;
     padding: 0 16px;
   }
 
@@ -48,38 +47,5 @@
   .mat-mdc-paginator {
     border-top: 1px solid #e5e7eb;
     background-color: white;
-  }
-}
-.empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-  padding: 2rem;
-
-  .empty-state-content {
-    text-align: center;
-    color: rgba(0, 0, 0, 0.54);
-
-    .empty-state-icon {
-      font-size: 48px;
-      width: 48px;
-      height: 48px;
-      margin-bottom: 16px;
-      color: rgba(0, 0, 0, 0.38);
-    }
-
-    .empty-state-title {
-      margin: 0 0 8px 0;
-      font-size: 20px;
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.87);
-    }
-
-    .empty-state-description {
-      margin: 0;
-      font-size: 14px;
-      color: rgba(0, 0, 0, 0.54);
-    }
   }
 }

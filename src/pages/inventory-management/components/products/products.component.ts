@@ -25,6 +25,7 @@ import {
 } from './constants/products.constant';
 import { Category, Product } from './models/interface';
 import { ProductsManagementService } from './services/products-management.service';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-products',
@@ -35,7 +36,8 @@ import { ProductsManagementService } from './services/products-management.servic
     SearchComponent,
     MatProgressSpinner,
     PaginatorComponent,
-    TableComponent
+    TableComponent,
+    EmptyStateComponent,
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',

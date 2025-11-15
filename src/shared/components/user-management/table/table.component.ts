@@ -33,6 +33,7 @@ import {MatIconButton} from '@angular/material/button';
 import {StatusConfig, TableAction, TableColumn} from './interface/interface';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {PaginatorComponent} from '@shared/components/paginator/paginator.component';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-table',
@@ -58,7 +59,8 @@ import {PaginatorComponent} from '@shared/components/paginator/paginator.compone
     MatProgressSpinner,
     MatSortHeader,
     PaginatorComponent,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    EmptyStateComponent,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',

@@ -85,9 +85,9 @@ export class DashboardComponent implements OnInit {
     this.generateYearOptions();
     this.generateMonthOptions();
 
-    this.dashboardService.getDashboardSummary();
-    this.dashboardService.getOrderSummary(this.selectedYear.toString());
-    this.dashboardService.getHighValueCustomers(this.selectedMonth);
+    this.dashboardService.getDashboardSummary({ useCache: true, showLoader: true });
+    this.dashboardService.getOrderSummary(this.selectedYear.toString(), { useCache: true, showLoader: true });
+    this.dashboardService.getHighValueCustomers(this.selectedMonth, { useCache: true, showLoader: true });
   }
 
   private handleSummary(summary: DashboardSummary): void {
@@ -174,7 +174,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onYearChange(): void {
-    this.dashboardService.getOrderSummary(this.selectedYear.toString());
+    this.dashboardService.getOrderSummary(this.selectedYear.toString(), { useCache: false, showLoader: true });
   }
 
   private generateMonthOptions(): void {
@@ -206,7 +206,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onMonthChange(): void {
-    this.dashboardService.getHighValueCustomers(this.selectedMonth);
+    this.dashboardService.getHighValueCustomers(this.selectedMonth, { useCache: false, showLoader: true });
   }
 
   public barChartOptions: ChartConfiguration<'bar'>['options'] = Object.freeze({
