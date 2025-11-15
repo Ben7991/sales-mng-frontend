@@ -38,40 +38,7 @@ export class AuthorizationService {
       return true;
     }
 
-    // Check if the feature is in the user's feature list
+    // Check if user has access to the specific feature
     return userConfig.features.includes(feature);
-  }
-
-  public canAccessPageFeature(page: Page, feature?: string): boolean {
-    if (!feature) {
-      return this.canAccessPage(page);
-    }
-
-    return this.hasFeatureAccess(page, feature);
-  }
-
-  public getAccessiblePages(): Page[] {
-    const user = this.userService.user;
-    if (!user) return [];
-
-    const accessiblePages: Page[] = [];
-    const allPages = Object.keys(RBAC).map(key => parseInt(key) as Page);
-
-    for (const page of allPages) {
-      if (this.canAccessPage(page)) {
-        accessiblePages.push(page);
-      }
-    }
-
-    return accessiblePages;
-  }
-
-  public getUserRole(): UserRole | null {
-    const user = this.userService.user;
-    return user?.role ?? null;
-  }
-
-  public isAdmin(): boolean {
-    return this.getUserRole() === 'ADMIN';
   }
 }
