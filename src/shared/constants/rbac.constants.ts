@@ -9,7 +9,7 @@ export const RBAC: RoleBasedAccess = {
     ],
     [Page.SUPPLIERS]: [
         { roles: ['ADMIN'], features: 'ALL' },
-        { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_SUPPLIERS'] }
+        // { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_SUPPLIERS'] }
     ],
     [Page.USERS]: [
         { roles: ['ADMIN'], features: 'ALL' }
@@ -18,12 +18,10 @@ export const RBAC: RoleBasedAccess = {
         { roles: ['ADMIN', 'SALES_PERSON'], features: 'ALL' }
     ],
     [Page.INVENTORY]: [
-        { roles: ['ADMIN'], features: 'ALL' },
-        { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_INVENTORY', 'ADD_PRODUCT', 'EDIT_PRODUCT'] }
+        { roles: ['ADMIN', 'PROCUREMENT_OFFICER'], features: 'ALL' },
     ],
     [Page.SALES]: [
-        { roles: ['ADMIN'], features: 'ALL' },
-        { roles: ['SALES_PERSON'], features: ['VIEW_SALES', 'CREATE_SALE'] }
+        { roles: ['ADMIN', 'SALES_PERSON'], features: 'ALL' },
     ],
     [Page.REPORTS]: [
         { roles: ['ADMIN'], features: 'ALL' }

@@ -42,8 +42,8 @@ export class DashboardComponent implements OnInit {
   public metrics: any[] = [];
 
   // Permission checks
-  public canViewTopCards = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_TOP_CARDS);
-  public canViewCharts = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_CHARTS);
+  protected canViewTopCards = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_TOP_CARDS);
+  protected canViewCharts = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_CHARTS);
   public canViewRecentActivities = this.authorizationService.hasFeatureAccess(Page.DASHBOARD, DASHBOARD_FEATURES.VIEW_RECENT_ACTIVITIES);
 
   public barChartData?: ChartConfiguration<'bar'>['data'];
