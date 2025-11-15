@@ -9,7 +9,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/dashboardIcon.svg', 
     route: NAVIGATION_ROUTES.DASHBOARD.HOME, 
     active: false,
-    roles: [],
     feature: Page.DASHBOARD
   },
   { 
@@ -17,7 +16,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/suppliersIcon.svg', 
     route: NAVIGATION_ROUTES.SUPPLIERS.HOME, 
     active: false, 
-    roles: [],
     feature: Page.SUPPLIERS
   },
   { 
@@ -25,7 +23,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/usersIcon.svg', 
     route: NAVIGATION_ROUTES.USERS.HOME, 
     active: false, 
-    roles: [],
     feature: Page.USERS
   },
   { 
@@ -33,7 +30,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/customerIcon.svg', 
     route: NAVIGATION_ROUTES.CUSTOMERS.HOME, 
     active: false, 
-    roles: [],
     feature: Page.CUSTOMERS
   },
   { 
@@ -41,7 +37,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/inventoryIcon.svg', 
     route: NAVIGATION_ROUTES.INVENTORY.HOME, 
     active: false, 
-    roles: [],
     feature: Page.INVENTORY
   },
   { 
@@ -49,7 +44,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/salesIcon.svg', 
     route: NAVIGATION_ROUTES.SALES.HOME, 
     active: false, 
-    roles: [],
     feature: Page.SALES
   },
   { 
@@ -57,7 +51,6 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/reportsIcon.svg', 
     route: NAVIGATION_ROUTES.REPORTS.HOME, 
     active: false, 
-    roles: [],
     feature: Page.REPORTS
   },
   { 
@@ -65,6 +58,5 @@ export const menuItems: MenuItem[] = [
     icon: 'assets/settingsIcon.svg', 
     route: NAVIGATION_ROUTES.SETTINGS.HOME, 
     active: false, 
-    roles: [] 
   },
 ];
