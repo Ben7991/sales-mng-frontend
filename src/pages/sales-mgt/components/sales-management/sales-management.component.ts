@@ -147,7 +147,10 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
     this.clickedRow.set(null);
   }
 
-  onActionClick(event: { action: string; item: any }) {
+  onActionClick(event: { action: string; item: any; originalEvent?: Event }) {
+    if (event.originalEvent) {
+      event.originalEvent.stopPropagation();
+    }
     if (event.action === 'edit') this.salesService.changeOrderStatusAndRefresh(event.item.id, 'DELIVERED');
   }
 

@@ -1,7 +1,6 @@
 <div class="table-container">
   @if (data().length > 0) {
     <mat-table [dataSource]="data()" matSort class="mat-elevation-0">
-      <!-- Checkbox Column -->
       @if (showCheckboxes()) {
         <ng-container matColumnDef="select">
           <mat-header-cell *matHeaderCellDef>
@@ -21,7 +20,6 @@
         </ng-container>
       }
 
-      <!-- Dynamic Columns -->
       @for (column of columns(); track column.key) {
         <ng-container [matColumnDef]="column.key">
           <mat-header-cell *matHeaderCellDef>
@@ -49,7 +47,6 @@
         </ng-container>
       }
 
-      <!-- Actions Column -->
       @if (actions().length > 0 || actionsTemplate()) {
         <ng-container matColumnDef="actions">
           <mat-header-cell *matHeaderCellDef
@@ -65,7 +62,10 @@
               </ng-container>
             }
             @else if (actions().length > 0) {
-              <button mat-icon-button [matMenuTriggerFor]="menu">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                (click)="$event.stopPropagation()">
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #menu="matMenu" class="popup-menu">
