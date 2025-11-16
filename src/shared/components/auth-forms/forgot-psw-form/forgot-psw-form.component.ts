@@ -7,7 +7,7 @@ import { InputComponent } from "@shared/components/input/input.component";
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
 import { NAVIGATION_ROUTES } from '@shared/constants/navigation.constant';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
-import { AuthService } from '@shared/services/auth/auth.service';
+import { AuthenticationService } from '@shared/services/auth/authentication.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -23,7 +23,7 @@ import { finalize } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPswFormComponent {
-  private readonly authService = inject(AuthService);
+  private readonly authService = inject(AuthenticationService);
   private readonly router = inject(Router);
   private readonly snackbarService = inject(SnackbarService);
   private readonly fb = inject(FormBuilder);

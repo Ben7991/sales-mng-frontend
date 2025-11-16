@@ -1,17 +1,23 @@
 <mat-tab-group dynamicHeight>
-  <mat-tab label="Products">
-    <div class="example-small-box mat-elevation-z4">
-      <app-products/>
-    </div>
-  </mat-tab>
-  <mat-tab label="Inventory">
-    <div class="example-small-box mat-elevation-z4">
-      <app-inventory/>
-    </div>
-  </mat-tab>
-  <mat-tab label="Restock History">
-    <div class="example-small-box mat-elevation-z4">
-      <app-restock-history/>
-    </div>
-  </mat-tab>
+  @if (canViewProducts) {
+    <mat-tab label="Products">
+      <div class="example-small-box mat-elevation-z4">
+        <app-products/>
+      </div>
+    </mat-tab>
+  }
+  @if (canViewInventory) {
+    <mat-tab label="Inventory">
+      <div class="example-small-box mat-elevation-z4">
+        <app-inventory/>
+      </div>
+    </mat-tab>
+  }
+  @if (canViewRestockHistory) {
+    <mat-tab label="Restock History">
+      <div class="example-small-box mat-elevation-z4">
+        <app-restock-history/>
+      </div>
+    </mat-tab>
+  }
 </mat-tab-group>

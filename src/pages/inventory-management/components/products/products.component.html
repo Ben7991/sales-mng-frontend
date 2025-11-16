@@ -28,7 +28,7 @@
         </div>
       } @else {
         <div class="categories-list">
-          @for (category of productsService.categories(); track category.id) {
+          @for (category of productsService.categories() ?? []; track category.id) {
             <div class="category-item">
               <span class="category-name">{{ toTitleCase(category.name) }}</span>
               <app-button
@@ -41,6 +41,9 @@
                 (click)="onCategoryActionClick({action: 'edit', item: category})"
               />
             </div>
+          }
+          @empty {
+            <app-empty-state />
           }
         </div>
         

@@ -71,7 +71,7 @@ export class CustomersComponent implements OnInit {
   }
 
   protected onSelectionChange(selectedItems: any[]) {
-    console.log('Selected items:', selectedItems);
+    
   }
 
   protected onActionClick(event: { action: string, item: Customer }) {
