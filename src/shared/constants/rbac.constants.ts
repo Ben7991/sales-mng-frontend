@@ -9,7 +9,6 @@ export const RBAC: RoleBasedAccess = {
     ],
     [Page.SUPPLIERS]: [
         { roles: ['ADMIN'], features: 'ALL' },
-        // { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_SUPPLIERS'] }
     ],
     [Page.USERS]: [
         { roles: ['ADMIN'], features: 'ALL' }
@@ -18,7 +17,8 @@ export const RBAC: RoleBasedAccess = {
         { roles: ['ADMIN', 'SALES_PERSON'], features: 'ALL' }
     ],
     [Page.INVENTORY]: [
-        { roles: ['ADMIN', 'PROCUREMENT_OFFICER'], features: 'ALL' },
+        { roles: ['ADMIN'], features: 'ALL' },
+        { roles: ['PROCUREMENT_OFFICER'], features: ['VIEW_INVENTORY', 'VIEW_RESTOCK_HISTORY'] },
     ],
     [Page.SALES]: [
         { roles: ['ADMIN', 'SALES_PERSON'], features: 'ALL' },
@@ -33,4 +33,11 @@ export const DASHBOARD_FEATURES = {
     VIEW_TOP_CARDS: 'VIEW_TOP_CARDS',
     VIEW_CHARTS: 'VIEW_CHARTS',
     VIEW_RECENT_ACTIVITIES: 'VIEW_RECENT_ACTIVITIES'
+} as const;
+
+// Inventory feature constants
+export const INVENTORY_FEATURES = {
+    VIEW_PRODUCTS: 'VIEW_PRODUCTS',
+    VIEW_INVENTORY: 'VIEW_INVENTORY',
+    VIEW_RESTOCK_HISTORY: 'VIEW_RESTOCK_HISTORY'
 } as const;
