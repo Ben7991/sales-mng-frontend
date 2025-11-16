@@ -2,10 +2,10 @@
   width: 220px;
   height: 100vh;
   background-color: #ABBEC4;
-  z-index: 999;
+  z-index: 1000;
   padding: 0 24px;
   overflow: visible;
-  transition: width 0.3s ease;
+  position: relative;
 
   &.collapsed {
     width: 80px;
@@ -71,10 +71,11 @@
   overflow: visible;
   position: relative;
   width: 100%;
+  z-index: 1001;
 }
 
 .menu-item {
-  margin-bottom: 0.5rem; // Increased spacing
+  margin-bottom: 0.5rem;
   position: relative;
 
   &.active .menu-link {
@@ -105,12 +106,6 @@
   &:hover {
     background: rgba(255, 255, 255, 0.1);
     color: white;
-
-    // Show tooltip on collapsed sidebar hover
-    .sidenav.collapsed & .menu-text {
-      opacity: 1;
-      visibility: visible;
-    }
   }
 
   .sidenav.collapsed & {
@@ -120,10 +115,10 @@
 }
 
 .menu-icon {
-  min-width: 24px; // Increased from 20px
+  min-width: 24px;
   width: 24px;
   height: 24px;
-  margin-right: 1rem; // Increased margin
+  margin-right: 1rem;
   color: rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
@@ -134,42 +129,53 @@
   }
 
   svg {
-    width: 24px; // Increased from 20px
+    width: 24px;
     height: 24px;
     stroke-width: 1.5;
   }
 }
 
 .menu-text {
-  font-size: 1rem; // Increased from 0.875rem
+  font-size: 1rem;
   font-weight: 500;
   white-space: nowrap;
 
   .sidenav.collapsed & {
-    opacity: 0;
-    visibility: hidden;
-    position: absolute;
-    left: 70px; // Adjusted for new collapsed width
-    background: #2d3748;
-    color: white;
-    padding: 0.75rem 1rem; // Increased padding
-    border-radius: 6px;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    pointer-events: none;
-    z-index: 1000;
-    font-size: 0.875rem;
+    display: none;
+  }
+}
 
-    // Arrow for tooltip
-    &::before {
-      content: '';
-      position: absolute;
-      left: -5px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: 5px solid transparent;
-      border-right-color: #2d3748;
-    }
+.tooltip-portal {
+  position: fixed;
+  transform: translateY(-50%);
+  background: #2d3748;
+  color: white;
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 99999;
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: tooltipFadeIn 0.15s ease;
+
+  .tooltip-arrow {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: #2d3748;
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -183,7 +189,6 @@
   z-index: 998;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
 
   &.show {
     opacity: 1;
@@ -203,7 +208,6 @@
   .logo {
     height: 50px;
     width: 50px;
-    transition: all 0.3s ease;
 
     .sidenav.collapsed & {
       height: 40px;
@@ -214,7 +218,7 @@
 
 .sidenav-content {
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
 
   &::-webkit-scrollbar {
     width: 4px;

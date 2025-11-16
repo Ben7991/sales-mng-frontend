@@ -16,8 +16,12 @@
     </div>
     <ul class="menu-list">
       @for (item of sidenavService.menuItems$(); track $index) {
-        <li class="menu-item" [class.active]="item.active" (click)="sidenavService.selectMenuItem(item)">
-          <a class="menu-link" [title]="sidenavService.isCollapsed$() ? item.name : ''">
+        <li class="menu-item"
+            [class.active]="item.active"
+            (click)="sidenavService.selectMenuItem(item)"
+            (mouseenter)="onMenuItemHover($index, $event)"
+            (mouseleave)="onMenuItemLeave()">
+          <a class="menu-link">
             <img [ngSrc]="item.icon" alt="{{ item.name }} Icon" class="menu-icon" width="24" height="24" />
             <span class="menu-text">{{ item.name }}</span>
           </a>
@@ -26,3 +30,10 @@
     </ul>
   </div>
 </nav>
+
+@if (sidenavService.isCollapsed$() && hoveredItemIndex() !== null) {
+  <div class="tooltip-portal" [style.top.px]="tooltipPosition().top" [style.left.px]="tooltipPosition().left">
+    {{ hoveredItemName() }}
+    <div class="tooltip-arrow"></div>
+  </div>
+}
