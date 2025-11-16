@@ -204,9 +204,14 @@ export class CreateOrderModalComponent implements OnInit {
     this.showSearchDropdown.set(false);
     this.productNotFound.set(false);
     this.productsForm.get('productName')?.setValue(item.name, { emitEvent: false });
+
     setTimeout(() => {
+      const quantityInput = document.querySelector('input[formControlName="quantity"]') as HTMLInputElement;
+      if (quantityInput) {
+        quantityInput.focus();
+      }
       this.isSelectingProduct = false;
-    }, 300);
+    }, 100);
   }
 
   protected onInputFocus(): void {
