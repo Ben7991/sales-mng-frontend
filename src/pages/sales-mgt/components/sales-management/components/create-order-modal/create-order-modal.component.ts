@@ -86,19 +86,19 @@ export class CreateOrderModalComponent implements OnInit {
   ];
   selectedOrderType: orderSale | '' = '';
 
-  // Live search properties
   protected readonly searchResults = signal<LiveSearchItem[]>([]);
   protected readonly isSearching = signal(false);
   protected readonly showSearchDropdown = signal(false);
   protected readonly productNotFound = signal(false);
   private readonly searchSubject = new Subject<string>();
   private selectedProduct: any = null;
+  private isSelectingProduct = false;
 
-  // Customer live search
   protected readonly customerSearchResults = signal<LiveSearchItem[]>([]);
   protected readonly isCustomerSearching = signal(false);
   protected readonly showCustomerSearchDropdown = signal(false);
   private readonly customerSearchSubject = new Subject<string>();
+  private isSelectingCustomer = false;
 
 
   ngOnInit() {
@@ -151,6 +151,10 @@ export class CreateOrderModalComponent implements OnInit {
 
   setupProductNameListener() {
     this.productsForm.get('productName')?.valueChanges.subscribe(value => {
+      if (this.isSelectingProduct) {
+        return;
+      }
+
       if (this.selectedProduct && value !== this.selectedProduct.name) {
         this.selectedProduct = null;
       }
@@ -170,11 +174,39 @@ export class CreateOrderModalComponent implements OnInit {
     this.searchSubject.next(input.value);
   }
 
+  protected onProductNameKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.selectedProduct) {
+        const quantityInput = document.querySelector('input[formControlName="quantity"]') as HTMLInputElement;
+        if (quantityInput) {
+          quantityInput.focus();
+        }
+      }
+    }
+  }
+
+  protected onQuantityKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const productName = this.productsForm.get('productName')?.value;
+      const quantity = this.productsForm.get('quantity')?.value;
+
+      if (productName && quantity && quantity > 0 && this.selectedProduct) {
+        this.addProduct();
+      }
+    }
+  }
+
   protected onSelectSearchResult(item: LiveSearchItem): void {
-    this.productsForm.get('productName')?.setValue(item.name);
+    this.isSelectingProduct = true;
+    this.selectedProduct = item;
     this.showSearchDropdown.set(false);
     this.productNotFound.set(false);
-    this.selectedProduct = item;
+    this.productsForm.get('productName')?.setValue(item.name, { emitEvent: false });
+    setTimeout(() => {
+      this.isSelectingProduct = false;
+    }, 300);
   }
 
   protected onInputFocus(): void {
@@ -188,6 +220,9 @@ export class CreateOrderModalComponent implements OnInit {
   }
 
   protected onInputBlur(): void {
+    if (this.isSelectingProduct) {
+      return;
+    }
     setTimeout(() => {
       this.showSearchDropdown.set(false);
     }, 200);
@@ -229,6 +264,10 @@ export class CreateOrderModalComponent implements OnInit {
     this.customerForm.get('customerName')?.valueChanges
       .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe(value => {
+        if (this.isSelectingCustomer) {
+          return;
+        }
+
         if (value && value.trim().length >= 2) {
           this.customerSearchSubject.next(value);
         } else {
@@ -256,14 +295,21 @@ export class CreateOrderModalComponent implements OnInit {
   }
 
   protected onCustomerInputBlur() {
+    if (this.isSelectingCustomer) {
+      return;
+    }
     setTimeout(() => {
       this.showCustomerSearchDropdown.set(false);
     }, 200);
   }
 
   protected onCustomerSelected(item: LiveSearchItem) {
-    this.customerForm.get('customerName')?.setValue(item.name);
+    this.isSelectingCustomer = true;
     this.showCustomerSearchDropdown.set(false);
+    this.customerForm.get('customerName')?.setValue(item.name, { emitEvent: false });
+    setTimeout(() => {
+      this.isSelectingCustomer = false;
+    }, 300);
   }
 
   addProduct() {
