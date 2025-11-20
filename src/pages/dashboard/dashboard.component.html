@@ -4,19 +4,17 @@
   </div>
 } @else {
 <div class="dashboard-container">
-  <!-- Metrics Section (Top Cards - Admin Only) -->
-  @if (canViewTopCards) {
-    <div class="metricSection">
-      @for (metric of metrics; track $index) {
-        <app-metricscard
-          [showActions]="metric.showAction"
-          [metricTitle]="metric.metricsName"
-          [metricNumber]="metric.metricsNumber"
-          [routePath]="metric.route"
-        />
-      }
-    </div>
-  }
+  <!-- Metrics Section -->
+  <div class="metricSection">
+    @for (metric of metrics; track $index) {
+      <app-metricscard
+        [showActions]="canViewTopCards"
+        [metricTitle]="metric.metricsName"
+        [metricNumber]="metric.metricsNumber"
+        [routePath]="metric.route"
+      />
+    }
+  </div>
 
   <!-- Order Summary Bar Chart -->
   @if (canViewCharts) {
