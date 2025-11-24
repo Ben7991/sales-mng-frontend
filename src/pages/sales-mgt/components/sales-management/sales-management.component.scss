@@ -37,3 +37,34 @@
     gap: 20px;
   }
 }
+
+::ng-deep .action-menu-button {
+  background: transparent !important;
+  border: none !important;
+  
+  &:hover {
+    background: transparent !important;
+  }
+  
+  .mat-mdc-button-persistent-ripple {
+    display: none !important;
+  }
+}
+
+::ng-deep .mat-column-actions {
+  width: 60px !important;
+  max-width: 60px !important;
+  flex: 0 0 60px !important;
+}
+
+::ng-deep .mat-column-orderStatus {
+  min-width: 160px !important;
+}
+
+::ng-deep .status-chip {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+  display: inline-block !important;
+}

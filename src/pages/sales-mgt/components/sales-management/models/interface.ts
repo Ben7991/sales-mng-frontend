@@ -7,7 +7,8 @@ export interface SalesOrder {
   "amountPaid": number,
   "orderStatus": orderStatus,
   "orderTotal": number,
-  "paidStatus": PaidStatus
+  "paidStatus": PaidStatus,
+  "commenet"?: string
 }
 export type ProductStatus = 'IN_USE' | 'DISCONTINUED';
 export interface APISalesOrderResponse {
@@ -16,7 +17,7 @@ export interface APISalesOrderResponse {
 }
 
 export type PaidStatus = 'PAID' | 'OUTSTANDING' ;
-export type orderStatus = 'OPEN' | 'DELIVERED' ;
+export type orderStatus = 'OPEN' | 'DELIVERED' | 'DEEMED_SATISFIED';
 export type orderSale = 'WHOLESALE' | 'RETAIL' | 'SPECIAL_PURCHASE' ;
 export type paymentMode = 'CASH' | 'BANK_TRANSFER' | 'MOBILE_MONEY' |'CHEQUE' ;
 
@@ -34,9 +35,15 @@ export interface ProductI{
 export interface CreateOrderRequest {
   orderItems: OrderItem[];
   orderSale: orderSale;
-  paymentMode: paymentMode;
-  amountPaid: number;
   customer: string;
+  comment?: string;
+}
+
+export interface UpdateOrderRequest {
+  orderItems: OrderItem[];
+  orderSale: orderSale;
+  customer: string;
+  comment?: string;
 }
 
 export interface OrderItem {

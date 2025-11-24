@@ -28,7 +28,8 @@
 .step-content {
   padding: 24px;
   background-color: #ffffff;
-  overflow: visible;
+  max-height: 50vh;
+  overflow: auto;
 }
 
 .step-content h3 {

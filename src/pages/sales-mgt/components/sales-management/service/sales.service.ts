@@ -1,11 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { changeOrderStatusUrl, getOrderUrl, getSalesReceiptDataUrl, getSalesOrdersUrl } from '@shared/constants/api.constants';
+import { changeOrderStatusUrl, getOrderUrl, getSalesReceiptDataUrl, getSalesOrdersUrl, updateOrderUrl, changeOrderStatusPatchUrl } from '@shared/constants/api.constants';
 import { TOAST_MESSAGES } from '@shared/constants/general.constants';
 import { ReportDownloadService } from '@shared/services/report-download/report-download.service';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
-import { APISalesOrderResponse, CreateOrderRequest, SalesOrder } from '../models/interface';
+import { APISalesOrderResponse, CreateOrderRequest, SalesOrder, UpdateOrderRequest } from '../models/interface';
 
 const DEFAULT_SALES_ORDER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
   useCache: false,
@@ -146,6 +146,34 @@ export class SalesService {
         return EMPTY;
       }),
       finalize(() => this.isCreatingOrder.set(false))
+    );
+  }
+
+  public updateOrder(orderId: number, payload: UpdateOrderRequest) {
+    return this.http.put<SalesOrder>(updateOrderUrl(orderId), payload).pipe(
+      tap(() => {
+        this.snackbarService.showSuccess("Order updated successfully");
+        this.getOrders();
+      }),
+      catchError((err: HttpErrorResponse) => {
+        const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
+        this.snackbarService.showError(msg);
+        return EMPTY;
+      })
+    );
+  }
+
+  public changeOrderStatus(orderId: number, status: 'DEEMED_SATISFIED' | 'DELIVERED'): Observable<any> {
+    return this.http.patch(changeOrderStatusPatchUrl(orderId), { status }).pipe(
+      tap(() => {
+        this.snackbarService.showSuccess('Order status updated successfully');
+        this.getOrders();
+      }),
+      catchError((err: HttpErrorResponse) => {
+        const msg = err.error?.message ?? TOAST_MESSAGES.HTTP_ERROR;
+        this.snackbarService.showError(msg);
+        return EMPTY;
+      })
     );
   }
 

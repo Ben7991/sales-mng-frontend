@@ -106,7 +106,13 @@
                     </div>
                 </div>
 
-                <app-button text="Update Payment" (click)="getBalance() !== 0 && onUpdatePayment()" [disabled]="getBalance() === 0" />              
+                @if (shouldShowUpdatePaymentButton()) {
+                    <app-button 
+                        text="Update Payment" 
+                        (click)="getBalance() !== 0 && onUpdatePayment()" 
+                        [disabled]="getBalance() === 0" 
+                    />
+                }              
             </div>
         </section>
 

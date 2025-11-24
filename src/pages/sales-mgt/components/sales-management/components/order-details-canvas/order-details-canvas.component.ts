@@ -78,6 +78,14 @@ export class OrderDetailsCanvasComponent {
         }
     }
 
+    protected shouldShowUpdatePaymentButton(): boolean {
+        const order = this.salesService.singleOrder();
+        if (!order) return false;
+
+        const status = order.orderStatus?.toUpperCase();
+        return status !== 'OPEN';
+    }
+
     protected downloadReceipt(): void {
         const orderId = this._orderId;
         if (!orderId) return;
