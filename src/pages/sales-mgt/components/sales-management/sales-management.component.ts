@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import { UpdatePaymentModalComponent } from './components/update-payment-modal/update-payment-modal.component';
 import { OrderDetailsCanvasComponent } from './components/order-details-canvas/order-details-canvas.component';
 import { CreateOrderModalComponent } from './components/create-order-modal/create-order-modal.component';
+import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal.component';
 import { TableComponent } from '@shared/components/user-management/table/table.component';
 import { SearchComponent } from '@shared/components/search/search.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
@@ -73,10 +74,10 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
     Outstanding: STATUS_COLORS.QUIT,
     Paid: STATUS_COLORS.ACTIVE,
     Open: STATUS_COLORS.ACTIVE,
+    'Deemed Satisfied': STATUS_COLORS.QUIT,
     Delivered: STATUS_COLORS.INACTIVE
   };
 
-  tableActions: TableAction[] = salesTableActions;
   tableColumns: TableColumn[] = salesTableColumns;
 
   private subscriptions: Subscription[] = [];
@@ -151,7 +152,25 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
     if (event.originalEvent) {
       event.originalEvent.stopPropagation();
     }
-    if (event.action === 'edit') this.salesService.changeOrderStatusAndRefresh(event.item.id, 'DELIVERED');
+
+    const order = event.item;
+
+    switch (event.action) {
+      case 'edit':
+        this.openEditOrderModal(order);
+        break;
+      case 'mark-delivered':
+        this.confirmAndMarkAsDelivered(order.id);
+        break;
+      case 'deemed-satisfied':
+        this.changeOrderStatus(order.id, 'DEEMED_SATISFIED');
+        break;
+      case 'change-status':
+        // Handled by submenu actions
+        break;
+      default:
+        break;
+    }
   }
 
   openCreateOrderModal() {
@@ -166,6 +185,54 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) this.salesService.getOrders();
     });
+  }
+
+  openEditOrderModal(order: SalesOrder) {
+    // Fetch full order details before opening modal
+    this.salesService.getSingleOrder(order.id).subscribe(({ data }) => {
+      // Ensure customer is present from the row data if missing in detailed data
+      const fullOrderData = {
+        ...data,
+        customer: order.customer,
+        comment: data.commenet
+      };
+
+      const dialogRef = this.dialog.open(CreateOrderModalComponent, {
+        width: '700px',
+        maxWidth: '90vw',
+        maxHeight: '90%',
+        disableClose: false,
+        panelClass: 'custom-dialog-container',
+        data: { order: fullOrderData }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) this.salesService.getOrders();
+      });
+    });
+  }
+
+  confirmAndMarkAsDelivered(orderId: number) {
+    const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+      width: '450px',
+      maxWidth: '90vw',
+      data: {
+        title: 'Confirm Action',
+        message: 'Confirm marking order as delivered. <b>NB: this is irreversible.</b>',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.changeOrderStatus(orderId, 'DELIVERED');
+      }
+    });
+  }
+
+  changeOrderStatus(orderId: number, status: 'DEEMED_SATISFIED' | 'DELIVERED') {
+    this.salesService.changeOrderStatus(orderId, status).subscribe();
   }
 
   openUpdatePaymentModal(orderId: number) {

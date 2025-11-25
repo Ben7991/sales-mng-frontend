@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {MatFormField} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatButton, MatIconButton} from '@angular/material/button';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
 import {
   MatCell, MatCellDef, MatColumnDef,
@@ -15,7 +15,7 @@ import {
   MatTable
 } from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
-import {ProductI, CreateOrderRequest, orderSale, paymentMode} from '../../models/interface';
+import {ProductI, CreateOrderRequest, orderSale} from '../../models/interface';
 import {ButtonComponent} from '@shared/components/button/button.component';
 import {LiveSearchDropdownComponent} from '@shared/components/live-search-dropdown/live-search-dropdown.component';
 import {LiveSearchItem} from '@shared/models/interface';
@@ -67,15 +67,19 @@ interface AddedProductWithStock extends ProductI {
 export class CreateOrderModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<CreateOrderModalComponent>);
+  public data = inject(MAT_DIALOG_DATA, { optional: true });
   private readonly productsService = inject(ProductsManagementService);
   private readonly snackbarService = inject(SnackbarService);
   private readonly customerService = inject(CustomerManagementService);
   private readonly salesService = inject(SalesService);
 
+  protected isEditMode = false;
+  protected editOrderId: number | null = null;
 
-  productsForm!: FormGroup;
-  customerForm!: FormGroup;
-  paymentForm!: FormGroup;
+
+  protected productsForm!: FormGroup;
+  protected customerForm!: FormGroup;
+  protected commentForm!: FormGroup;
 
   addedProducts: AddedProductWithStock[] = [];
   displayedColumns = ['product', 'qty', 'actions'];
@@ -108,6 +112,74 @@ export class CreateOrderModalComponent implements OnInit {
     this.setupCustomerSearch();
     this.setupCustomerNameListener();
 
+    // Check if edit mode
+    if (this.data?.order) {
+      this.isEditMode = true;
+      this.editOrderId = this.data.order.id;
+      this.prepopulateForm(this.data.order);
+    }
+  }
+
+  private prepopulateForm(order: any) {
+    console.log('Prepopulating with order:', order);
+    console.log('Comment value:', order.comment);
+
+    // Set customer
+    let customerName = '';
+    if (order.customer) {
+      customerName = typeof order.customer === 'object' ? (order.customer.name || '') : order.customer;
+    } else if (order.customerName) {
+      customerName = order.customerName;
+    }
+
+    if (customerName) {
+      this.customerForm.patchValue({
+        customerName: customerName
+      }, { emitEvent: false });
+    }
+
+    // Set comment
+    if (order.comment) {
+      console.log('Setting comment to:', order.comment);
+      this.commentForm.patchValue({
+        comment: order.comment
+      });
+      console.log('Comment form value after patch:', this.commentForm.get('comment')?.value);
+    } else {
+      console.log('No comment found in order object');
+    }
+
+    // Set order type
+    const orderType = order.orderSale || order.orderType;
+    if (orderType) {
+      const upperType = String(orderType).toUpperCase();
+      const matchedType = this.orderTypes.find(t => t.value === upperType)?.value;
+      if (matchedType) {
+        this.selectedOrderType = matchedType;
+      }
+    }
+
+    // Set products - need to fetch full product details
+    const items = order.orderItems || order.items || [];
+    if (items.length > 0) {
+      this.addedProducts = items.map((item: any) => {
+        const stock = item.stock || {};
+        const product = stock.product || item.product || {};
+
+        // Try to find stockId from various possible locations
+        const stockId = stock.id || item.stockId || (item.stock && item.stock.id) || item.id;
+
+        return {
+          stockId: stockId,
+          name: product.name || item.productName || item.name || 'Product',
+          quantity: item.quantity,
+          price: item.unitPrice || item.price || 0,
+          imagePath: product.imagePath || item.imagePath,
+          status: product.status || item.status,
+          category: product.category || item.category
+        };
+      });
+    }
   }
 
 
@@ -293,9 +365,8 @@ export class CreateOrderModalComponent implements OnInit {
       customerName: ['', Validators.required],
     });
 
-    this.paymentForm = this.fb.group({
-      paymentMethod: ['', Validators.required],
-      amountPaid: ['', [Validators.required, Validators.min(0)]]
+    this.commentForm = this.fb.group({
+      comment: ['', Validators.required],
     });
   }
 
@@ -392,20 +463,10 @@ export class CreateOrderModalComponent implements OnInit {
       return;
     }
 
-    if (!this.paymentForm.valid) {
-      this.snackbarService.showError('Please complete payment details');
+    if (!this.commentForm.valid) {
+      this.snackbarService.showError('Please enter a comment');
       return;
     }
-
-    const paymentMethodMap: { [key: string]: paymentMode } = {
-      'cash': 'CASH',
-      'mobile': 'MOBILE_MONEY',
-      'bank': 'BANK_TRANSFER',
-      'card': 'CHEQUE'
-    };
-
-    const paymentMethod = this.paymentForm.get('paymentMethod')?.value;
-    const mappedPaymentMethod = paymentMethodMap[paymentMethod] ;
 
     const orderRequest: CreateOrderRequest = {
       orderItems: this.addedProducts.map(product => ({
@@ -413,16 +474,23 @@ export class CreateOrderModalComponent implements OnInit {
         quantity: product.quantity!
       })),
       orderSale: this.selectedOrderType as orderSale,
-      paymentMode: mappedPaymentMethod,
-      amountPaid: this.paymentForm.get('amountPaid')?.value,
-      customer: this.customerForm.get('customerName')?.value
+      customer: this.customerForm.get('customerName')?.value,
+      comment: this.commentForm.get('comment')?.value || undefined
     };
 
-    this.salesService.createOrder(orderRequest).subscribe({
-      next: () => {
-        this.dialogRef.close(true);
-      }
-    });
+    if (this.isEditMode && this.editOrderId) {
+      this.salesService.updateOrder(this.editOrderId, orderRequest).subscribe({
+        next: () => {
+          this.dialogRef.close(true);
+        }
+      });
+    } else {
+      this.salesService.createOrder(orderRequest).subscribe({
+        next: () => {
+          this.dialogRef.close(true);
+        }
+      });
+    }
   }
 
   protected goToCustomerStep(stepper: any) {

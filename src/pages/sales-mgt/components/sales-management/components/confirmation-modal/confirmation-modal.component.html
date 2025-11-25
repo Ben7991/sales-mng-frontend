@@ -1,0 +1,27 @@
+<div class="confirmation-modal">
+  <div class="modal-header">
+    <h2>{{ data.title }}</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="modal-content">
+    <p [innerHTML]="data.message"></p>
+  </div>
+
+  <div class="modal-actions">
+    <app-button
+      variant="outlined"
+      [text]="data.cancelText || 'Cancel'"
+      (click)="onCancel()"
+      [styles]="{width: '120px'}"
+    />
+    <app-button
+      variant="filled"
+      [text]="data.confirmText || 'Confirm'"
+      (click)="onConfirm()"
+      [styles]="{width: '120px'}"
+    />
+  </div>
+</div>

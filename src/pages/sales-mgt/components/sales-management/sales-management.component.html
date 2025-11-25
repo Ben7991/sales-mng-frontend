@@ -86,7 +86,7 @@
       <app-table
         [columns]="tableColumns"
         [data]="salesService.orders() ?? []"
-        [actions]="tableActions"
+        [actionsTemplate]="actionsTemplate"
         [loading]="isLoading$()"
         [showCheckboxes]="false"
         [isRowClickable]="true"
@@ -95,10 +95,45 @@
         [currentPage]="salesService.currentPage"
         [totalItems]="salesService.ordersCount()"
         [statusConfig]="statusConfig"
-        (actionClick)="onActionClick($event)"
         (pageChange)="onPageChange($event)"
         (clickedRow)="onRowItemClick($event)"
       />
+
+      <ng-template #actionsTemplate let-order>
+        @if (order.orderStatus?.toLowerCase() !== 'delivered') {
+          <button
+            mat-icon-button
+            class="action-menu-button"
+            [matMenuTriggerFor]="orderMenu"
+            (click)="$event.stopPropagation()">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #orderMenu="matMenu" class="popup-menu">
+            @if (order.orderStatus?.toLowerCase() === 'open') {
+              <button mat-menu-item (click)="onActionClick({action: 'edit', item: order, originalEvent: $event})">
+                <span>Edit Order</span>
+              </button>
+              <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+                <span>Change Status</span>
+              </button>
+            } @else if (order.orderStatus?.toLowerCase() === 'deemed satisfied') {
+              <button mat-menu-item (click)="onActionClick({action: 'mark-delivered', item: order, originalEvent: $event})">
+                <span>Mark as Delivered</span>
+              </button>
+            }
+          </mat-menu>
+
+          <mat-menu #statusMenu="matMenu" class="popup-menu submenu">
+            <button mat-menu-item (click)="onActionClick({action: 'deemed-satisfied', item: order, originalEvent: $event})">
+              <span>Deemed Satisfied</span>
+            </button>
+            <button mat-menu-item (click)="onActionClick({action: 'mark-delivered', item: order, originalEvent: $event})">
+              <span>Mark as Delivered</span>
+            </button>
+          </mat-menu>
+        }
+      </ng-template>
     </div>
 
     @if (clickedRow()) {

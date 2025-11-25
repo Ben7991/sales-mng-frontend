@@ -1,7 +1,7 @@
 <div class="order-form-container">
   <div class="create-order-modal">
     <div class="modal-header">
-      <h2>Create Order</h2>
+      <h2>{{ isEditMode ? 'Edit Order' : 'Create Order' }}</h2>
       <button mat-icon-button (click)="closeDialog()">
         <mat-icon>close</mat-icon>
       </button>
@@ -173,24 +173,22 @@
         </div>
       </mat-step>
 
-      <mat-step label="Payment">
+      <mat-step label="Comment">
         <div class="step-content">
-          <h3>Payment Details</h3>
+          <h3>Order Comment</h3>
 
-          <form [formGroup]="paymentForm">
+          <form [formGroup]="commentForm">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Payment Method</mat-label>
-              <mat-select formControlName="paymentMethod">
-                <mat-option value="cash">Cash</mat-option>
-                <mat-option value="card">Bank Transfer</mat-option>
-                <mat-option value="mobile">Mobile Money</mat-option>
-                <mat-option value="bank">Cheque</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Amount Paid</mat-label>
-              <input matInput type="number" formControlName="amountPaid" placeholder="Enter amount">
+              <mat-label>Comment</mat-label>
+              <textarea
+                matInput
+                formControlName="comment"
+                placeholder="Enter any additional notes or comments about this order"
+                rows="6">
+              </textarea>
+              @if (commentForm.get('comment')?.hasError('required') && commentForm.get('comment')?.touched) {
+                <mat-error>Comment is required</mat-error>
+              }
             </mat-form-field>
           </form>
 
@@ -200,8 +198,8 @@
               class="submit"
               matButton="filled"
               (click)="submitOrder()"
-              [disabled]="paymentForm.invalid">
-              Create Order
+              [disabled]="commentForm.invalid">
+              {{ isEditMode ? 'Update Order' : 'Create Order' }}
             </button>
           </div>
         </div>
