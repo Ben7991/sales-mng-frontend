@@ -84,9 +84,9 @@ export class RestockHistoryComponent implements OnInit {
   }
 
   protected readonly inventoryHistoryStatusConfig: StatusConfig = {
-    'IN_USE': STATUS_COLORS.ACTIVE,
-    'QUIT': STATUS_COLORS.QUIT,
-    'FIRED': STATUS_COLORS.INACTIVE
+    'IN_USE': STATUS_COLORS.GREEN,
+    'QUIT': STATUS_COLORS.ORANGE,
+    'FIRED': STATUS_COLORS.RED
   };
 
   openDetailModal(item: any) {
