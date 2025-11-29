@@ -51,9 +51,9 @@ export class UserManagementComponent implements OnInit{
   protected readonly userSearchConfig: SearchConfig = userSearchConfig;
 
   protected readonly statusConfig: StatusConfig = {
-    'ACTIVE': STATUS_COLORS.ACTIVE,
-    'QUIT': STATUS_COLORS.QUIT,
-    'FIRED': STATUS_COLORS.INACTIVE
+    'ACTIVE': STATUS_COLORS.GREEN,
+    'QUIT': STATUS_COLORS.ORANGE,
+    'FIRED': STATUS_COLORS.RED
   };
 
   ngOnInit() {

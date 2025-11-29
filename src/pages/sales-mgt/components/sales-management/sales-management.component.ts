@@ -1,37 +1,36 @@
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
-  signal,
-  OnDestroy
+  signal
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { UpdatePaymentModalComponent } from './components/update-payment-modal/update-payment-modal.component';
-import { OrderDetailsCanvasComponent } from './components/order-details-canvas/order-details-canvas.component';
-import { CreateOrderModalComponent } from './components/create-order-modal/create-order-modal.component';
-import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal.component';
-import { TableComponent } from '@shared/components/user-management/table/table.component';
-import { SearchComponent } from '@shared/components/search/search.component';
-import { ButtonComponent } from '@shared/components/button/button.component';
 import { MatDivider } from '@angular/material/divider';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-
+import { ButtonComponent } from '@shared/components/button/button.component';
+import { SearchComponent } from '@shared/components/search/search.component';
+import { StatusConfig, TableColumn } from '@shared/components/user-management/table/interface/interface';
+import { TableComponent } from '@shared/components/user-management/table/table.component';
 import { getUpdateOrderPaymentUrl } from '@shared/constants/api.constants';
 import { STATUS_COLORS } from '@shared/constants/colors.constant';
-import { salesSearchConfig, salesTableActions, salesTableColumns } from './constants/sales.data';
-import { SalesService } from './service/sales.service';
-import { CustomerManagementService } from '../../../customers/services/customer-management.service';
-import { StatusConfig, TableAction, TableColumn } from '@shared/components/user-management/table/interface/interface';
-import { SalesOrder } from './models/interface';
 import { Customer } from '../../../customers/models/interface';
+import { CustomerManagementService } from '../../../customers/services/customer-management.service';
+import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal.component';
+import { CreateOrderModalComponent } from './components/create-order-modal/create-order-modal.component';
+import { OrderDetailsCanvasComponent } from './components/order-details-canvas/order-details-canvas.component';
+import { UpdatePaymentModalComponent } from './components/update-payment-modal/update-payment-modal.component';
+import { salesSearchConfig, salesTableColumns } from './constants/sales.data';
+import { OrderStatus, SalesOrder } from './models/interface';
+import { SalesService } from './service/sales.service';
 
 @Component({
   selector: 'app-sales-management',
@@ -71,11 +70,15 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
 
   public readonly salesSearchConfig = salesSearchConfig;
   public readonly statusConfig: StatusConfig = {
-    Outstanding: STATUS_COLORS.QUIT,
-    Paid: STATUS_COLORS.ACTIVE,
-    Open: STATUS_COLORS.ACTIVE,
-    'Deemed Satisfied': STATUS_COLORS.QUIT,
-    Delivered: STATUS_COLORS.INACTIVE
+    // Payment statuses
+    Outstanding: STATUS_COLORS.ORANGE,
+    Paid: STATUS_COLORS.GREEN,
+
+    // Order statuses
+    Open: STATUS_COLORS.GREEN,
+    'Deemed Satisfied': STATUS_COLORS.ORANGE,
+    Delivered: STATUS_COLORS.RED,
+    Cancelled: STATUS_COLORS.GREY
   };
 
   tableColumns: TableColumn[] = salesTableColumns;
@@ -165,6 +168,12 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
       case 'deemed-satisfied':
         this.changeOrderStatus(order.id, 'DEEMED_SATISFIED');
         break;
+      case 'cancel':
+        this.changeOrderStatus(order.id, 'CANCELLED');
+        break;
+      case 'reopen':
+        this.changeOrderStatus(order.id, 'OPEN');
+        break;
       case 'change-status':
         // Handled by submenu actions
         break;
@@ -231,13 +240,13 @@ export class SalesManagementComponent implements OnInit, OnDestroy {
     });
   }
 
-  changeOrderStatus(orderId: number, status: 'DEEMED_SATISFIED' | 'DELIVERED') {
+  changeOrderStatus(orderId: number, status: OrderStatus) {
     this.salesService.changeOrderStatus(orderId, status).subscribe();
   }
 
   openUpdatePaymentModal(orderId: number) {
     const dialogRef = this.dialog.open(UpdatePaymentModalComponent, {
-      width: '350px',
+      width: 'auto',
       maxWidth: '90vw',
       data: { orderId },
       disableClose: false,

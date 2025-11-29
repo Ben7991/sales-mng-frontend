@@ -15,7 +15,7 @@ import {
   MatTable
 } from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
-import {ProductI, CreateOrderRequest, orderSale} from '../../models/interface';
+import {ProductI, CreateOrderRequest, OrderSale} from '../../models/interface';
 import {ButtonComponent} from '@shared/components/button/button.component';
 import {LiveSearchDropdownComponent} from '@shared/components/live-search-dropdown/live-search-dropdown.component';
 import {LiveSearchItem} from '@shared/models/interface';
@@ -83,12 +83,12 @@ export class CreateOrderModalComponent implements OnInit {
 
   addedProducts: AddedProductWithStock[] = [];
   displayedColumns = ['product', 'qty', 'actions'];
-  orderTypes: { value: orderSale; label: string }[] = [
+  orderTypes: { value: OrderSale; label: string }[] = [
     { value: 'RETAIL', label: 'Retail' },
     { value: 'WHOLESALE', label: 'Wholesale' },
     {value: 'SPECIAL_PURCHASE', label:'Special Order' }
   ];
-  selectedOrderType: orderSale | '' = '';
+  selectedOrderType: OrderSale | '' = '';
 
   protected readonly searchResults = signal<LiveSearchItem[]>([]);
   protected readonly isSearching = signal(false);
@@ -443,7 +443,7 @@ export class CreateOrderModalComponent implements OnInit {
     this.addedProducts = this.addedProducts.filter((_, i) => i !== index);
   }
 
-  selectOrderType(type: orderSale) {
+  selectOrderType(type: OrderSale) {
     this.selectedOrderType = type;
   }
 
@@ -473,7 +473,7 @@ export class CreateOrderModalComponent implements OnInit {
         stockId: product.stockId,
         quantity: product.quantity!
       })),
-      orderSale: this.selectedOrderType as orderSale,
+      orderSale: this.selectedOrderType as OrderSale,
       customer: this.customerForm.get('customerName')?.value,
       comment: this.commentForm.get('comment')?.value || undefined
     };

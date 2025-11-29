@@ -89,13 +89,13 @@
                         [ngClass]="salesService.singleOrder().paidStatus?.toLowerCase()"
                         [style.background-color]="
                             orderPaidStatus === 'OUTSTANDING' ? 
-                                statusColors.QUIT.backgroundColor : 
-                                statusColors.ACTIVE.backgroundColor          
+                                statusColors.ORANGE.backgroundColor : 
+                                statusColors.GREEN.backgroundColor          
                             "
                          [style.color]="
                             orderPaidStatus === 'OUTSTANDING' ? 
-                                statusColors.QUIT.color : 
-                                statusColors.ACTIVE.color          
+                                statusColors.ORANGE.color : 
+                                statusColors.GREEN.color          
                             "
                     >
                         {{ salesService.singleOrder().paidStatus | titlecase }}

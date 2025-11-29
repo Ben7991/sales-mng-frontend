@@ -30,6 +30,7 @@ export class OrderDetailsCanvasComponent {
         this._orderId = v ?? null;
         this.fetchSingleOrder();
     }
+    @Input() orderStatus: string | null = null;
     @Input() openUpdatePaymentModal!: (orderId: number) => void;
 
     @Output() canvasClose = new EventEmitter<void>();
@@ -79,11 +80,11 @@ export class OrderDetailsCanvasComponent {
     }
 
     protected shouldShowUpdatePaymentButton(): boolean {
-        const order = this.salesService.singleOrder();
-        if (!order) return false;
+        // Use the orderStatus input from parent (already formatted)
+        if (!this.orderStatus) return false;
 
-        const status = order.orderStatus?.toUpperCase();
-        return status !== 'OPEN';
+        const status = this.orderStatus.toUpperCase().replace(/ /g, '_');
+        return status === 'DEEMED_SATISFIED' || status === 'DELIVERED';
     }
 
     protected downloadReceipt(): void {

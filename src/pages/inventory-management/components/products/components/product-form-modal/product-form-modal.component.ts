@@ -249,12 +249,6 @@ export class ProductFormModalComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    // For add mode, file is required
-    if (!this.data.isEdit && !this.selectedFile()) {
-      this.snackbarService.showError('Please select a product image');
-      return;
-    }
-
     // Check for duplicate product name
     if (this.isDuplicateName() || this.productForm.get('name')?.hasError('duplicate')) {
       this.snackbarService.showError('This product name already exists. Please choose a unique name.');

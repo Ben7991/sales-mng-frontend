@@ -43,8 +43,8 @@ export class SupplierManagementComponent implements OnInit {
   protected readonly supplierSearchConfig: SearchConfig = supplierSearchConfig;
 
   protected readonly statusConfig: StatusConfig = {
-    Active: STATUS_COLORS.ACTIVE,
-    Inactive: STATUS_COLORS.INACTIVE
+    Active: STATUS_COLORS.GREEN,
+    Inactive: STATUS_COLORS.RED
   };
 
   ngOnInit() {
