@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ButtonComponent } from '@shared/components/button/button.component';
-import { paymentMode } from '../../models/interface';
+import { PaymentMode } from '../../models/interface';
 
 interface DialogData {
   orderId: number;
@@ -33,7 +33,7 @@ interface DialogData {
 })
 export class UpdatePaymentModalComponent {
   protected paymentForm: FormGroup;
-  protected readonly paymentModes: paymentMode[] = ['CASH', 'BANK_TRANSFER', 'MOBILE_MONEY', 'CHEQUE'];
+  protected readonly paymentModes: PaymentMode[] = ['CASH', 'BANK_TRANSFER', 'MOBILE_MONEY', 'CHEQUE'];
 
   constructor(
     private readonly fb: FormBuilder,

@@ -4,7 +4,10 @@
   padding: 5%;
   background: #fff;
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 80vh;
+  width: clamp(300px, 50vw, 500px);
+  box-sizing: border-box;
 }
 
 .modal-header {

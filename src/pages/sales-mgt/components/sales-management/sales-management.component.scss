@@ -49,6 +49,20 @@
   .mat-mdc-button-persistent-ripple {
     display: none !important;
   }
+
+  &.action-disabled {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    pointer-events: auto;
+
+    &:hover {
+      cursor: not-allowed !important;
+    }
+
+    mat-icon {
+      cursor: not-allowed !important;
+    }
+  }
 }
 
 ::ng-deep .mat-column-actions {

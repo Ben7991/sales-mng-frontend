@@ -5,7 +5,7 @@ import { TOAST_MESSAGES } from '@shared/constants/general.constants';
 import { ReportDownloadService } from '@shared/services/report-download/report-download.service';
 import { SnackbarService } from '@shared/services/snackbar/snackbar.service';
 import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
-import { APISalesOrderResponse, CreateOrderRequest, SalesOrder, UpdateOrderRequest } from '../models/interface';
+import { APISalesOrderResponse, CreateOrderRequest, OrderStatus, SalesOrder, UpdateOrderRequest } from '../models/interface';
 
 const DEFAULT_SALES_ORDER_FETCH_OPTIONS: { useCache?: boolean, showLoader?: boolean } = {
   useCache: false,
@@ -83,13 +83,15 @@ export class SalesService {
 
     let httpParams = new HttpParams();
 
+    // Use stored pagination values as defaults
+    httpParams = httpParams.set('perPage', (params?.perPage ?? this.currentPageSize).toString());
+    httpParams = httpParams.set('page', (params?.page ?? this.currentPage).toString());
+
     if (params) {
       if (params.perPage) {
-        httpParams = httpParams.set('perPage', params.perPage.toString());
         this.currentPageSize = params.perPage;
       }
       if (params.page !== undefined) {
-        httpParams = httpParams.set('page', params.page.toString());
         this.currentPage = params.page;
       }
       if (params.q && params.q !== '') {
@@ -163,7 +165,7 @@ export class SalesService {
     );
   }
 
-  public changeOrderStatus(orderId: number, status: 'DEEMED_SATISFIED' | 'DELIVERED'): Observable<any> {
+  public changeOrderStatus(orderId: number, status: OrderStatus): Observable<any> {
     return this.http.patch(changeOrderStatusPatchUrl(orderId), { status }).pipe(
       tap(() => {
         this.snackbarService.showSuccess('Order status updated successfully');

@@ -60,14 +60,16 @@
       <!-- Status submenu -->
       <mat-menu #statusMenu="matMenu" class="popup-menu submenu">
         <button mat-menu-item (click)="filterStatus('OPEN')">Open</button>
-        <button mat-menu-item (click)="filterStatus('DELIVERED')" >Delivered</button>
+        <button mat-menu-item (click)="filterStatus('DEEMED_SATISFIED')">Deemed Satisfied</button>
+        <button mat-menu-item (click)="filterStatus('DELIVERED')">Delivered</button>
+        <button mat-menu-item (click)="filterStatus('CANCELLED')">Cancelled</button>
       </mat-menu>
 
       <app-button
         (click)="openCreateOrderModal()"
         icon="assets/addIcon.svg"
         [isIconButton]="true"
-        text="create order"
+        text="Create order"
         [styles]="{ height: '40px',width: '140px' }"
       />
     </div>
@@ -100,7 +102,15 @@
       />
 
       <ng-template #actionsTemplate let-order>
-        @if (order.orderStatus?.toLowerCase() !== 'delivered') {
+        @if (order.orderStatus?.toLowerCase() === 'delivered') {
+          <!-- Disabled action button for delivered orders -->
+          <button
+            mat-icon-button
+            class="action-menu-button action-disabled"
+            (click)="$event.stopPropagation()">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        } @else {
           <button
             mat-icon-button
             class="action-menu-button"
@@ -114,22 +124,29 @@
               <button mat-menu-item (click)="onActionClick({action: 'edit', item: order, originalEvent: $event})">
                 <span>Edit Order</span>
               </button>
-              <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+              <button mat-menu-item [matMenuTriggerFor]="changeStatusMenu">
                 <span>Change Status</span>
               </button>
             } @else if (order.orderStatus?.toLowerCase() === 'deemed satisfied') {
               <button mat-menu-item (click)="onActionClick({action: 'mark-delivered', item: order, originalEvent: $event})">
                 <span>Mark as Delivered</span>
               </button>
+            } @else if (order.orderStatus?.toLowerCase() === 'cancelled') {
+              <button mat-menu-item (click)="onActionClick({action: 'reopen', item: order, originalEvent: $event})">
+                <span>Reopen Order</span>
+              </button>
             }
           </mat-menu>
 
-          <mat-menu #statusMenu="matMenu" class="popup-menu submenu">
+          <mat-menu #changeStatusMenu="matMenu" class="popup-menu submenu">
             <button mat-menu-item (click)="onActionClick({action: 'deemed-satisfied', item: order, originalEvent: $event})">
               <span>Deemed Satisfied</span>
             </button>
             <button mat-menu-item (click)="onActionClick({action: 'mark-delivered', item: order, originalEvent: $event})">
               <span>Mark as Delivered</span>
+            </button>
+            <button mat-menu-item (click)="onActionClick({action: 'cancel', item: order, originalEvent: $event})">
+              <span>Cancel Order</span>
             </button>
           </mat-menu>
         }
@@ -138,9 +155,9 @@
 
     @if (clickedRow()) {
       <div class="canvas">
-
         <app-order-details-canvas
           [orderId]="clickedRow()!.id"
+          [orderStatus]="clickedRow()!.orderStatus"
           [openUpdatePaymentModal]="openUpdatePaymentModal.bind(this)"
           (canvasClose)="clearClickedRowItem()"
         />
