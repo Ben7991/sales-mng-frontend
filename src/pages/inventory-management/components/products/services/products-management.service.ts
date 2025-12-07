@@ -9,7 +9,8 @@ import {
   updateCategoryUrl,
   updateProductUrl,
   changeProductImageUrl,
-  productLiveSearchUrl
+  productLiveSearchUrl,
+  stockLiveSearchUrl
 } from '@shared/constants/api.constants';
 import {
   AddCategoryInterface,
@@ -189,5 +190,9 @@ export class ProductsManagementService {
 
   public searchProducts(query: string): Observable<ProductLiveSearchApiResponse> {
     return this.http.get<ProductLiveSearchApiResponse>(productLiveSearchUrl(query));
+  }
+
+  public searchStockProducts(query: string): Observable<ProductLiveSearchApiResponse> {
+    return this.http.get<ProductLiveSearchApiResponse>(stockLiveSearchUrl(query));
   }
 }

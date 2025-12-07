@@ -199,7 +199,7 @@ export class CreateOrderModalComponent implements OnInit {
         }
 
         this.isSearching.set(true);
-        return this.productsService.searchProducts(query.trim()).pipe(
+        return this.productsService.searchStockProducts(query.trim()).pipe(
           catchError(() => {
             this.isSearching.set(false);
             return of({data: []});
