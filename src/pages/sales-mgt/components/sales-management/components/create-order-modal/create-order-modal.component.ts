@@ -407,19 +407,21 @@ export class CreateOrderModalComponent implements OnInit {
       return;
     }
 
-    if (!this.selectedProduct.id) {
+    // Support both 'id' and 'stockId' field names
+    const productStockId = this.selectedProduct.stockId ?? this.selectedProduct.id;
+    if (!productStockId) {
       this.snackbarService.showError('Invalid product selected');
       return;
     }
 
-    const existingProduct = this.addedProducts.find(p => p.stockId === this.selectedProduct.id);
+    const existingProduct = this.addedProducts.find(p => p.stockId === productStockId);
     if (existingProduct) {
       this.snackbarService.showError('This product is already added to the order');
       return;
     }
 
     const product: AddedProductWithStock = {
-      stockId: this.selectedProduct.id,
+      stockId: productStockId,
       name: this.selectedProduct.name,
       quantity: quantity,
       price: this.selectedProduct.price || 0,
