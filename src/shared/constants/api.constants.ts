@@ -107,6 +107,9 @@ export const changeProductImageUrl =
 export const productLiveSearchUrl =
   (query: string) => `${environment.serverUrl}/products/live-search?q=${query}`;
 
+export const stockLiveSearchUrl =
+  (query: string) => `${environment.serverUrl}/products/stock-live-search?q=${query}`;
+
 
 /*DASHBOARD*/
 export const getSummaryUrl = `${environment.serverUrl}/dashboard/summary`;
